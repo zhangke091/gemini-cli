@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -12,70 +12,79 @@ import { useKeypress } from '../hooks/useKeypress.js';
 import { debugLogger } from '@google/gemini-cli-core';
 // Mock dependencies
 vi.mock('@google/gemini-cli-core', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        debugLogger: {
-            log: vi.fn(),
-            warn: vi.fn(),
-            error: vi.fn(),
-            debug: vi.fn(),
-        },
-    };
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    debugLogger: {
+      log: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+    },
+  };
 });
 vi.mock('../hooks/useKeypress.js', () => ({
-    useKeypress: vi.fn(),
+  useKeypress: vi.fn(),
 }));
 vi.mock('../components/CliSpinner.js', () => ({
-    CliSpinner: () => '[Spinner]',
+  CliSpinner: () => '[Spinner]',
 }));
 describe('AuthInProgress', () => {
-    const onTimeout = vi.fn();
-    beforeEach(() => {
-        vi.clearAllMocks();
-        vi.useFakeTimers();
-        vi.mocked(debugLogger.error).mockImplementation((...args) => {
-            if (typeof args[0] === 'string' &&
-                args[0].includes('was not wrapped in act')) {
-                return;
-            }
-        });
+  const onTimeout = vi.fn();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.mocked(debugLogger.error).mockImplementation((...args) => {
+      if (
+        typeof args[0] === 'string' &&
+        args[0].includes('was not wrapped in act')
+      ) {
+        return;
+      }
     });
-    afterEach(() => {
-        vi.useRealTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  it('renders initial state with spinner', () => {
+    const { lastFrame } = render(
+      _jsx(AuthInProgress, { onTimeout: onTimeout }),
+    );
+    expect(lastFrame()).toContain('[Spinner] Waiting for auth...');
+    expect(lastFrame()).toContain('Press ESC or CTRL+C to cancel');
+  });
+  it('calls onTimeout when ESC is pressed', () => {
+    render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
+    const keypressHandler = vi.mocked(useKeypress).mock.calls[0][0];
+    keypressHandler({ name: 'escape' });
+    expect(onTimeout).toHaveBeenCalled();
+  });
+  it('calls onTimeout when Ctrl+C is pressed', () => {
+    render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
+    const keypressHandler = vi.mocked(useKeypress).mock.calls[0][0];
+    keypressHandler({ name: 'c', ctrl: true });
+    expect(onTimeout).toHaveBeenCalled();
+  });
+  it('calls onTimeout and shows timeout message after 3 minutes', async () => {
+    const { lastFrame } = render(
+      _jsx(AuthInProgress, { onTimeout: onTimeout }),
+    );
+    await act(async () => {
+      vi.advanceTimersByTime(180000);
     });
-    it('renders initial state with spinner', () => {
-        const { lastFrame } = render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
-        expect(lastFrame()).toContain('[Spinner] Waiting for auth...');
-        expect(lastFrame()).toContain('Press ESC or CTRL+C to cancel');
+    expect(onTimeout).toHaveBeenCalled();
+    await vi.waitUntil(
+      () => lastFrame()?.includes('Authentication timed out'),
+      { timeout: 1000 },
+    );
+  });
+  it('clears timer on unmount', () => {
+    const { unmount } = render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
+    act(() => {
+      unmount();
     });
-    it('calls onTimeout when ESC is pressed', () => {
-        render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
-        const keypressHandler = vi.mocked(useKeypress).mock.calls[0][0];
-        keypressHandler({ name: 'escape' });
-        expect(onTimeout).toHaveBeenCalled();
-    });
-    it('calls onTimeout when Ctrl+C is pressed', () => {
-        render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
-        const keypressHandler = vi.mocked(useKeypress).mock.calls[0][0];
-        keypressHandler({ name: 'c', ctrl: true });
-        expect(onTimeout).toHaveBeenCalled();
-    });
-    it('calls onTimeout and shows timeout message after 3 minutes', async () => {
-        const { lastFrame } = render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
-        await act(async () => {
-            vi.advanceTimersByTime(180000);
-        });
-        expect(onTimeout).toHaveBeenCalled();
-        await vi.waitUntil(() => lastFrame()?.includes('Authentication timed out'), { timeout: 1000 });
-    });
-    it('clears timer on unmount', () => {
-        const { unmount } = render(_jsx(AuthInProgress, { onTimeout: onTimeout }));
-        act(() => {
-            unmount();
-        });
-        vi.advanceTimersByTime(180000);
-        expect(onTimeout).not.toHaveBeenCalled();
-    });
+    vi.advanceTimersByTime(180000);
+    expect(onTimeout).not.toHaveBeenCalled();
+  });
 });
 //# sourceMappingURL=AuthInProgress.test.js.map

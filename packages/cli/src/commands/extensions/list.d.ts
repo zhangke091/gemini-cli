@@ -5,6 +5,6 @@
  */
 import type { CommandModule } from 'yargs';
 export declare function handleList(options?: {
-    outputFormat?: 'text' | 'json';
+  outputFormat?: 'text' | 'json';
 }): Promise<void>;
 export declare const listCommand: CommandModule;

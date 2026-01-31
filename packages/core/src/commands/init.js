@@ -4,16 +4,17 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export function performInit(doesGeminiMdExist) {
-    if (doesGeminiMdExist) {
-        return {
-            type: 'message',
-            messageType: 'info',
-            content: 'A GEMINI.md file already exists in this directory. No changes were made.',
-        };
-    }
+  if (doesGeminiMdExist) {
     return {
-        type: 'submit_prompt',
-        content: `
+      type: 'message',
+      messageType: 'info',
+      content:
+        'A GEMINI.md file already exists in this directory. No changes were made.',
+    };
+  }
+  return {
+    type: 'submit_prompt',
+    content: `
 You are an AI agent that brings the power of Gemini directly into the terminal. Your task is to analyze the current directory and generate a comprehensive GEMINI.md file to be used as instructional context for future interactions.
 
 **Analysis Process:**
@@ -48,6 +49,6 @@ You are an AI agent that brings the power of Gemini directly into the terminal. 
 
 Write the complete content to the \`GEMINI.md\` file. The output must be well-formatted Markdown.
 `,
-    };
+  };
 }
 //# sourceMappingURL=init.js.map

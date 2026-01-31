@@ -12,24 +12,24 @@ const __dirname = path.dirname(__filename);
 // Cache all client metadata.
 let clientMetadataPromise;
 function getPlatform() {
-    const platform = process.platform;
-    const arch = process.arch;
-    if (platform === 'darwin' && arch === 'x64') {
-        return 'DARWIN_AMD64';
-    }
-    if (platform === 'darwin' && arch === 'arm64') {
-        return 'DARWIN_ARM64';
-    }
-    if (platform === 'linux' && arch === 'x64') {
-        return 'LINUX_AMD64';
-    }
-    if (platform === 'linux' && arch === 'arm64') {
-        return 'LINUX_ARM64';
-    }
-    if (platform === 'win32' && arch === 'x64') {
-        return 'WINDOWS_AMD64';
-    }
-    return 'PLATFORM_UNSPECIFIED';
+  const platform = process.platform;
+  const arch = process.arch;
+  if (platform === 'darwin' && arch === 'x64') {
+    return 'DARWIN_AMD64';
+  }
+  if (platform === 'darwin' && arch === 'arm64') {
+    return 'DARWIN_ARM64';
+  }
+  if (platform === 'linux' && arch === 'x64') {
+    return 'LINUX_AMD64';
+  }
+  if (platform === 'linux' && arch === 'arm64') {
+    return 'LINUX_ARM64';
+  }
+  if (platform === 'win32' && arch === 'x64') {
+    return 'WINDOWS_AMD64';
+  }
+  return 'PLATFORM_UNSPECIFIED';
 }
 /**
  * Returns the client metadata.
@@ -37,15 +37,15 @@ function getPlatform() {
  * The client metadata is cached so that it is only computed once per session.
  */
 export async function getClientMetadata() {
-    if (!clientMetadataPromise) {
-        clientMetadataPromise = (async () => ({
-            ideName: 'IDE_UNSPECIFIED',
-            pluginType: 'GEMINI',
-            ideVersion: await getVersion(),
-            platform: getPlatform(),
-            updateChannel: await getReleaseChannel(__dirname),
-        }))();
-    }
-    return clientMetadataPromise;
+  if (!clientMetadataPromise) {
+    clientMetadataPromise = (async () => ({
+      ideName: 'IDE_UNSPECIFIED',
+      pluginType: 'GEMINI',
+      ideVersion: await getVersion(),
+      platform: getPlatform(),
+      updateChannel: await getReleaseChannel(__dirname),
+    }))();
+  }
+  return clientMetadataPromise;
 }
 //# sourceMappingURL=client_metadata.js.map

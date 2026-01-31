@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export declare const PHRASE_CHANGE_INTERVAL_MS = 15000;
-export declare const INTERACTIVE_SHELL_WAITING_PHRASE = "Interactive shell awaiting input... press tab to focus shell";
+export declare const INTERACTIVE_SHELL_WAITING_PHRASE =
+  'Interactive shell awaiting input... press tab to focus shell';
 /**
  * Custom hook to manage cycling through loading phrases.
  * @param isActive Whether the phrase cycling should be active.
@@ -13,4 +14,9 @@ export declare const INTERACTIVE_SHELL_WAITING_PHRASE = "Interactive shell await
  * @param customPhrases Optional list of custom phrases to use.
  * @returns The current loading phrase.
  */
-export declare const usePhraseCycler: (isActive: boolean, isWaiting: boolean, shouldShowFocusHint: boolean, customPhrases?: string[]) => string;
+export declare const usePhraseCycler: (
+  isActive: boolean,
+  isWaiting: boolean,
+  shouldShowFocusHint: boolean,
+  customPhrases?: string[],
+) => string;

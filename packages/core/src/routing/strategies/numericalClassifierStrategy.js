@@ -13,18 +13,18 @@ const HISTORY_TURNS_FOR_CONTEXT = 8;
 const FLASH_MODEL = 'flash';
 const PRO_MODEL = 'pro';
 const RESPONSE_SCHEMA = {
-    type: Type.OBJECT,
-    properties: {
-        complexity_reasoning: {
-            type: Type.STRING,
-            description: 'Brief explanation for the score.',
-        },
-        complexity_score: {
-            type: Type.INTEGER,
-            description: 'Complexity score from 1-100.',
-        },
+  type: Type.OBJECT,
+  properties: {
+    complexity_reasoning: {
+      type: Type.STRING,
+      description: 'Brief explanation for the score.',
     },
-    required: ['complexity_reasoning', 'complexity_score'],
+    complexity_score: {
+      type: Type.INTEGER,
+      description: 'Complexity score from 1-100.',
+    },
+  },
+  required: ['complexity_reasoning', 'complexity_score'],
 };
 const CLASSIFIER_SYSTEM_PROMPT = `
 You are a specialized Task Routing AI. Your sole function is to analyze the user's request and assign a **Complexity Score** from 1 to 100.
@@ -74,8 +74,8 @@ User: Design a microservices backend for this app.
 Model: {"complexity_reasoning": "High-level architecture and strategic planning.", "complexity_score": 95}
 `;
 const ClassifierResponseSchema = z.object({
-    complexity_reasoning: z.string(),
-    complexity_score: z.number().min(1).max(100),
+  complexity_reasoning: z.string(),
+  complexity_score: z.number().min(1).max(100),
 });
 /**
  * Deterministically calculates the routing threshold based on the session ID.
@@ -88,91 +88,100 @@ const ClassifierResponseSchema = z.object({
  * @returns The threshold (50 or 80).
  */
 function getComplexityThreshold(sessionId) {
-    const FNV_OFFSET_BASIS_32 = 0x811c9dc5;
-    const FNV_PRIME_32 = 0x01000193;
-    let hash = FNV_OFFSET_BASIS_32;
-    for (let i = 0; i < sessionId.length; i++) {
-        hash ^= sessionId.charCodeAt(i);
-        // Multiply by prime (simulate 32-bit overflow with bitwise shift)
-        hash = Math.imul(hash, FNV_PRIME_32);
-    }
-    // Ensure positive integer
-    hash = hash >>> 0;
-    // Normalize to 0-99
-    const normalized = hash % 100;
-    // 50% split:
-    // 0-49: Strict (80)
-    // 50-99: Control (50)
-    return normalized < 50 ? 80 : 50;
+  const FNV_OFFSET_BASIS_32 = 0x811c9dc5;
+  const FNV_PRIME_32 = 0x01000193;
+  let hash = FNV_OFFSET_BASIS_32;
+  for (let i = 0; i < sessionId.length; i++) {
+    hash ^= sessionId.charCodeAt(i);
+    // Multiply by prime (simulate 32-bit overflow with bitwise shift)
+    hash = Math.imul(hash, FNV_PRIME_32);
+  }
+  // Ensure positive integer
+  hash = hash >>> 0;
+  // Normalize to 0-99
+  const normalized = hash % 100;
+  // 50% split:
+  // 0-49: Strict (80)
+  // 50-99: Control (50)
+  return normalized < 50 ? 80 : 50;
 }
 export class NumericalClassifierStrategy {
-    name = 'numerical_classifier';
-    async route(context, config, baseLlmClient) {
-        const startTime = Date.now();
-        try {
-            if (!(await config.getNumericalRoutingEnabled())) {
-                return null;
-            }
-            const promptId = getPromptIdWithFallback('classifier-router');
-            const finalHistory = context.history.slice(-HISTORY_TURNS_FOR_CONTEXT);
-            // Wrap the user's request in tags to prevent prompt injection
-            const requestParts = Array.isArray(context.request)
-                ? context.request
-                : [context.request];
-            const sanitizedRequest = requestParts.map((part) => {
-                if (typeof part === 'string') {
-                    return { text: part };
-                }
-                if (part.text) {
-                    return { text: part.text };
-                }
-                return part;
-            });
-            const jsonResponse = await baseLlmClient.generateJson({
-                modelConfigKey: { model: 'classifier' },
-                contents: [...finalHistory, createUserContent(sanitizedRequest)],
-                schema: RESPONSE_SCHEMA,
-                systemInstruction: CLASSIFIER_SYSTEM_PROMPT,
-                abortSignal: context.signal,
-                promptId,
-            });
-            const routerResponse = ClassifierResponseSchema.parse(jsonResponse);
-            const score = routerResponse.complexity_score;
-            const { threshold, groupLabel, modelAlias } = await this.getRoutingDecision(score, config, config.getSessionId() || 'unknown-session');
-            const selectedModel = resolveClassifierModel(config.getModel(), modelAlias, config.getPreviewFeatures());
-            const latencyMs = Date.now() - startTime;
-            return {
-                model: selectedModel,
-                metadata: {
-                    source: `Classifier (${groupLabel})`,
-                    latencyMs,
-                    reasoning: `[Score: ${score} / Threshold: ${threshold}] ${routerResponse.complexity_reasoning}`,
-                },
-            };
+  name = 'numerical_classifier';
+  async route(context, config, baseLlmClient) {
+    const startTime = Date.now();
+    try {
+      if (!(await config.getNumericalRoutingEnabled())) {
+        return null;
+      }
+      const promptId = getPromptIdWithFallback('classifier-router');
+      const finalHistory = context.history.slice(-HISTORY_TURNS_FOR_CONTEXT);
+      // Wrap the user's request in tags to prevent prompt injection
+      const requestParts = Array.isArray(context.request)
+        ? context.request
+        : [context.request];
+      const sanitizedRequest = requestParts.map((part) => {
+        if (typeof part === 'string') {
+          return { text: part };
         }
-        catch (error) {
-            debugLogger.warn(`[Routing] NumericalClassifierStrategy failed:`, error);
-            return null;
+        if (part.text) {
+          return { text: part.text };
         }
+        return part;
+      });
+      const jsonResponse = await baseLlmClient.generateJson({
+        modelConfigKey: { model: 'classifier' },
+        contents: [...finalHistory, createUserContent(sanitizedRequest)],
+        schema: RESPONSE_SCHEMA,
+        systemInstruction: CLASSIFIER_SYSTEM_PROMPT,
+        abortSignal: context.signal,
+        promptId,
+      });
+      const routerResponse = ClassifierResponseSchema.parse(jsonResponse);
+      const score = routerResponse.complexity_score;
+      const { threshold, groupLabel, modelAlias } =
+        await this.getRoutingDecision(
+          score,
+          config,
+          config.getSessionId() || 'unknown-session',
+        );
+      const selectedModel = resolveClassifierModel(
+        config.getModel(),
+        modelAlias,
+        config.getPreviewFeatures(),
+      );
+      const latencyMs = Date.now() - startTime;
+      return {
+        model: selectedModel,
+        metadata: {
+          source: `Classifier (${groupLabel})`,
+          latencyMs,
+          reasoning: `[Score: ${score} / Threshold: ${threshold}] ${routerResponse.complexity_reasoning}`,
+        },
+      };
+    } catch (error) {
+      debugLogger.warn(`[Routing] NumericalClassifierStrategy failed:`, error);
+      return null;
     }
-    async getRoutingDecision(score, config, sessionId) {
-        let threshold;
-        let groupLabel;
-        const remoteThresholdValue = await config.getClassifierThreshold();
-        if (remoteThresholdValue !== undefined &&
-            !isNaN(remoteThresholdValue) &&
-            remoteThresholdValue >= 0 &&
-            remoteThresholdValue <= 100) {
-            threshold = remoteThresholdValue;
-            groupLabel = 'Remote';
-        }
-        else {
-            // Fallback to deterministic A/B test
-            threshold = getComplexityThreshold(sessionId);
-            groupLabel = threshold === 80 ? 'Strict' : 'Control';
-        }
-        const modelAlias = score >= threshold ? PRO_MODEL : FLASH_MODEL;
-        return { threshold, groupLabel, modelAlias };
+  }
+  async getRoutingDecision(score, config, sessionId) {
+    let threshold;
+    let groupLabel;
+    const remoteThresholdValue = await config.getClassifierThreshold();
+    if (
+      remoteThresholdValue !== undefined &&
+      !isNaN(remoteThresholdValue) &&
+      remoteThresholdValue >= 0 &&
+      remoteThresholdValue <= 100
+    ) {
+      threshold = remoteThresholdValue;
+      groupLabel = 'Remote';
+    } else {
+      // Fallback to deterministic A/B test
+      threshold = getComplexityThreshold(sessionId);
+      groupLabel = threshold === 80 ? 'Strict' : 'Control';
     }
+    const modelAlias = score >= threshold ? PRO_MODEL : FLASH_MODEL;
+    return { threshold, groupLabel, modelAlias };
+  }
 }
 //# sourceMappingURL=numericalClassifierStrategy.js.map

@@ -13,17 +13,23 @@ import { Scheduler } from '../scheduler/scheduler.js';
  * @returns A promise that resolves to the completed tool calls.
  */
 export async function scheduleAgentTools(config, requests, options) {
-    const { schedulerId, parentCallId, toolRegistry, signal, getPreferredEditor, } = options;
-    // Create a proxy/override of the config to provide the agent-specific tool registry.
-    const agentConfig = Object.create(config);
-    agentConfig.getToolRegistry = () => toolRegistry;
-    const scheduler = new Scheduler({
-        config: agentConfig,
-        messageBus: config.getMessageBus(),
-        getPreferredEditor: getPreferredEditor ?? (() => undefined),
-        schedulerId,
-        parentCallId,
-    });
-    return scheduler.schedule(requests, signal);
+  const {
+    schedulerId,
+    parentCallId,
+    toolRegistry,
+    signal,
+    getPreferredEditor,
+  } = options;
+  // Create a proxy/override of the config to provide the agent-specific tool registry.
+  const agentConfig = Object.create(config);
+  agentConfig.getToolRegistry = () => toolRegistry;
+  const scheduler = new Scheduler({
+    config: agentConfig,
+    messageBus: config.getMessageBus(),
+    getPreferredEditor: getPreferredEditor ?? (() => undefined),
+    schedulerId,
+    parentCallId,
+  });
+  return scheduler.schedule(requests, signal);
 }
 //# sourceMappingURL=agent-scheduler.js.map

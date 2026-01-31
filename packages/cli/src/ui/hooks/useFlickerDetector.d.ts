@@ -11,4 +11,7 @@ import { type DOMElement } from 'ink';
  * @param rootUiRef A ref to the root UI element.
  * @param terminalHeight The height of the terminal.
  */
-export declare function useFlickerDetector(rootUiRef: React.RefObject<DOMElement | null>, terminalHeight: number): void;
+export declare function useFlickerDetector(
+  rootUiRef: React.RefObject<DOMElement | null>,
+  terminalHeight: number,
+): void;

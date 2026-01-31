@@ -6,4 +6,6 @@
 /**
  * Parses custom headers and returns a map of key and vallues
  */
-export declare function parseCustomHeaders(envValue: string | undefined): Record<string, string>;
+export declare function parseCustomHeaders(
+  envValue: string | undefined,
+): Record<string, string>;

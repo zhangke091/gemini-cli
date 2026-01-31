@@ -13,7 +13,13 @@ export type { Key };
  * @param options.isActive - Whether the hook should be actively listening for input.
  * @param options.priority - Whether the hook should have priority over normal subscribers.
  */
-export declare function useKeypress(onKeypress: KeypressHandler, { isActive, priority }: {
+export declare function useKeypress(
+  onKeypress: KeypressHandler,
+  {
+    isActive,
+    priority,
+  }: {
     isActive: boolean;
     priority?: boolean;
-}): void;
+  },
+): void;

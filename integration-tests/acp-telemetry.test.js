@@ -17,76 +17,82 @@ const itMaybe = sandboxEnv && sandboxEnv !== 'false' ? it.skip : it;
 // Reuse existing fake responses that return a simple "Hello" response
 const SIMPLE_RESPONSE_PATH = 'hooks-system.session-startup.responses';
 class SessionUpdateCollector {
-    updates = [];
-    sessionUpdate = async (params) => {
-        this.updates.push(params);
-    };
-    requestPermission = async () => {
-        throw new Error('unexpected');
-    };
+  updates = [];
+  sessionUpdate = async (params) => {
+    this.updates.push(params);
+  };
+  requestPermission = async () => {
+    throw new Error('unexpected');
+  };
 }
 describe('ACP telemetry', () => {
-    let rig;
-    let child;
-    beforeEach(() => {
-        rig = new TestRig();
+  let rig;
+  let child;
+  beforeEach(() => {
+    rig = new TestRig();
+  });
+  afterEach(async () => {
+    child?.kill();
+    child = undefined;
+    await rig.cleanup();
+  });
+  itMaybe('should flush telemetry when connection closes', async () => {
+    rig.setup('acp-telemetry-flush', {
+      fakeResponsesPath: join(import.meta.dirname, SIMPLE_RESPONSE_PATH),
     });
-    afterEach(async () => {
-        child?.kill();
-        child = undefined;
-        await rig.cleanup();
+    const telemetryPath = join(rig.homeDir, 'telemetry.log');
+    const bundlePath = join(import.meta.dirname, '..', 'bundle/gemini.js');
+    child = spawn(
+      'node',
+      [
+        bundlePath,
+        '--experimental-acp',
+        '--fake-responses',
+        join(rig.testDir, 'fake-responses.json'),
+      ],
+      {
+        cwd: rig.testDir,
+        stdio: ['pipe', 'pipe', 'inherit'],
+        env: {
+          ...process.env,
+          GEMINI_API_KEY: 'fake-key',
+          GEMINI_CLI_HOME: rig.homeDir,
+          GEMINI_TELEMETRY_ENABLED: 'true',
+          GEMINI_TELEMETRY_TARGET: 'local',
+          GEMINI_TELEMETRY_OUTFILE: telemetryPath,
+          // GEMINI_DEV_TRACING not set: fake responses aren't instrumented for spans
+        },
+      },
+    );
+    const input = Writable.toWeb(child.stdin);
+    const output = Readable.toWeb(child.stdout);
+    const testClient = new SessionUpdateCollector();
+    const stream = acp.ndJsonStream(input, output);
+    const connection = new acp.ClientSideConnection(() => testClient, stream);
+    await connection.initialize({
+      protocolVersion: acp.PROTOCOL_VERSION,
+      clientCapabilities: { fs: { readTextFile: false, writeTextFile: false } },
     });
-    itMaybe('should flush telemetry when connection closes', async () => {
-        rig.setup('acp-telemetry-flush', {
-            fakeResponsesPath: join(import.meta.dirname, SIMPLE_RESPONSE_PATH),
-        });
-        const telemetryPath = join(rig.homeDir, 'telemetry.log');
-        const bundlePath = join(import.meta.dirname, '..', 'bundle/gemini.js');
-        child = spawn('node', [
-            bundlePath,
-            '--experimental-acp',
-            '--fake-responses',
-            join(rig.testDir, 'fake-responses.json'),
-        ], {
-            cwd: rig.testDir,
-            stdio: ['pipe', 'pipe', 'inherit'],
-            env: {
-                ...process.env,
-                GEMINI_API_KEY: 'fake-key',
-                GEMINI_CLI_HOME: rig.homeDir,
-                GEMINI_TELEMETRY_ENABLED: 'true',
-                GEMINI_TELEMETRY_TARGET: 'local',
-                GEMINI_TELEMETRY_OUTFILE: telemetryPath,
-                // GEMINI_DEV_TRACING not set: fake responses aren't instrumented for spans
-            },
-        });
-        const input = Writable.toWeb(child.stdin);
-        const output = Readable.toWeb(child.stdout);
-        const testClient = new SessionUpdateCollector();
-        const stream = acp.ndJsonStream(input, output);
-        const connection = new acp.ClientSideConnection(() => testClient, stream);
-        await connection.initialize({
-            protocolVersion: acp.PROTOCOL_VERSION,
-            clientCapabilities: { fs: { readTextFile: false, writeTextFile: false } },
-        });
-        const { sessionId } = await connection.newSession({
-            cwd: rig.testDir,
-            mcpServers: [],
-        });
-        await connection.prompt({
-            sessionId,
-            prompt: [{ type: 'text', text: 'Say hello' }],
-        });
-        expect(JSON.stringify(testClient.updates)).toContain('Hello');
-        // Close stdin to trigger telemetry flush via runExitCleanup()
-        child.stdin.end();
-        await new Promise((resolve) => {
-            child.on('close', () => resolve());
-        });
-        child = undefined;
-        // gen_ai.output.messages is the last OTEL log emitted (after prompt response)
-        expect(existsSync(telemetryPath)).toBe(true);
-        expect(readFileSync(telemetryPath, 'utf-8')).toContain('gen_ai.output.messages');
+    const { sessionId } = await connection.newSession({
+      cwd: rig.testDir,
+      mcpServers: [],
     });
+    await connection.prompt({
+      sessionId,
+      prompt: [{ type: 'text', text: 'Say hello' }],
+    });
+    expect(JSON.stringify(testClient.updates)).toContain('Hello');
+    // Close stdin to trigger telemetry flush via runExitCleanup()
+    child.stdin.end();
+    await new Promise((resolve) => {
+      child.on('close', () => resolve());
+    });
+    child = undefined;
+    // gen_ai.output.messages is the last OTEL log emitted (after prompt response)
+    expect(existsSync(telemetryPath)).toBe(true);
+    expect(readFileSync(telemetryPath, 'utf-8')).toContain(
+      'gen_ai.output.messages',
+    );
+  });
 });
 //# sourceMappingURL=acp-telemetry.test.js.map

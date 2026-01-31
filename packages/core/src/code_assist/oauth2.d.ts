@@ -14,11 +14,14 @@ export declare const authEvents: EventEmitter<[never]>;
  * been refreshed (or which throws error when refreshing credentials failed).
  */
 export interface OauthWebLogin {
-    authUrl: string;
-    loginCompletePromise: Promise<void>;
+  authUrl: string;
+  loginCompletePromise: Promise<void>;
 }
 export declare function getConsentForOauth(): Promise<boolean>;
-export declare function getOauthClient(authType: AuthType, config: Config): Promise<AuthClient>;
+export declare function getOauthClient(
+  authType: AuthType,
+  config: Config,
+): Promise<AuthClient>;
 export declare function getAvailablePort(): Promise<number>;
 export declare function clearOauthClientCache(): void;
 export declare function clearCachedCredentialFile(): Promise<void>;

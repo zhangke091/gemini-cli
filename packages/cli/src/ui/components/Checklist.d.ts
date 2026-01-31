@@ -6,9 +6,9 @@
 import type React from 'react';
 import { type ChecklistItemData } from './ChecklistItem.js';
 export interface ChecklistProps {
-    title: string;
-    items: ChecklistItemData[];
-    isExpanded: boolean;
-    toggleHint?: string;
+  title: string;
+  items: ChecklistItemData[];
+  isExpanded: boolean;
+  toggleHint?: string;
 }
 export declare const Checklist: React.FC<ChecklistProps>;

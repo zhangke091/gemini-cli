@@ -10,10 +10,17 @@ import type { ContentGenerator } from '../core/contentGenerator.js';
  * - Text: character-based heuristic (ASCII vs CJK) for small strings, length/4 for massive ones.
  * - Non-text (Tools, etc): JSON string length / 4.
  */
-export declare function estimateTokenCountSync(parts: Part[], depth?: number): number;
+export declare function estimateTokenCountSync(
+  parts: Part[],
+  depth?: number,
+): number;
 /**
  * Calculates the token count of the request.
  * If the request contains only text or tools, it estimates the token count locally.
  * If the request contains media (images, files), it uses the countTokens API.
  */
-export declare function calculateRequestTokenCount(request: PartListUnion, contentGenerator: ContentGenerator, model: string): Promise<number>;
+export declare function calculateRequestTokenCount(
+  request: PartListUnion,
+  contentGenerator: ContentGenerator,
+  model: string,
+): Promise<number>;

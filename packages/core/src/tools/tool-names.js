@@ -29,20 +29,20 @@ export const DISCOVERED_TOOL_PREFIX = 'discovered_tool_';
  * List of all built-in tool names.
  */
 export const ALL_BUILTIN_TOOL_NAMES = [
-    GLOB_TOOL_NAME,
-    WRITE_TODOS_TOOL_NAME,
-    WRITE_FILE_TOOL_NAME,
-    WEB_SEARCH_TOOL_NAME,
-    WEB_FETCH_TOOL_NAME,
-    EDIT_TOOL_NAME,
-    SHELL_TOOL_NAME,
-    GREP_TOOL_NAME,
-    READ_MANY_FILES_TOOL_NAME,
-    READ_FILE_TOOL_NAME,
-    LS_TOOL_NAME,
-    MEMORY_TOOL_NAME,
-    ACTIVATE_SKILL_TOOL_NAME,
-    ASK_USER_TOOL_NAME,
+  GLOB_TOOL_NAME,
+  WRITE_TODOS_TOOL_NAME,
+  WRITE_FILE_TOOL_NAME,
+  WEB_SEARCH_TOOL_NAME,
+  WEB_FETCH_TOOL_NAME,
+  EDIT_TOOL_NAME,
+  SHELL_TOOL_NAME,
+  GREP_TOOL_NAME,
+  READ_MANY_FILES_TOOL_NAME,
+  READ_FILE_TOOL_NAME,
+  LS_TOOL_NAME,
+  MEMORY_TOOL_NAME,
+  ACTIVATE_SKILL_TOOL_NAME,
+  ASK_USER_TOOL_NAME,
 ];
 /**
  * Read-only tools available in Plan Mode.
@@ -50,45 +50,45 @@ export const ALL_BUILTIN_TOOL_NAMES = [
  * filtered by what tools are actually enabled in the current configuration.
  */
 export const PLAN_MODE_TOOLS = [
-    GLOB_TOOL_NAME,
-    GREP_TOOL_NAME,
-    READ_FILE_TOOL_NAME,
-    LS_TOOL_NAME,
-    WEB_SEARCH_TOOL_NAME,
-    ASK_USER_TOOL_NAME,
+  GLOB_TOOL_NAME,
+  GREP_TOOL_NAME,
+  READ_FILE_TOOL_NAME,
+  LS_TOOL_NAME,
+  WEB_SEARCH_TOOL_NAME,
+  ASK_USER_TOOL_NAME,
 ];
 /**
  * Validates if a tool name is syntactically valid.
  * Checks against built-in tools, discovered tools, and MCP naming conventions.
  */
 export function isValidToolName(name, options = {}) {
-    // Built-in tools
-    if (ALL_BUILTIN_TOOL_NAMES.includes(name)) {
-        return true;
+  // Built-in tools
+  if (ALL_BUILTIN_TOOL_NAMES.includes(name)) {
+    return true;
+  }
+  // Discovered tools
+  if (name.startsWith(DISCOVERED_TOOL_PREFIX)) {
+    return true;
+  }
+  // Policy wildcards
+  if (options.allowWildcards && name === '*') {
+    return true;
+  }
+  // MCP tools (format: server__tool)
+  if (name.includes('__')) {
+    const parts = name.split('__');
+    if (parts.length !== 2 || parts[0].length === 0 || parts[1].length === 0) {
+      return false;
     }
-    // Discovered tools
-    if (name.startsWith(DISCOVERED_TOOL_PREFIX)) {
-        return true;
+    const server = parts[0];
+    const tool = parts[1];
+    if (tool === '*') {
+      return !!options.allowWildcards;
     }
-    // Policy wildcards
-    if (options.allowWildcards && name === '*') {
-        return true;
-    }
-    // MCP tools (format: server__tool)
-    if (name.includes('__')) {
-        const parts = name.split('__');
-        if (parts.length !== 2 || parts[0].length === 0 || parts[1].length === 0) {
-            return false;
-        }
-        const server = parts[0];
-        const tool = parts[1];
-        if (tool === '*') {
-            return !!options.allowWildcards;
-        }
-        // Basic slug validation for server and tool names
-        const slugRegex = /^[a-z0-9-_]+$/i;
-        return slugRegex.test(server) && slugRegex.test(tool);
-    }
-    return false;
+    // Basic slug validation for server and tool names
+    const slugRegex = /^[a-z0-9-_]+$/i;
+    return slugRegex.test(server) && slugRegex.test(tool);
+  }
+  return false;
 }
 //# sourceMappingURL=tool-names.js.map

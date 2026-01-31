@@ -5,13 +5,13 @@
  */
 import { CommandKind } from './types.js';
 export const themeCommand = {
-    name: 'theme',
-    description: 'Change the theme',
-    kind: CommandKind.BUILT_IN,
-    autoExecute: true,
-    action: (_context, _args) => ({
-        type: 'dialog',
-        dialog: 'theme',
-    }),
+  name: 'theme',
+  description: 'Change the theme',
+  kind: CommandKind.BUILT_IN,
+  autoExecute: true,
+  action: (_context, _args) => ({
+    type: 'dialog',
+    dialog: 'theme',
+  }),
 };
 //# sourceMappingURL=themeCommand.js.map

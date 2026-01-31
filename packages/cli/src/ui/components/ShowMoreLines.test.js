@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -13,28 +13,38 @@ import { StreamingState } from '../types.js';
 vi.mock('../contexts/OverflowContext.js');
 vi.mock('../contexts/StreamingContext.js');
 describe('ShowMoreLines', () => {
-    const mockUseOverflowState = vi.mocked(useOverflowState);
-    const mockUseStreamingContext = vi.mocked(useStreamingContext);
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
-    it.each([
-        [new Set(), StreamingState.Idle, true], // No overflow
-        [new Set(['1']), StreamingState.Idle, false], // Not constraining height
-        [new Set(['1']), StreamingState.Responding, true], // Streaming
-    ])('renders nothing when: overflow=%s, streaming=%s, constrain=%s', (overflowingIds, streamingState, constrainHeight) => {
-        mockUseOverflowState.mockReturnValue({ overflowingIds });
-        mockUseStreamingContext.mockReturnValue(streamingState);
-        const { lastFrame } = render(_jsx(ShowMoreLines, { constrainHeight: constrainHeight }));
-        expect(lastFrame()).toBe('');
-    });
-    it.each([[StreamingState.Idle], [StreamingState.WaitingForConfirmation]])('renders message when overflowing and state is %s', (streamingState) => {
-        mockUseOverflowState.mockReturnValue({
-            overflowingIds: new Set(['1']),
-        });
-        mockUseStreamingContext.mockReturnValue(streamingState);
-        const { lastFrame } = render(_jsx(ShowMoreLines, { constrainHeight: true }));
-        expect(lastFrame()).toContain('Press ctrl-o to show more lines');
-    });
+  const mockUseOverflowState = vi.mocked(useOverflowState);
+  const mockUseStreamingContext = vi.mocked(useStreamingContext);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  it.each([
+    [new Set(), StreamingState.Idle, true], // No overflow
+    [new Set(['1']), StreamingState.Idle, false], // Not constraining height
+    [new Set(['1']), StreamingState.Responding, true], // Streaming
+  ])(
+    'renders nothing when: overflow=%s, streaming=%s, constrain=%s',
+    (overflowingIds, streamingState, constrainHeight) => {
+      mockUseOverflowState.mockReturnValue({ overflowingIds });
+      mockUseStreamingContext.mockReturnValue(streamingState);
+      const { lastFrame } = render(
+        _jsx(ShowMoreLines, { constrainHeight: constrainHeight }),
+      );
+      expect(lastFrame()).toBe('');
+    },
+  );
+  it.each([[StreamingState.Idle], [StreamingState.WaitingForConfirmation]])(
+    'renders message when overflowing and state is %s',
+    (streamingState) => {
+      mockUseOverflowState.mockReturnValue({
+        overflowingIds: new Set(['1']),
+      });
+      mockUseStreamingContext.mockReturnValue(streamingState);
+      const { lastFrame } = render(
+        _jsx(ShowMoreLines, { constrainHeight: true }),
+      );
+      expect(lastFrame()).toContain('Press ctrl-o to show more lines');
+    },
+  );
 });
 //# sourceMappingURL=ShowMoreLines.test.js.map

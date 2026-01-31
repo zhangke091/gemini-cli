@@ -11,7 +11,9 @@ export declare const INITIAL_HISTORY_LENGTH = 1;
  * @param {Config} config - The runtime configuration and services.
  * @returns {Promise<string>} A promise that resolves to the directory context string.
  */
-export declare function getDirectoryContextString(config: Config): Promise<string>;
+export declare function getDirectoryContextString(
+  config: Config,
+): Promise<string>;
 /**
  * Retrieves environment-related information to be included in the chat context.
  * This includes the current working directory, date, operating system, and folder structure.
@@ -20,4 +22,7 @@ export declare function getDirectoryContextString(config: Config): Promise<strin
  * @returns A promise that resolves to an array of `Part` objects containing environment information.
  */
 export declare function getEnvironmentContext(config: Config): Promise<Part[]>;
-export declare function getInitialChatHistory(config: Config, extraHistory?: Content[]): Promise<Content[]>;
+export declare function getInitialChatHistory(
+  config: Config,
+  extraHistory?: Content[],
+): Promise<Content[]>;

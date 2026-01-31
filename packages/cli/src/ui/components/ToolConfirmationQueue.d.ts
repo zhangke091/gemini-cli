@@ -6,7 +6,7 @@
 import type React from 'react';
 import type { ConfirmingToolState } from '../hooks/useConfirmingTool.js';
 interface ToolConfirmationQueueProps {
-    confirmingTool: ConfirmingToolState;
+  confirmingTool: ConfirmingToolState;
 }
 export declare const ToolConfirmationQueue: React.FC<ToolConfirmationQueueProps>;
 export {};

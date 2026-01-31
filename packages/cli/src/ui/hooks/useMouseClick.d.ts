@@ -5,9 +5,16 @@
  */
 import { type DOMElement } from 'ink';
 import type React from 'react';
-import { type MouseEvent, type MouseEventName } from '../contexts/MouseContext.js';
-export declare const useMouseClick: (containerRef: React.RefObject<DOMElement | null>, handler: (event: MouseEvent, relativeX: number, relativeY: number) => void, options?: {
+import {
+  type MouseEvent,
+  type MouseEventName,
+} from '../contexts/MouseContext.js';
+export declare const useMouseClick: (
+  containerRef: React.RefObject<DOMElement | null>,
+  handler: (event: MouseEvent, relativeX: number, relativeY: number) => void,
+  options?: {
     isActive?: boolean;
-    button?: "left" | "right";
+    button?: 'left' | 'right';
     name?: MouseEventName;
-}) => void;
+  },
+) => void;

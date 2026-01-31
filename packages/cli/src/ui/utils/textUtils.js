@@ -15,11 +15,11 @@ import { LRU_BUFFER_PERF_CACHE_LIMIT } from '../constants.js';
  * @returns The length of the longest line in the ASCII art.
  */
 export const getAsciiArtWidth = (asciiArt) => {
-    if (!asciiArt) {
-        return 0;
-    }
-    const lines = asciiArt.split('\n');
-    return Math.max(...lines.map((line) => line.length));
+  if (!asciiArt) {
+    return 0;
+  }
+  const lines = asciiArt.split('\n');
+  return Math.max(...lines.map((line) => line.length));
 };
 /*
  * -------------------------------------------------------------------------
@@ -30,44 +30,44 @@ export const getAsciiArtWidth = (asciiArt) => {
 const MAX_STRING_LENGTH_TO_CACHE = 1000;
 const codePointsCache = new LRUCache(LRU_BUFFER_PERF_CACHE_LIMIT);
 export function toCodePoints(str) {
-    // ASCII fast path - check if all chars are ASCII (0-127)
-    let isAscii = true;
-    for (let i = 0; i < str.length; i++) {
-        if (str.charCodeAt(i) > 127) {
-            isAscii = false;
-            break;
-        }
+  // ASCII fast path - check if all chars are ASCII (0-127)
+  let isAscii = true;
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) > 127) {
+      isAscii = false;
+      break;
     }
-    if (isAscii) {
-        return str.split('');
+  }
+  if (isAscii) {
+    return str.split('');
+  }
+  // Cache short strings
+  if (str.length <= MAX_STRING_LENGTH_TO_CACHE) {
+    const cached = codePointsCache.get(str);
+    if (cached !== undefined) {
+      return cached;
     }
-    // Cache short strings
-    if (str.length <= MAX_STRING_LENGTH_TO_CACHE) {
-        const cached = codePointsCache.get(str);
-        if (cached !== undefined) {
-            return cached;
-        }
-    }
-    const result = Array.from(str);
-    // Cache result
-    if (str.length <= MAX_STRING_LENGTH_TO_CACHE) {
-        codePointsCache.set(str, result);
-    }
-    return result;
+  }
+  const result = Array.from(str);
+  // Cache result
+  if (str.length <= MAX_STRING_LENGTH_TO_CACHE) {
+    codePointsCache.set(str, result);
+  }
+  return result;
 }
 export function cpLen(str) {
-    return toCodePoints(str).length;
+  return toCodePoints(str).length;
 }
 /**
  * Converts a code point index to a UTF-16 code unit offset.
  */
 export function cpIndexToOffset(str, cpIndex) {
-    return cpSlice(str, 0, cpIndex).length;
+  return cpSlice(str, 0, cpIndex).length;
 }
 export function cpSlice(str, start, end) {
-    // Slice by code‑point indices and re‑join.
-    const arr = toCodePoints(str).slice(start, end);
-    return arr.join('');
+  // Slice by code‑point indices and re‑join.
+  const arr = toCodePoints(str).slice(start, end);
+  return arr.join('');
 }
 /**
  * Strip characters that can break terminal rendering.
@@ -88,29 +88,25 @@ export function cpSlice(str, start, end) {
  * - TAB (0x09) - preserve tabs
  */
 export function stripUnsafeCharacters(str) {
-    const strippedAnsi = stripAnsi(str);
-    const strippedVT = stripVTControlCharacters(strippedAnsi);
-    return toCodePoints(strippedVT)
-        .filter((char) => {
-        const code = char.codePointAt(0);
-        if (code === undefined)
-            return false;
-        // Preserve CR/LF/TAB for line handling
-        if (code === 0x0a || code === 0x0d || code === 0x09)
-            return true;
-        // Remove C0 control chars (except CR/LF) that can break display
-        // Examples: BELL(0x07) makes noise, BS(0x08) moves cursor, VT(0x0B), FF(0x0C)
-        if (code >= 0x00 && code <= 0x1f)
-            return false;
-        // Remove C1 control chars (0x80-0x9f) - legacy 8-bit control codes
-        if (code >= 0x80 && code <= 0x9f)
-            return false;
-        // Preserve DEL (0x7f) - it's handled functionally by applyOperations as backspace
-        // and doesn't cause rendering issues when displayed
-        // Preserve all other characters including Unicode/emojis
-        return true;
+  const strippedAnsi = stripAnsi(str);
+  const strippedVT = stripVTControlCharacters(strippedAnsi);
+  return toCodePoints(strippedVT)
+    .filter((char) => {
+      const code = char.codePointAt(0);
+      if (code === undefined) return false;
+      // Preserve CR/LF/TAB for line handling
+      if (code === 0x0a || code === 0x0d || code === 0x09) return true;
+      // Remove C0 control chars (except CR/LF) that can break display
+      // Examples: BELL(0x07) makes noise, BS(0x08) moves cursor, VT(0x0B), FF(0x0C)
+      if (code >= 0x00 && code <= 0x1f) return false;
+      // Remove C1 control chars (0x80-0x9f) - legacy 8-bit control codes
+      if (code >= 0x80 && code <= 0x9f) return false;
+      // Preserve DEL (0x7f) - it's handled functionally by applyOperations as backspace
+      // and doesn't cause rendering issues when displayed
+      // Preserve all other characters including Unicode/emojis
+      return true;
     })
-        .join('');
+    .join('');
 }
 /**
  * Sanitize a string for display in inline UI components (e.g. Help, Suggestions).
@@ -118,49 +114,48 @@ export function stripUnsafeCharacters(str) {
  * characters into a single space, and optionally truncates.
  */
 export function sanitizeForDisplay(str, maxLength) {
-    if (!str) {
-        return '';
-    }
-    let sanitized = stripUnsafeCharacters(str).replace(/\s+/g, ' ');
-    if (maxLength && sanitized.length > maxLength) {
-        sanitized = sanitized.substring(0, maxLength - 3) + '...';
-    }
-    return sanitized;
+  if (!str) {
+    return '';
+  }
+  let sanitized = stripUnsafeCharacters(str).replace(/\s+/g, ' ');
+  if (maxLength && sanitized.length > maxLength) {
+    sanitized = sanitized.substring(0, maxLength - 3) + '...';
+  }
+  return sanitized;
 }
 const stringWidthCache = new LRUCache(LRU_BUFFER_PERF_CACHE_LIMIT);
 /**
  * Cached version of stringWidth function for better performance
  */
 export const getCachedStringWidth = (str) => {
-    // ASCII printable chars (32-126) have width 1.
-    // This is a very frequent path, so we use a fast numeric check.
-    if (str.length === 1) {
-        const code = str.charCodeAt(0);
-        if (code >= 0x20 && code <= 0x7e) {
-            return 1;
-        }
+  // ASCII printable chars (32-126) have width 1.
+  // This is a very frequent path, so we use a fast numeric check.
+  if (str.length === 1) {
+    const code = str.charCodeAt(0);
+    if (code >= 0x20 && code <= 0x7e) {
+      return 1;
     }
-    const cached = stringWidthCache.get(str);
-    if (cached !== undefined) {
-        return cached;
-    }
-    let width;
-    try {
-        width = stringWidth(str);
-    }
-    catch {
-        // Fallback for characters that cause string-width to crash (e.g. U+0602)
-        // See: https://github.com/google-gemini/gemini-cli/issues/16418
-        width = toCodePoints(stripAnsi(str)).length;
-    }
-    stringWidthCache.set(str, width);
-    return width;
+  }
+  const cached = stringWidthCache.get(str);
+  if (cached !== undefined) {
+    return cached;
+  }
+  let width;
+  try {
+    width = stringWidth(str);
+  } catch {
+    // Fallback for characters that cause string-width to crash (e.g. U+0602)
+    // See: https://github.com/google-gemini/gemini-cli/issues/16418
+    width = toCodePoints(stripAnsi(str)).length;
+  }
+  stringWidthCache.set(str, width);
+  return width;
 };
 /**
  * Clear the string width cache
  */
 export const clearStringWidthCache = () => {
-    stringWidthCache.clear();
+  stringWidthCache.clear();
 };
 const regex = ansiRegex();
 /* Recursively traverses a JSON-like structure (objects, arrays, primitives)
@@ -179,42 +174,42 @@ const regex = ansiRegex();
  * original `obj` reference if no changes were necessary.
  */
 export function escapeAnsiCtrlCodes(obj) {
-    if (typeof obj === 'string') {
-        if (obj.search(regex) === -1) {
-            return obj; // No changes return original string
+  if (typeof obj === 'string') {
+    if (obj.search(regex) === -1) {
+      return obj; // No changes return original string
+    }
+    regex.lastIndex = 0; // needed for global regex
+    return obj.replace(regex, (match) => JSON.stringify(match).slice(1, -1));
+  }
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    let newArr = null;
+    for (let i = 0; i < obj.length; i++) {
+      const value = obj[i];
+      const escapedValue = escapeAnsiCtrlCodes(value);
+      if (escapedValue !== value) {
+        if (newArr === null) {
+          newArr = [...obj];
         }
-        regex.lastIndex = 0; // needed for global regex
-        return obj.replace(regex, (match) => JSON.stringify(match).slice(1, -1));
+        newArr[i] = escapedValue;
+      }
     }
-    if (obj === null || typeof obj !== 'object') {
-        return obj;
+    return newArr !== null ? newArr : obj;
+  }
+  let newObj = null;
+  const keys = Object.keys(obj);
+  for (const key of keys) {
+    const value = obj[key];
+    const escapedValue = escapeAnsiCtrlCodes(value);
+    if (escapedValue !== value) {
+      if (newObj === null) {
+        newObj = { ...obj };
+      }
+      newObj[key] = escapedValue;
     }
-    if (Array.isArray(obj)) {
-        let newArr = null;
-        for (let i = 0; i < obj.length; i++) {
-            const value = obj[i];
-            const escapedValue = escapeAnsiCtrlCodes(value);
-            if (escapedValue !== value) {
-                if (newArr === null) {
-                    newArr = [...obj];
-                }
-                newArr[i] = escapedValue;
-            }
-        }
-        return (newArr !== null ? newArr : obj);
-    }
-    let newObj = null;
-    const keys = Object.keys(obj);
-    for (const key of keys) {
-        const value = obj[key];
-        const escapedValue = escapeAnsiCtrlCodes(value);
-        if (escapedValue !== value) {
-            if (newObj === null) {
-                newObj = { ...obj };
-            }
-            newObj[key] = escapedValue;
-        }
-    }
-    return newObj !== null ? newObj : obj;
+  }
+  return newObj !== null ? newObj : obj;
 }
 //# sourceMappingURL=textUtils.js.map

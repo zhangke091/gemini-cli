@@ -8,33 +8,33 @@
  * Handles Text, Data (JSON), and File parts.
  */
 export function extractMessageText(message) {
-    if (!message) {
-        return '';
-    }
-    return extractPartsText(message.parts);
+  if (!message) {
+    return '';
+  }
+  return extractPartsText(message.parts);
 }
 /**
  * Extracts text from a single Part.
  */
 export function extractPartText(part) {
-    if (isTextPart(part)) {
-        return part.text;
+  if (isTextPart(part)) {
+    return part.text;
+  }
+  if (isDataPart(part)) {
+    // Attempt to format known data types if metadata exists, otherwise JSON stringify
+    return `Data: ${JSON.stringify(part.data)}`;
+  }
+  if (isFilePart(part)) {
+    const fileData = part.file;
+    if (fileData.name) {
+      return `File: ${fileData.name}`;
     }
-    if (isDataPart(part)) {
-        // Attempt to format known data types if metadata exists, otherwise JSON stringify
-        return `Data: ${JSON.stringify(part.data)}`;
+    if ('uri' in fileData && fileData.uri) {
+      return `File: ${fileData.uri}`;
     }
-    if (isFilePart(part)) {
-        const fileData = part.file;
-        if (fileData.name) {
-            return `File: ${fileData.name}`;
-        }
-        if ('uri' in fileData && fileData.uri) {
-            return `File: ${fileData.uri}`;
-        }
-        return `File: [binary/unnamed]`;
-    }
-    return '';
+    return `File: [binary/unnamed]`;
+  }
+  return '';
 }
 /**
  * Extracts a clean, human-readable text summary from a Task object.
@@ -42,72 +42,73 @@ export function extractPartText(part) {
  * Technical metadata like ID and State are omitted for better clarity and token efficiency.
  */
 export function extractTaskText(task) {
-    const parts = [];
-    // Status Message
-    const statusMessageText = extractMessageText(task.status?.message);
-    if (statusMessageText) {
-        parts.push(statusMessageText);
+  const parts = [];
+  // Status Message
+  const statusMessageText = extractMessageText(task.status?.message);
+  if (statusMessageText) {
+    parts.push(statusMessageText);
+  }
+  // Artifacts
+  if (task.artifacts) {
+    for (const artifact of task.artifacts) {
+      const artifactContent = extractPartsText(artifact.parts);
+      if (artifactContent) {
+        const header = artifact.name
+          ? `Artifact (${artifact.name}):`
+          : 'Artifact:';
+        parts.push(`${header}\n${artifactContent}`);
+      }
     }
-    // Artifacts
-    if (task.artifacts) {
-        for (const artifact of task.artifacts) {
-            const artifactContent = extractPartsText(artifact.parts);
-            if (artifactContent) {
-                const header = artifact.name
-                    ? `Artifact (${artifact.name}):`
-                    : 'Artifact:';
-                parts.push(`${header}\n${artifactContent}`);
-            }
-        }
-    }
-    return parts.join('\n\n');
+  }
+  return parts.join('\n\n');
 }
 /**
  * Extracts text from an array of parts.
  */
 function extractPartsText(parts) {
-    if (!parts || parts.length === 0) {
-        return '';
-    }
-    return parts
-        .map((p) => extractPartText(p))
-        .filter(Boolean)
-        .join('\n');
+  if (!parts || parts.length === 0) {
+    return '';
+  }
+  return parts
+    .map((p) => extractPartText(p))
+    .filter(Boolean)
+    .join('\n');
 }
 // Type Guards
 function isTextPart(part) {
-    return part.kind === 'text';
+  return part.kind === 'text';
 }
 function isDataPart(part) {
-    return part.kind === 'data';
+  return part.kind === 'data';
 }
 function isFilePart(part) {
-    return part.kind === 'file';
+  return part.kind === 'file';
 }
 /**
  * Extracts contextId and taskId from a Message or Task response.
  * Follows the pattern from the A2A CLI sample to maintain conversational continuity.
  */
 export function extractIdsFromResponse(result) {
-    let contextId;
-    let taskId;
-    if (result.kind === 'message') {
-        taskId = result.taskId;
-        contextId = result.contextId;
+  let contextId;
+  let taskId;
+  if (result.kind === 'message') {
+    taskId = result.taskId;
+    contextId = result.contextId;
+  } else if (result.kind === 'task') {
+    taskId = result.id;
+    contextId = result.contextId;
+    // If the task is in a final state (and not input-required), we clear the taskId
+    // so that the next interaction starts a fresh task (or keeps context without being bound to the old task).
+    if (
+      result.status &&
+      result.status.state !== 'input-required' &&
+      (result.status.state === 'completed' ||
+        result.status.state === 'failed' ||
+        result.status.state === 'canceled')
+    ) {
+      taskId = undefined;
     }
-    else if (result.kind === 'task') {
-        taskId = result.id;
-        contextId = result.contextId;
-        // If the task is in a final state (and not input-required), we clear the taskId
-        // so that the next interaction starts a fresh task (or keeps context without being bound to the old task).
-        if (result.status &&
-            result.status.state !== 'input-required' &&
-            (result.status.state === 'completed' ||
-                result.status.state === 'failed' ||
-                result.status.state === 'canceled')) {
-            taskId = undefined;
-        }
-    }
-    return { contextId, taskId };
+  }
+  return { contextId, taskId };
 }
 //# sourceMappingURL=a2aUtils.js.map

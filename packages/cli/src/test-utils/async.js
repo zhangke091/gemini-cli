@@ -9,21 +9,23 @@ import { act } from 'react';
 // or @testing-library/react-native
 // The version of waitFor from vitest is still fine to use if you aren't waiting
 // for React state updates.
-export async function waitFor(assertion, { timeout = 1000, interval = 50 } = {}) {
-    const startTime = Date.now();
-    while (true) {
-        try {
-            assertion();
-            return;
-        }
-        catch (error) {
-            if (Date.now() - startTime > timeout) {
-                throw error;
-            }
-            await act(async () => {
-                await new Promise((resolve) => setTimeout(resolve, interval));
-            });
-        }
+export async function waitFor(
+  assertion,
+  { timeout = 1000, interval = 50 } = {},
+) {
+  const startTime = Date.now();
+  while (true) {
+    try {
+      assertion();
+      return;
+    } catch (error) {
+      if (Date.now() - startTime > timeout) {
+        throw error;
+      }
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, interval));
+      });
     }
+  }
 }
 //# sourceMappingURL=async.js.map

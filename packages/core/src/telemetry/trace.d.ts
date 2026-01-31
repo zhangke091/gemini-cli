@@ -8,15 +8,15 @@ import { type AttributeValue, type SpanOptions } from '@opentelemetry/api';
  * Metadata for a span.
  */
 export interface SpanMetadata {
-    /** The name of the span. */
-    name: string;
-    /** The input to the span. */
-    input?: unknown;
-    /** The output of the span. */
-    output?: unknown;
-    error?: unknown;
-    /** Additional attributes for the span. */
-    attributes: Record<string, AttributeValue>;
+  /** The name of the span. */
+  name: string;
+  /** The input to the span. */
+  input?: unknown;
+  /** The output of the span. */
+  output?: unknown;
+  error?: unknown;
+  /** Additional attributes for the span. */
+  attributes: Record<string, AttributeValue>;
 }
 /**
  * Runs a function in a new OpenTelemetry span.
@@ -37,10 +37,15 @@ export interface SpanMetadata {
  * @param fn The function to run in the span.
  * @returns The result of the function.
  */
-export declare function runInDevTraceSpan<R>(opts: SpanOptions & {
+export declare function runInDevTraceSpan<R>(
+  opts: SpanOptions & {
     name: string;
     noAutoEnd?: boolean;
-}, fn: ({ metadata, }: {
+  },
+  fn: ({
+    metadata,
+  }: {
     metadata: SpanMetadata;
     endSpan: () => void;
-}) => Promise<R>): Promise<R>;
+  }) => Promise<R>,
+): Promise<R>;

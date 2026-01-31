@@ -5,8 +5,8 @@
  */
 import type React from 'react';
 interface UserShellMessageProps {
-    text: string;
-    width: number;
+  text: string;
+  width: number;
 }
 export declare const UserShellMessage: React.FC<UserShellMessageProps>;
 export {};

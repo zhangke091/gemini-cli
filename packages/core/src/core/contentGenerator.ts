@@ -199,8 +199,13 @@ export async function createContentGenerator(
 
     // DeepSeek provider support
     if (config.authType === AuthType.USE_DEEPSEEK && config.deepseekApiKey) {
-      debugLogger.log('Creating DeepSeek content generator with model:', gcConfig.getModel());
-      const { DeepSeekContentGenerator } = await import('../providers/deepseek/index.js');
+      debugLogger.log(
+        'Creating DeepSeek content generator with model:',
+        gcConfig.getModel(),
+      );
+      const { DeepSeekContentGenerator } = await import(
+        '../providers/deepseek/index.js'
+      );
       const deepseekGenerator = new DeepSeekContentGenerator({
         apiKey: config.deepseekApiKey,
         defaultModel: gcConfig.getModel(),
@@ -208,7 +213,12 @@ export async function createContentGenerator(
       return new LoggingContentGenerator(deepseekGenerator, gcConfig);
     }
 
-    debugLogger.log('createContentGenerator fallback - authType:', config.authType, 'hasDeepseekKey:', !!config.deepseekApiKey);
+    debugLogger.log(
+      'createContentGenerator fallback - authType:',
+      config.authType,
+      'hasDeepseekKey:',
+      !!config.deepseekApiKey,
+    );
     throw new Error(
       `Error creating contentGenerator: Unsupported authType: ${config.authType}`,
     );

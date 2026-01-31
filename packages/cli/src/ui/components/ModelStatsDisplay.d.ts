@@ -5,9 +5,9 @@
  */
 import type React from 'react';
 interface ModelStatsDisplayProps {
-    selectedAuthType?: string;
-    userEmail?: string;
-    tier?: string;
+  selectedAuthType?: string;
+  userEmail?: string;
+  tier?: string;
 }
 export declare const ModelStatsDisplay: React.FC<ModelStatsDisplayProps>;
 export {};

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 interface UseTipsResult {
-    showTips: boolean;
+  showTips: boolean;
 }
 export declare function useTips(): UseTipsResult;
 export {};

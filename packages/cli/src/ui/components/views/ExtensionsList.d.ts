@@ -6,7 +6,7 @@
 import type React from 'react';
 import { type GeminiCLIExtension } from '@google/gemini-cli-core';
 interface ExtensionsList {
-    extensions: readonly GeminiCLIExtension[];
+  extensions: readonly GeminiCLIExtension[];
 }
 export declare const ExtensionsList: React.FC<ExtensionsList>;
 export {};

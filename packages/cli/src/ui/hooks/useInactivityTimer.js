@@ -13,18 +13,18 @@ import { useState, useEffect } from 'react';
  * @param delayMs The delay in milliseconds before considering the state inactive.
  */
 export const useInactivityTimer = (isActive, trigger, delayMs = 5000) => {
-    const [isInactive, setIsInactive] = useState(false);
-    useEffect(() => {
-        if (!isActive) {
-            setIsInactive(false);
-            return;
-        }
-        setIsInactive(false);
-        const timer = setTimeout(() => {
-            setIsInactive(true);
-        }, delayMs);
-        return () => clearTimeout(timer);
-    }, [isActive, trigger, delayMs]);
-    return isInactive;
+  const [isInactive, setIsInactive] = useState(false);
+  useEffect(() => {
+    if (!isActive) {
+      setIsInactive(false);
+      return;
+    }
+    setIsInactive(false);
+    const timer = setTimeout(() => {
+      setIsInactive(true);
+    }, delayMs);
+    return () => clearTimeout(timer);
+  }, [isActive, trigger, delayMs]);
+  return isInactive;
 };
 //# sourceMappingURL=useInactivityTimer.js.map

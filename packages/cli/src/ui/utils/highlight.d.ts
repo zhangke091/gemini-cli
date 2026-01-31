@@ -5,8 +5,17 @@
  */
 import { type Transformation } from '../components/shared/text-buffer.js';
 export type HighlightToken = {
-    text: string;
-    type: 'default' | 'command' | 'file' | 'paste';
+  text: string;
+  type: 'default' | 'command' | 'file' | 'paste';
 };
-export declare function parseInputForHighlighting(text: string, index: number, transformations?: Transformation[], cursorCol?: number): readonly HighlightToken[];
-export declare function parseSegmentsFromTokens(tokens: readonly HighlightToken[], sliceStart: number, sliceEnd: number): readonly HighlightToken[];
+export declare function parseInputForHighlighting(
+  text: string,
+  index: number,
+  transformations?: Transformation[],
+  cursorCol?: number,
+): readonly HighlightToken[];
+export declare function parseSegmentsFromTokens(
+  tokens: readonly HighlightToken[],
+  sliceStart: number,
+  sliceEnd: number,
+): readonly HighlightToken[];

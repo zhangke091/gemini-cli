@@ -9,25 +9,25 @@ import { loadSettings } from '../../config/settings.js';
 import { requestConsentNonInteractive } from '../../config/extensions/consent.js';
 import { debugLogger } from '@google/gemini-cli-core';
 export async function getExtensionManager() {
-    const workspaceDir = process.cwd();
-    const extensionManager = new ExtensionManager({
-        workspaceDir,
-        requestConsent: requestConsentNonInteractive,
-        requestSetting: promptForSetting,
-        settings: loadSettings(workspaceDir).merged,
-    });
-    await extensionManager.loadExtensions();
-    return extensionManager;
+  const workspaceDir = process.cwd();
+  const extensionManager = new ExtensionManager({
+    workspaceDir,
+    requestConsent: requestConsentNonInteractive,
+    requestSetting: promptForSetting,
+    settings: loadSettings(workspaceDir).merged,
+  });
+  await extensionManager.loadExtensions();
+  return extensionManager;
 }
 export async function getExtensionAndManager(name) {
-    const extensionManager = await getExtensionManager();
-    const extension = extensionManager
-        .getExtensions()
-        .find((ext) => ext.name === name);
-    if (!extension) {
-        debugLogger.error(`Extension "${name}" is not installed.`);
-        return { extension: null, extensionManager: null };
-    }
-    return { extension, extensionManager };
+  const extensionManager = await getExtensionManager();
+  const extension = extensionManager
+    .getExtensions()
+    .find((ext) => ext.name === name);
+  if (!extension) {
+    debugLogger.error(`Extension "${name}" is not installed.`);
+    return { extension: null, extensionManager: null };
+  }
+  return { extension, extensionManager };
 }
 //# sourceMappingURL=utils.js.map

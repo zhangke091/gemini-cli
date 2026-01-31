@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { isDevelopment } from '../utils/installationInfo.js';
-import { CommandKind, } from '../ui/commands/types.js';
-import { isNightly, startupProfiler, getAdminErrorMessage, } from '@google/gemini-cli-core';
+import { CommandKind } from '../ui/commands/types.js';
+import {
+  isNightly,
+  startupProfiler,
+  getAdminErrorMessage,
+} from '@google/gemini-cli-core';
 import { aboutCommand } from '../ui/commands/aboutCommand.js';
 import { agentsCommand } from '../ui/commands/agentsCommand.js';
 import { authCommand } from '../ui/commands/authCommand.js';
@@ -49,114 +53,121 @@ import { terminalSetupCommand } from '../ui/commands/terminalSetupCommand.js';
  * of the Gemini CLI application.
  */
 export class BuiltinCommandLoader {
-    config;
-    constructor(config) {
-        this.config = config;
-    }
-    /**
-     * Gathers all raw built-in command definitions, injects dependencies where
-     * needed (e.g., config) and filters out any that are not available.
-     *
-     * @param _signal An AbortSignal (unused for this synchronous loader).
-     * @returns A promise that resolves to an array of `SlashCommand` objects.
-     */
-    async loadCommands(_signal) {
-        const handle = startupProfiler.start('load_builtin_commands');
-        const isNightlyBuild = await isNightly(process.cwd());
-        const allDefinitions = [
-            aboutCommand,
-            ...(this.config?.isAgentsEnabled() ? [agentsCommand] : []),
-            authCommand,
-            bugCommand,
+  config;
+  constructor(config) {
+    this.config = config;
+  }
+  /**
+   * Gathers all raw built-in command definitions, injects dependencies where
+   * needed (e.g., config) and filters out any that are not available.
+   *
+   * @param _signal An AbortSignal (unused for this synchronous loader).
+   * @returns A promise that resolves to an array of `SlashCommand` objects.
+   */
+  async loadCommands(_signal) {
+    const handle = startupProfiler.start('load_builtin_commands');
+    const isNightlyBuild = await isNightly(process.cwd());
+    const allDefinitions = [
+      aboutCommand,
+      ...(this.config?.isAgentsEnabled() ? [agentsCommand] : []),
+      authCommand,
+      bugCommand,
+      {
+        ...chatCommand,
+        subCommands: isNightlyBuild
+          ? [...(chatCommand.subCommands || []), debugCommand]
+          : chatCommand.subCommands,
+      },
+      clearCommand,
+      compressCommand,
+      copyCommand,
+      corgiCommand,
+      docsCommand,
+      directoryCommand,
+      editorCommand,
+      ...(this.config?.getExtensionsEnabled() === false
+        ? [
             {
-                ...chatCommand,
-                subCommands: isNightlyBuild
-                    ? [...(chatCommand.subCommands || []), debugCommand]
-                    : chatCommand.subCommands,
+              name: 'extensions',
+              description: 'Manage extensions',
+              kind: CommandKind.BUILT_IN,
+              autoExecute: false,
+              subCommands: [],
+              action: async (_context) => ({
+                type: 'message',
+                messageType: 'error',
+                content: getAdminErrorMessage(
+                  'Extensions',
+                  this.config ?? undefined,
+                ),
+              }),
             },
-            clearCommand,
-            compressCommand,
-            copyCommand,
-            corgiCommand,
-            docsCommand,
-            directoryCommand,
-            editorCommand,
-            ...(this.config?.getExtensionsEnabled() === false
-                ? [
-                    {
-                        name: 'extensions',
-                        description: 'Manage extensions',
-                        kind: CommandKind.BUILT_IN,
-                        autoExecute: false,
-                        subCommands: [],
-                        action: async (_context) => ({
-                            type: 'message',
-                            messageType: 'error',
-                            content: getAdminErrorMessage('Extensions', this.config ?? undefined),
-                        }),
-                    },
-                ]
-                : [extensionsCommand(this.config?.getEnableExtensionReloading())]),
-            helpCommand,
-            ...(this.config?.getEnableHooksUI() ? [hooksCommand] : []),
-            rewindCommand,
-            await ideCommand(),
-            initCommand,
-            ...(isNightlyBuild ? [oncallCommand] : []),
-            ...(this.config?.getMcpEnabled() === false
-                ? [
-                    {
-                        name: 'mcp',
-                        description: 'Manage configured Model Context Protocol (MCP) servers',
-                        kind: CommandKind.BUILT_IN,
-                        autoExecute: false,
-                        subCommands: [],
-                        action: async (_context) => ({
-                            type: 'message',
-                            messageType: 'error',
-                            content: getAdminErrorMessage('MCP', this.config ?? undefined),
-                        }),
-                    },
-                ]
-                : [mcpCommand]),
-            memoryCommand,
-            modelCommand,
-            ...(this.config?.getFolderTrust() ? [permissionsCommand] : []),
-            privacyCommand,
-            policiesCommand,
-            ...(isDevelopment ? [profileCommand] : []),
-            quitCommand,
-            restoreCommand(this.config),
-            resumeCommand,
-            statsCommand,
-            themeCommand,
-            toolsCommand,
-            ...(this.config?.isSkillsSupportEnabled()
-                ? this.config?.getSkillManager()?.isAdminEnabled() === false
-                    ? [
-                        {
-                            name: 'skills',
-                            description: 'Manage agent skills',
-                            kind: CommandKind.BUILT_IN,
-                            autoExecute: false,
-                            subCommands: [],
-                            action: async (_context) => ({
-                                type: 'message',
-                                messageType: 'error',
-                                content: getAdminErrorMessage('Agent skills', this.config ?? undefined),
-                            }),
-                        },
-                    ]
-                    : [skillsCommand]
-                : []),
-            settingsCommand,
-            shellsCommand,
-            vimCommand,
-            setupGithubCommand,
-            terminalSetupCommand,
-        ];
-        handle?.end();
-        return allDefinitions.filter((cmd) => cmd !== null);
-    }
+          ]
+        : [extensionsCommand(this.config?.getEnableExtensionReloading())]),
+      helpCommand,
+      ...(this.config?.getEnableHooksUI() ? [hooksCommand] : []),
+      rewindCommand,
+      await ideCommand(),
+      initCommand,
+      ...(isNightlyBuild ? [oncallCommand] : []),
+      ...(this.config?.getMcpEnabled() === false
+        ? [
+            {
+              name: 'mcp',
+              description:
+                'Manage configured Model Context Protocol (MCP) servers',
+              kind: CommandKind.BUILT_IN,
+              autoExecute: false,
+              subCommands: [],
+              action: async (_context) => ({
+                type: 'message',
+                messageType: 'error',
+                content: getAdminErrorMessage('MCP', this.config ?? undefined),
+              }),
+            },
+          ]
+        : [mcpCommand]),
+      memoryCommand,
+      modelCommand,
+      ...(this.config?.getFolderTrust() ? [permissionsCommand] : []),
+      privacyCommand,
+      policiesCommand,
+      ...(isDevelopment ? [profileCommand] : []),
+      quitCommand,
+      restoreCommand(this.config),
+      resumeCommand,
+      statsCommand,
+      themeCommand,
+      toolsCommand,
+      ...(this.config?.isSkillsSupportEnabled()
+        ? this.config?.getSkillManager()?.isAdminEnabled() === false
+          ? [
+              {
+                name: 'skills',
+                description: 'Manage agent skills',
+                kind: CommandKind.BUILT_IN,
+                autoExecute: false,
+                subCommands: [],
+                action: async (_context) => ({
+                  type: 'message',
+                  messageType: 'error',
+                  content: getAdminErrorMessage(
+                    'Agent skills',
+                    this.config ?? undefined,
+                  ),
+                }),
+              },
+            ]
+          : [skillsCommand]
+        : []),
+      settingsCommand,
+      shellsCommand,
+      vimCommand,
+      setupGithubCommand,
+      terminalSetupCommand,
+    ];
+    handle?.end();
+    return allDefinitions.filter((cmd) => cmd !== null);
+  }
 }
 //# sourceMappingURL=BuiltinCommandLoader.js.map

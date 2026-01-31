@@ -3,9 +3,9 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-export declare const ESC = "\u001B";
-export declare const SGR_EVENT_PREFIX = "\u001B[<";
-export declare const X11_EVENT_PREFIX = "\u001B[M";
+export declare const ESC = '\u001B';
+export declare const SGR_EVENT_PREFIX = '\u001B[<';
+export declare const X11_EVENT_PREFIX = '\u001B[M';
 export declare const SGR_MOUSE_REGEX: RegExp;
 export declare const X11_MOUSE_REGEX: RegExp;
 export declare function couldBeSGRMouseSequence(buffer: string): boolean;

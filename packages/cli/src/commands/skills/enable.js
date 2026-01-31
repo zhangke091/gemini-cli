@@ -10,26 +10,30 @@ import { enableSkill } from '../../utils/skillSettings.js';
 import { renderSkillActionFeedback } from '../../utils/skillUtils.js';
 import chalk from 'chalk';
 export async function handleEnable(args) {
-    const { name } = args;
-    const workspaceDir = process.cwd();
-    const settings = loadSettings(workspaceDir);
-    const result = enableSkill(settings, name);
-    const feedback = renderSkillActionFeedback(result, (label, path) => `${chalk.bold(label)} (${chalk.dim(path)})`);
-    debugLogger.log(feedback);
+  const { name } = args;
+  const workspaceDir = process.cwd();
+  const settings = loadSettings(workspaceDir);
+  const result = enableSkill(settings, name);
+  const feedback = renderSkillActionFeedback(
+    result,
+    (label, path) => `${chalk.bold(label)} (${chalk.dim(path)})`,
+  );
+  debugLogger.log(feedback);
 }
 export const enableCommand = {
-    command: 'enable <name>',
-    describe: 'Enables an agent skill.',
-    builder: (yargs) => yargs.positional('name', {
-        describe: 'The name of the skill to enable.',
-        type: 'string',
-        demandOption: true,
+  command: 'enable <name>',
+  describe: 'Enables an agent skill.',
+  builder: (yargs) =>
+    yargs.positional('name', {
+      describe: 'The name of the skill to enable.',
+      type: 'string',
+      demandOption: true,
     }),
-    handler: async (argv) => {
-        await handleEnable({
-            name: argv['name'],
-        });
-        await exitCli();
-    },
+  handler: async (argv) => {
+    await handleEnable({
+      name: argv['name'],
+    });
+    await exitCli();
+  },
 };
 //# sourceMappingURL=enable.js.map

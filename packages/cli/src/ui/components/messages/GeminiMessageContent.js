@@ -1,4 +1,4 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
 import { Box } from 'ink';
 import { MarkdownDisplay } from '../../utils/MarkdownDisplay.js';
 import { ShowMoreLines } from '../ShowMoreLines.js';
@@ -10,13 +10,37 @@ import { useAlternateBuffer } from '../../hooks/useAlternateBuffer.js';
  * are split into multiple GeminiMessageContent's to enable the root <Static> component in
  * App.tsx to be as performant as humanly possible.
  */
-export const GeminiMessageContent = ({ text, isPending, availableTerminalHeight, terminalWidth, }) => {
-    const { renderMarkdown } = useUIState();
-    const isAlternateBuffer = useAlternateBuffer();
-    const originalPrefix = '✦ ';
-    const prefixWidth = originalPrefix.length;
-    return (_jsxs(Box, { flexDirection: "column", paddingLeft: prefixWidth, children: [_jsx(MarkdownDisplay, { text: text, isPending: isPending, availableTerminalHeight: isAlternateBuffer || availableTerminalHeight === undefined
-                    ? undefined
-                    : Math.max(availableTerminalHeight - 1, 1), terminalWidth: terminalWidth, renderMarkdown: renderMarkdown }), _jsx(Box, { marginBottom: 1, children: _jsx(ShowMoreLines, { constrainHeight: availableTerminalHeight !== undefined }) })] }));
+export const GeminiMessageContent = ({
+  text,
+  isPending,
+  availableTerminalHeight,
+  terminalWidth,
+}) => {
+  const { renderMarkdown } = useUIState();
+  const isAlternateBuffer = useAlternateBuffer();
+  const originalPrefix = '✦ ';
+  const prefixWidth = originalPrefix.length;
+  return _jsxs(Box, {
+    flexDirection: 'column',
+    paddingLeft: prefixWidth,
+    children: [
+      _jsx(MarkdownDisplay, {
+        text: text,
+        isPending: isPending,
+        availableTerminalHeight:
+          isAlternateBuffer || availableTerminalHeight === undefined
+            ? undefined
+            : Math.max(availableTerminalHeight - 1, 1),
+        terminalWidth: terminalWidth,
+        renderMarkdown: renderMarkdown,
+      }),
+      _jsx(Box, {
+        marginBottom: 1,
+        children: _jsx(ShowMoreLines, {
+          constrainHeight: availableTerminalHeight !== undefined,
+        }),
+      }),
+    ],
+  });
 };
 //# sourceMappingURL=GeminiMessageContent.js.map

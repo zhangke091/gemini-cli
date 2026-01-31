@@ -14,16 +14,16 @@ import { spawnAsync } from './shell-utils.js';
  * @returns A promise that resolves to a SecurityCheckResult.
  */
 export async function isDirectorySecure(dirPath) {
-    try {
-        const stats = await fs.stat(dirPath);
-        if (!stats.isDirectory()) {
-            return { secure: false, reason: 'Not a directory' };
-        }
-        if (os.platform() === 'win32') {
-            try {
-                // Check ACLs using PowerShell to ensure standard users don't have write access
-                const escapedPath = dirPath.replace(/'/g, "''");
-                const script = `
+  try {
+    const stats = await fs.stat(dirPath);
+    if (!stats.isDirectory()) {
+      return { secure: false, reason: 'Not a directory' };
+    }
+    if (os.platform() === 'win32') {
+      try {
+        // Check ACLs using PowerShell to ensure standard users don't have write access
+        const escapedPath = dirPath.replace(/'/g, "''");
+        const script = `
           $path = '${escapedPath}';
           $acl = Get-Acl -LiteralPath $path;
           $rules = $acl.Access | Where-Object { 
@@ -35,54 +35,52 @@ export async function isDirectorySecure(dirPath) {
           } | Select-Object -ExpandProperty IdentityReference;
           Write-Output ($insecureIdentity -join ', ');
         `;
-                const { stdout } = await spawnAsync('powershell', [
-                    '-NoProfile',
-                    '-NonInteractive',
-                    '-Command',
-                    script,
-                ]);
-                const insecureGroups = stdout.trim();
-                if (insecureGroups) {
-                    return {
-                        secure: false,
-                        reason: `Directory '${dirPath}' is insecure. The following user groups have write permissions: ${insecureGroups}. To fix this, remove Write and Modify permissions for these groups from the directory's ACLs.`,
-                    };
-                }
-                return { secure: true };
-            }
-            catch (error) {
-                return {
-                    secure: false,
-                    reason: `A security check for the system policy directory '${dirPath}' failed and could not be completed. Please file a bug report. Original error: ${error.message}`,
-                };
-            }
-        }
-        // POSIX checks
-        // Check ownership: must be root (uid 0)
-        if (stats.uid !== 0) {
-            return {
-                secure: false,
-                reason: `Directory '${dirPath}' is not owned by root (uid 0). Current uid: ${stats.uid}. To fix this, run: sudo chown root:root "${dirPath}"`,
-            };
-        }
-        // Check permissions: not writable by group (S_IWGRP) or others (S_IWOTH)
-        const mode = stats.mode;
-        if ((mode & (constants.S_IWGRP | constants.S_IWOTH)) !== 0) {
-            return {
-                secure: false,
-                reason: `Directory '${dirPath}' is writable by group or others (mode: ${mode.toString(8)}). To fix this, run: sudo chmod g-w,o-w "${dirPath}"`,
-            };
+        const { stdout } = await spawnAsync('powershell', [
+          '-NoProfile',
+          '-NonInteractive',
+          '-Command',
+          script,
+        ]);
+        const insecureGroups = stdout.trim();
+        if (insecureGroups) {
+          return {
+            secure: false,
+            reason: `Directory '${dirPath}' is insecure. The following user groups have write permissions: ${insecureGroups}. To fix this, remove Write and Modify permissions for these groups from the directory's ACLs.`,
+          };
         }
         return { secure: true };
-    }
-    catch (error) {
-        if (error.code === 'ENOENT') {
-            return { secure: true };
-        }
+      } catch (error) {
         return {
-            secure: false,
-            reason: `Failed to access directory: ${error.message}`,
+          secure: false,
+          reason: `A security check for the system policy directory '${dirPath}' failed and could not be completed. Please file a bug report. Original error: ${error.message}`,
         };
+      }
     }
+    // POSIX checks
+    // Check ownership: must be root (uid 0)
+    if (stats.uid !== 0) {
+      return {
+        secure: false,
+        reason: `Directory '${dirPath}' is not owned by root (uid 0). Current uid: ${stats.uid}. To fix this, run: sudo chown root:root "${dirPath}"`,
+      };
+    }
+    // Check permissions: not writable by group (S_IWGRP) or others (S_IWOTH)
+    const mode = stats.mode;
+    if ((mode & (constants.S_IWGRP | constants.S_IWOTH)) !== 0) {
+      return {
+        secure: false,
+        reason: `Directory '${dirPath}' is writable by group or others (mode: ${mode.toString(8)}). To fix this, run: sudo chmod g-w,o-w "${dirPath}"`,
+      };
+    }
+    return { secure: true };
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return { secure: true };
+    }
+    return {
+      secure: false,
+      reason: `Failed to access directory: ${error.message}`,
+    };
+  }
 }
 //# sourceMappingURL=security.js.map

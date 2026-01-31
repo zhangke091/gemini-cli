@@ -5,31 +5,31 @@
  */
 import type { ClientMetadata } from '../types.js';
 export interface ListExperimentsRequest {
-    project: string;
-    metadata?: ClientMetadata;
+  project: string;
+  metadata?: ClientMetadata;
 }
 export interface ListExperimentsResponse {
-    experimentIds?: number[];
-    flags?: Flag[];
-    filteredFlags?: FilteredFlag[];
-    debugString?: string;
+  experimentIds?: number[];
+  flags?: Flag[];
+  filteredFlags?: FilteredFlag[];
+  debugString?: string;
 }
 export interface Flag {
-    flagId?: number;
-    boolValue?: boolean;
-    floatValue?: number;
-    intValue?: string;
-    stringValue?: string;
-    int32ListValue?: Int32List;
-    stringListValue?: StringList;
+  flagId?: number;
+  boolValue?: boolean;
+  floatValue?: number;
+  intValue?: string;
+  stringValue?: string;
+  int32ListValue?: Int32List;
+  stringListValue?: StringList;
 }
 export interface Int32List {
-    values?: number[];
+  values?: number[];
 }
 export interface StringList {
-    values?: string[];
+  values?: string[];
 }
 export interface FilteredFlag {
-    name?: string;
-    reason?: string;
+  name?: string;
+  reason?: string;
 }

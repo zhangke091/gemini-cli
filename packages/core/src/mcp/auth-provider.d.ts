@@ -9,8 +9,8 @@ import type { OAuthClientProvider } from '@modelcontextprotocol/sdk/client/auth.
  * into the transport request.
  */
 export interface McpAuthProvider extends OAuthClientProvider {
-    /**
-     * Returns custom headers to be added to the request.
-     */
-    getRequestHeaders?(): Promise<Record<string, string>>;
+  /**
+   * Returns custom headers to be added to the request.
+   */
+  getRequestHeaders?(): Promise<Record<string, string>>;
 }

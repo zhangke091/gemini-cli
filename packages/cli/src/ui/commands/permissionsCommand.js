@@ -9,67 +9,66 @@ import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { expandHomeDir } from '../utils/directoryUtils.js';
 export const permissionsCommand = {
-    name: 'permissions',
-    description: 'Manage folder trust settings and other permissions',
-    kind: CommandKind.BUILT_IN,
-    autoExecute: false,
-    subCommands: [
-        {
-            name: 'trust',
-            description: 'Manage folder trust settings. Usage: /permissions trust [<directory-path>]',
-            kind: CommandKind.BUILT_IN,
-            autoExecute: false,
-            action: (context, input) => {
-                const dirPath = input.trim();
-                let targetDirectory;
-                if (!dirPath) {
-                    targetDirectory = process.cwd();
-                }
-                else {
-                    targetDirectory = path.resolve(expandHomeDir(dirPath));
-                }
-                try {
-                    if (!fs.statSync(targetDirectory).isDirectory()) {
-                        return {
-                            type: 'message',
-                            messageType: 'error',
-                            content: `Path is not a directory: ${targetDirectory}`,
-                        };
-                    }
-                }
-                catch (e) {
-                    const message = e instanceof Error ? e.message : String(e);
-                    return {
-                        type: 'message',
-                        messageType: 'error',
-                        content: `Error accessing path: ${targetDirectory}. ${message}`,
-                    };
-                }
-                return {
-                    type: 'dialog',
-                    dialog: 'permissions',
-                    props: {
-                        targetDirectory,
-                    },
-                };
-            },
-        },
-    ],
-    action: (context, input) => {
-        const parts = input.trim().split(' ');
-        const subcommand = parts[0];
-        if (!subcommand) {
-            return {
-                type: 'message',
-                messageType: 'error',
-                content: `Please provide a subcommand for /permissions. Usage: /permissions trust [<directory-path>]`,
-            };
+  name: 'permissions',
+  description: 'Manage folder trust settings and other permissions',
+  kind: CommandKind.BUILT_IN,
+  autoExecute: false,
+  subCommands: [
+    {
+      name: 'trust',
+      description:
+        'Manage folder trust settings. Usage: /permissions trust [<directory-path>]',
+      kind: CommandKind.BUILT_IN,
+      autoExecute: false,
+      action: (context, input) => {
+        const dirPath = input.trim();
+        let targetDirectory;
+        if (!dirPath) {
+          targetDirectory = process.cwd();
+        } else {
+          targetDirectory = path.resolve(expandHomeDir(dirPath));
         }
-        return {
+        try {
+          if (!fs.statSync(targetDirectory).isDirectory()) {
+            return {
+              type: 'message',
+              messageType: 'error',
+              content: `Path is not a directory: ${targetDirectory}`,
+            };
+          }
+        } catch (e) {
+          const message = e instanceof Error ? e.message : String(e);
+          return {
             type: 'message',
             messageType: 'error',
-            content: `Invalid subcommand for /permissions: ${subcommand}. Usage: /permissions trust [<directory-path>]`,
+            content: `Error accessing path: ${targetDirectory}. ${message}`,
+          };
+        }
+        return {
+          type: 'dialog',
+          dialog: 'permissions',
+          props: {
+            targetDirectory,
+          },
         };
+      },
     },
+  ],
+  action: (context, input) => {
+    const parts = input.trim().split(' ');
+    const subcommand = parts[0];
+    if (!subcommand) {
+      return {
+        type: 'message',
+        messageType: 'error',
+        content: `Please provide a subcommand for /permissions. Usage: /permissions trust [<directory-path>]`,
+      };
+    }
+    return {
+      type: 'message',
+      messageType: 'error',
+      content: `Invalid subcommand for /permissions: ${subcommand}. Usage: /permissions trust [<directory-path>]`,
+    };
+  },
 };
 //# sourceMappingURL=permissionsCommand.js.map

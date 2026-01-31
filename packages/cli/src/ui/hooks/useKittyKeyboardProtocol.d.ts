@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export interface KittyProtocolStatus {
-    enabled: boolean;
-    checking: boolean;
+  enabled: boolean;
+  checking: boolean;
 }
 /**
  * Hook that returns the cached Kitty keyboard protocol status.

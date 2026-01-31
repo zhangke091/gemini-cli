@@ -16,29 +16,30 @@ import { configureCommand } from './extensions/configure.js';
 import { initializeOutputListenersAndFlush } from '../gemini.js';
 import { defer } from '../deferred.js';
 export const extensionsCommand = {
-    command: 'extensions <command>',
-    aliases: ['extension'],
-    describe: 'Manage Gemini CLI extensions.',
-    builder: (yargs) => yargs
-        .middleware((argv) => {
+  command: 'extensions <command>',
+  aliases: ['extension'],
+  describe: 'Manage Gemini CLI extensions.',
+  builder: (yargs) =>
+    yargs
+      .middleware((argv) => {
         initializeOutputListenersAndFlush();
         argv['isCommand'] = true;
-    })
-        .command(defer(installCommand, 'extensions'))
-        .command(defer(uninstallCommand, 'extensions'))
-        .command(defer(listCommand, 'extensions'))
-        .command(defer(updateCommand, 'extensions'))
-        .command(defer(disableCommand, 'extensions'))
-        .command(defer(enableCommand, 'extensions'))
-        .command(defer(linkCommand, 'extensions'))
-        .command(defer(newCommand, 'extensions'))
-        .command(defer(validateCommand, 'extensions'))
-        .command(defer(configureCommand, 'extensions'))
-        .demandCommand(1, 'You need at least one command before continuing.')
-        .version(false),
-    handler: () => {
-        // This handler is not called when a subcommand is provided.
-        // Yargs will show the help menu.
-    },
+      })
+      .command(defer(installCommand, 'extensions'))
+      .command(defer(uninstallCommand, 'extensions'))
+      .command(defer(listCommand, 'extensions'))
+      .command(defer(updateCommand, 'extensions'))
+      .command(defer(disableCommand, 'extensions'))
+      .command(defer(enableCommand, 'extensions'))
+      .command(defer(linkCommand, 'extensions'))
+      .command(defer(newCommand, 'extensions'))
+      .command(defer(validateCommand, 'extensions'))
+      .command(defer(configureCommand, 'extensions'))
+      .demandCommand(1, 'You need at least one command before continuing.')
+      .version(false),
+  handler: () => {
+    // This handler is not called when a subcommand is provided.
+    // Yargs will show the help menu.
+  },
 };
 //# sourceMappingURL=extensions.js.map

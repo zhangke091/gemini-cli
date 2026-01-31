@@ -18,13 +18,17 @@ export declare function clipboardHasImage(): Promise<boolean>;
  * @param targetDir The target directory to create temp files within
  * @returns The path to the saved image file, or null if no image or error
  */
-export declare function saveClipboardImage(targetDir: string): Promise<string | null>;
+export declare function saveClipboardImage(
+  targetDir: string,
+): Promise<string | null>;
 /**
  * Cleans up old temporary clipboard image files
  * Removes files older than 1 hour
  * @param targetDir The target directory where temp files are stored
  */
-export declare function cleanupOldClipboardImages(targetDir: string): Promise<void>;
+export declare function cleanupOldClipboardImages(
+  targetDir: string,
+): Promise<void>;
 /**
  * Splits text into individual path segments, respecting escaped spaces.
  * Unescaped spaces act as separators between paths, while "\ " is preserved
@@ -44,4 +48,7 @@ export declare function splitEscapedPaths(text: string): string[];
  * @param isValidPath Function to validate if a path exists/is valid
  * @returns Processed string with @ prefixes on valid paths, or null if no valid paths
  */
-export declare function parsePastedPaths(text: string, isValidPath: (path: string) => boolean): string | null;
+export declare function parsePastedPaths(
+  text: string,
+  isValidPath: (path: string) => boolean,
+): string | null;

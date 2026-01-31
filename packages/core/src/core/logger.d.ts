@@ -7,18 +7,18 @@ import type { Content } from '@google/genai';
 import type { AuthType } from './contentGenerator.js';
 import type { Storage } from '../config/storage.js';
 export declare enum MessageSenderType {
-    USER = "user"
+  USER = 'user',
 }
 export interface LogEntry {
-    sessionId: string;
-    messageId: number;
-    timestamp: string;
-    type: MessageSenderType;
-    message: string;
+  sessionId: string;
+  messageId: number;
+  timestamp: string;
+  type: MessageSenderType;
+  message: string;
 }
 export interface Checkpoint {
-    history: Content[];
-    authType?: AuthType;
+  history: Content[];
+  authType?: AuthType;
 }
 /**
  * Encodes a string to be safe for use as a filename.
@@ -41,25 +41,25 @@ export declare function encodeTagName(str: string): string;
  */
 export declare function decodeTagName(str: string): string;
 export declare class Logger {
-    private readonly storage;
-    private geminiDir;
-    private logFilePath;
-    private sessionId;
-    private messageId;
-    private initialized;
-    private logs;
-    constructor(sessionId: string, storage: Storage);
-    private _readLogFile;
-    private _backupCorruptedLogFile;
-    initialize(): Promise<void>;
-    private _updateLogFile;
-    getPreviousUserMessages(): Promise<string[]>;
-    logMessage(type: MessageSenderType, message: string): Promise<void>;
-    private _checkpointPath;
-    private _getCheckpointPath;
-    saveCheckpoint(checkpoint: Checkpoint, tag: string): Promise<void>;
-    loadCheckpoint(tag: string): Promise<Checkpoint>;
-    deleteCheckpoint(tag: string): Promise<boolean>;
-    checkpointExists(tag: string): Promise<boolean>;
-    close(): void;
+  private readonly storage;
+  private geminiDir;
+  private logFilePath;
+  private sessionId;
+  private messageId;
+  private initialized;
+  private logs;
+  constructor(sessionId: string, storage: Storage);
+  private _readLogFile;
+  private _backupCorruptedLogFile;
+  initialize(): Promise<void>;
+  private _updateLogFile;
+  getPreviousUserMessages(): Promise<string[]>;
+  logMessage(type: MessageSenderType, message: string): Promise<void>;
+  private _checkpointPath;
+  private _getCheckpointPath;
+  saveCheckpoint(checkpoint: Checkpoint, tag: string): Promise<void>;
+  loadCheckpoint(tag: string): Promise<Checkpoint>;
+  deleteCheckpoint(tag: string): Promise<boolean>;
+  checkpointExists(tag: string): Promise<boolean>;
+  close(): void;
 }

@@ -12,12 +12,35 @@ import { type Config } from '@google/gemini-cli-core';
 import { FakePersistentState } from './persistentStateFake.js';
 import { type AppState } from '../ui/contexts/AppContext.js';
 export declare const persistentStateMock: FakePersistentState;
-export declare const render: (tree: React.ReactElement, terminalWidth?: number) => ReturnType<typeof inkRender>;
-export declare const simulateClick: (stdin: ReturnType<typeof inkRender>["stdin"], col: number, row: number, button?: 0 | 1 | 2) => Promise<void>;
+export declare const render: (
+  tree: React.ReactElement,
+  terminalWidth?: number,
+) => ReturnType<typeof inkRender>;
+export declare const simulateClick: (
+  stdin: ReturnType<typeof inkRender>['stdin'],
+  col: number,
+  row: number,
+  button?: 0 | 1 | 2,
+) => Promise<void>;
 export declare const mockSettings: LoadedSettings;
-export declare const createMockSettings: (overrides: Partial<Settings>) => LoadedSettings;
+export declare const createMockSettings: (
+  overrides: Partial<Settings>,
+) => LoadedSettings;
 export declare const mockAppState: AppState;
-export declare const renderWithProviders: (component: React.ReactElement, { shellFocus, settings, uiState: providedUiState, width, mouseEventsEnabled, config, useAlternateBuffer, uiActions, persistentState, appState, }?: {
+export declare const renderWithProviders: (
+  component: React.ReactElement,
+  {
+    shellFocus,
+    settings,
+    uiState: providedUiState,
+    width,
+    mouseEventsEnabled,
+    config,
+    useAlternateBuffer,
+    uiActions,
+    persistentState,
+    appState,
+  }?: {
     shellFocus?: boolean;
     settings?: LoadedSettings;
     uiState?: Partial<UIState>;
@@ -27,29 +50,35 @@ export declare const renderWithProviders: (component: React.ReactElement, { shel
     useAlternateBuffer?: boolean;
     uiActions?: Partial<UIActions>;
     persistentState?: {
-        get?: typeof persistentStateMock.get;
-        set?: typeof persistentStateMock.set;
+      get?: typeof persistentStateMock.get;
+      set?: typeof persistentStateMock.set;
     };
     appState?: AppState;
-}) => ReturnType<typeof render> & {
-    simulateClick: typeof simulateClick;
+  },
+) => ReturnType<typeof render> & {
+  simulateClick: typeof simulateClick;
 };
-export declare function renderHook<Result, Props>(renderCallback: (props: Props) => Result, options?: {
+export declare function renderHook<Result, Props>(
+  renderCallback: (props: Props) => Result,
+  options?: {
     initialProps?: Props;
     wrapper?: React.ComponentType<{
-        children: React.ReactNode;
+      children: React.ReactNode;
     }>;
-}): {
-    result: {
-        current: Result;
-    };
-    rerender: (props?: Props) => void;
-    unmount: () => void;
+  },
+): {
+  result: {
+    current: Result;
+  };
+  rerender: (props?: Props) => void;
+  unmount: () => void;
 };
-export declare function renderHookWithProviders<Result, Props>(renderCallback: (props: Props) => Result, options?: {
+export declare function renderHookWithProviders<Result, Props>(
+  renderCallback: (props: Props) => Result,
+  options?: {
     initialProps?: Props;
     wrapper?: React.ComponentType<{
-        children: React.ReactNode;
+      children: React.ReactNode;
     }>;
     shellFocus?: boolean;
     settings?: LoadedSettings;
@@ -58,10 +87,11 @@ export declare function renderHookWithProviders<Result, Props>(renderCallback: (
     mouseEventsEnabled?: boolean;
     config?: Config;
     useAlternateBuffer?: boolean;
-}): {
-    result: {
-        current: Result;
-    };
-    rerender: (props?: Props) => void;
-    unmount: () => void;
+  },
+): {
+  result: {
+    current: Result;
+  };
+  rerender: (props?: Props) => void;
+  unmount: () => void;
 };

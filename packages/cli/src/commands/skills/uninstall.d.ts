@@ -5,8 +5,8 @@
  */
 import type { CommandModule } from 'yargs';
 interface UninstallArgs {
-    name: string;
-    scope?: 'user' | 'workspace';
+  name: string;
+  scope?: 'user' | 'workspace';
 }
 export declare function handleUninstall(args: UninstallArgs): Promise<void>;
 export declare const uninstallCommand: CommandModule;

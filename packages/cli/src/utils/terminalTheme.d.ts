@@ -12,4 +12,7 @@ import { type Config } from '@google/gemini-cli-core';
  * @param settings The loaded settings.
  * @returns The detected terminal background color.
  */
-export declare function setupTerminalAndTheme(config: Config, settings: LoadedSettings): Promise<TerminalBackgroundColor>;
+export declare function setupTerminalAndTheme(
+  config: Config,
+  settings: LoadedSettings,
+): Promise<TerminalBackgroundColor>;

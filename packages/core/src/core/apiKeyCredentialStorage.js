@@ -12,53 +12,50 @@ const storage = new HybridTokenStorage(KEYCHAIN_SERVICE_NAME);
  * Load cached API key
  */
 export async function loadApiKey() {
-    try {
-        const credentials = await storage.getCredentials(DEFAULT_API_KEY_ENTRY);
-        if (credentials?.token?.accessToken) {
-            return credentials.token.accessToken;
-        }
-        return null;
+  try {
+    const credentials = await storage.getCredentials(DEFAULT_API_KEY_ENTRY);
+    if (credentials?.token?.accessToken) {
+      return credentials.token.accessToken;
     }
-    catch (error) {
-        // Log other errors but don't crash, just return null so user can re-enter key
-        debugLogger.error('Failed to load API key from storage:', error);
-        return null;
-    }
+    return null;
+  } catch (error) {
+    // Log other errors but don't crash, just return null so user can re-enter key
+    debugLogger.error('Failed to load API key from storage:', error);
+    return null;
+  }
 }
 /**
  * Save API key
  */
 export async function saveApiKey(apiKey) {
-    if (!apiKey || apiKey.trim() === '') {
-        try {
-            await storage.deleteCredentials(DEFAULT_API_KEY_ENTRY);
-        }
-        catch (error) {
-            // Ignore errors when deleting, as it might not exist
-            debugLogger.warn('Failed to delete API key from storage:', error);
-        }
-        return;
+  if (!apiKey || apiKey.trim() === '') {
+    try {
+      await storage.deleteCredentials(DEFAULT_API_KEY_ENTRY);
+    } catch (error) {
+      // Ignore errors when deleting, as it might not exist
+      debugLogger.warn('Failed to delete API key from storage:', error);
     }
-    // Wrap API key in OAuthCredentials format as required by HybridTokenStorage
-    const credentials = {
-        serverName: DEFAULT_API_KEY_ENTRY,
-        token: {
-            accessToken: apiKey,
-            tokenType: 'ApiKey',
-        },
-        updatedAt: Date.now(),
-    };
-    await storage.setCredentials(credentials);
+    return;
+  }
+  // Wrap API key in OAuthCredentials format as required by HybridTokenStorage
+  const credentials = {
+    serverName: DEFAULT_API_KEY_ENTRY,
+    token: {
+      accessToken: apiKey,
+      tokenType: 'ApiKey',
+    },
+    updatedAt: Date.now(),
+  };
+  await storage.setCredentials(credentials);
 }
 /**
  * Clear cached API key
  */
 export async function clearApiKey() {
-    try {
-        await storage.deleteCredentials(DEFAULT_API_KEY_ENTRY);
-    }
-    catch (error) {
-        debugLogger.error('Failed to clear API key from storage:', error);
-    }
+  try {
+    await storage.deleteCredentials(DEFAULT_API_KEY_ENTRY);
+  } catch (error) {
+    debugLogger.error('Failed to clear API key from storage:', error);
+  }
 }
 //# sourceMappingURL=apiKeyCredentialStorage.js.map

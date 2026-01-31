@@ -4,6 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export function listExtensions(config) {
-    return config.getExtensions();
+  return config.getExtensions();
 }
 //# sourceMappingURL=extensions.js.map

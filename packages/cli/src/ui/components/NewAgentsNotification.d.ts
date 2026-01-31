@@ -5,12 +5,15 @@
  */
 import { type AgentDefinition } from '@google/gemini-cli-core';
 export declare enum NewAgentsChoice {
-    ACKNOWLEDGE = "acknowledge",
-    IGNORE = "ignore"
+  ACKNOWLEDGE = 'acknowledge',
+  IGNORE = 'ignore',
 }
 interface NewAgentsNotificationProps {
-    agents: AgentDefinition[];
-    onSelect: (choice: NewAgentsChoice) => void;
+  agents: AgentDefinition[];
+  onSelect: (choice: NewAgentsChoice) => void;
 }
-export declare const NewAgentsNotification: ({ agents, onSelect, }: NewAgentsNotificationProps) => import("react/jsx-runtime").JSX.Element;
+export declare const NewAgentsNotification: ({
+  agents,
+  onSelect,
+}: NewAgentsNotificationProps) => import('react/jsx-runtime').JSX.Element;
 export {};

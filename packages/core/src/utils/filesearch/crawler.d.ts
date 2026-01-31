@@ -5,12 +5,12 @@
  */
 import type { Ignore } from './ignore.js';
 export interface CrawlOptions {
-    crawlDirectory: string;
-    cwd: string;
-    maxDepth?: number;
-    maxFiles?: number;
-    ignore: Ignore;
-    cache: boolean;
-    cacheTtl: number;
+  crawlDirectory: string;
+  cwd: string;
+  maxDepth?: number;
+  maxFiles?: number;
+  ignore: Ignore;
+  cache: boolean;
+  cacheTtl: number;
 }
 export declare function crawl(options: CrawlOptions): Promise<string[]>;

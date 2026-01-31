@@ -9,45 +9,45 @@
  */
 import stripAnsi from 'strip-ansi';
 export class TextOutput {
-    atStartOfLine = true;
-    outputStream;
-    constructor(outputStream = process.stdout) {
-        this.outputStream = outputStream;
+  atStartOfLine = true;
+  outputStream;
+  constructor(outputStream = process.stdout) {
+    this.outputStream = outputStream;
+  }
+  /**
+   * Writes a string to stdout.
+   * @param str The string to write.
+   */
+  write(str) {
+    if (str.length === 0) {
+      return;
     }
-    /**
-     * Writes a string to stdout.
-     * @param str The string to write.
-     */
-    write(str) {
-        if (str.length === 0) {
-            return;
-        }
-        this.outputStream.write(str);
-        const strippedStr = stripAnsi(str);
-        if (strippedStr.length > 0) {
-            this.atStartOfLine = strippedStr.endsWith('\n');
-        }
+    this.outputStream.write(str);
+    const strippedStr = stripAnsi(str);
+    if (strippedStr.length > 0) {
+      this.atStartOfLine = strippedStr.endsWith('\n');
     }
-    /**
-     * Writes a string to stdout, ensuring it starts on a new line.
-     * If the previous output did not end with a newline, one will be added.
-     * This prevents adding extra blank lines if a newline already exists.
-     * @param str The string to write.
-     */
-    writeOnNewLine(str) {
-        if (!this.atStartOfLine) {
-            this.write('\n');
-        }
-        this.write(str);
+  }
+  /**
+   * Writes a string to stdout, ensuring it starts on a new line.
+   * If the previous output did not end with a newline, one will be added.
+   * This prevents adding extra blank lines if a newline already exists.
+   * @param str The string to write.
+   */
+  writeOnNewLine(str) {
+    if (!this.atStartOfLine) {
+      this.write('\n');
     }
-    /**
-     * Ensures that the output ends with a newline. If the last character
-     * written was not a newline, one will be added.
-     */
-    ensureTrailingNewline() {
-        if (!this.atStartOfLine) {
-            this.write('\n');
-        }
+    this.write(str);
+  }
+  /**
+   * Ensures that the output ends with a newline. If the last character
+   * written was not a newline, one will be added.
+   */
+  ensureTrailingNewline() {
+    if (!this.atStartOfLine) {
+      this.write('\n');
     }
+  }
 }
 //# sourceMappingURL=textOutput.js.map

@@ -5,12 +5,12 @@
  */
 import type { Config } from '../config/config.js';
 type SuccessfulPathCorrection = {
-    success: true;
-    correctedPath: string;
+  success: true;
+  correctedPath: string;
 };
 type FailedPathCorrection = {
-    success: false;
-    error: string;
+  success: false;
+  error: string;
 };
 /**
  * Attempts to correct a relative or ambiguous file path to a single, absolute path
@@ -20,6 +20,11 @@ type FailedPathCorrection = {
  * @param config The application configuration.
  * @returns A `PathCorrectionResult` object with either a `correctedPath` or an `error`.
  */
-export type PathCorrectionResult = SuccessfulPathCorrection | FailedPathCorrection;
-export declare function correctPath(filePath: string, config: Config): PathCorrectionResult;
+export type PathCorrectionResult =
+  | SuccessfulPathCorrection
+  | FailedPathCorrection;
+export declare function correctPath(
+  filePath: string,
+  config: Config,
+): PathCorrectionResult;
 export {};

@@ -6,7 +6,7 @@
 import type React from 'react';
 import { type ActiveHook } from '../types.js';
 interface HookStatusDisplayProps {
-    activeHooks: ActiveHook[];
+  activeHooks: ActiveHook[];
 }
 export declare const HookStatusDisplay: React.FC<HookStatusDisplayProps>;
 export {};

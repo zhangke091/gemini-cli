@@ -5,7 +5,7 @@
  */
 import type { CommandModule } from 'yargs';
 interface ValidateArgs {
-    path: string;
+  path: string;
 }
 export declare function handleValidate(args: ValidateArgs): Promise<void>;
 export declare const validateCommand: CommandModule;

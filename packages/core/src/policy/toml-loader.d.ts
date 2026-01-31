@@ -7,27 +7,32 @@ import { type PolicyRule, type SafetyCheckerRule } from './types.js';
 /**
  * Types of errors that can occur while loading policy files.
  */
-export type PolicyFileErrorType = 'file_read' | 'toml_parse' | 'schema_validation' | 'rule_validation' | 'regex_compilation';
+export type PolicyFileErrorType =
+  | 'file_read'
+  | 'toml_parse'
+  | 'schema_validation'
+  | 'rule_validation'
+  | 'regex_compilation';
 /**
  * Detailed error information for policy file loading failures.
  */
 export interface PolicyFileError {
-    filePath: string;
-    fileName: string;
-    tier: 'default' | 'user' | 'admin';
-    ruleIndex?: number;
-    errorType: PolicyFileErrorType;
-    message: string;
-    details?: string;
-    suggestion?: string;
+  filePath: string;
+  fileName: string;
+  tier: 'default' | 'user' | 'admin';
+  ruleIndex?: number;
+  errorType: PolicyFileErrorType;
+  message: string;
+  details?: string;
+  suggestion?: string;
 }
 /**
  * Result of loading policies from TOML files.
  */
 export interface PolicyLoadResult {
-    rules: PolicyRule[];
-    checkers: SafetyCheckerRule[];
-    errors: PolicyFileError[];
+  rules: PolicyRule[];
+  checkers: SafetyCheckerRule[];
+  errors: PolicyFileError[];
 }
 /**
  * Loads and parses policies from TOML files in the specified directories.
@@ -42,4 +47,7 @@ export interface PolicyLoadResult {
  * @param getPolicyTier Function to determine tier (1-3) for a directory
  * @returns Object containing successfully parsed rules and any errors encountered
  */
-export declare function loadPoliciesFromToml(policyDirs: string[], getPolicyTier: (dir: string) => number): Promise<PolicyLoadResult>;
+export declare function loadPoliciesFromToml(
+  policyDirs: string[],
+  getPolicyTier: (dir: string) => number,
+): Promise<PolicyLoadResult>;

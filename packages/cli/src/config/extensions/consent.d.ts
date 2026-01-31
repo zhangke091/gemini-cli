@@ -11,7 +11,11 @@ export declare const SKILLS_WARNING_MESSAGE: string;
 /**
  * Builds a consent string for installing agent skills.
  */
-export declare function skillsConsentString(skills: SkillDefinition[], source: string, targetDir?: string): Promise<string>;
+export declare function skillsConsentString(
+  skills: SkillDefinition[],
+  source: string,
+  targetDir?: string,
+): Promise<string>;
 /**
  * Requests consent from the user to perform an action, by reading a Y/n
  * character from stdin.
@@ -21,7 +25,9 @@ export declare function skillsConsentString(skills: SkillDefinition[], source: s
  * @param consentDescription The description of the thing they will be consenting to.
  * @returns boolean, whether they consented or not.
  */
-export declare function requestConsentNonInteractive(consentDescription: string): Promise<boolean>;
+export declare function requestConsentNonInteractive(
+  consentDescription: string,
+): Promise<boolean>;
 /**
  * Requests consent from the user to perform an action, in interactive mode.
  *
@@ -31,7 +37,10 @@ export declare function requestConsentNonInteractive(consentDescription: string)
  * @param addExtensionUpdateConfirmationRequest A function to actually add a prompt to the UI.
  * @returns boolean, whether they consented or not.
  */
-export declare function requestConsentInteractive(consentDescription: string, addExtensionUpdateConfirmationRequest: (value: ConfirmationRequest) => void): Promise<boolean>;
+export declare function requestConsentInteractive(
+  consentDescription: string,
+  addExtensionUpdateConfirmationRequest: (value: ConfirmationRequest) => void,
+): Promise<boolean>;
 /**
  * Requests consent from the user to install an extension (extensionConfig), if
  * there is any difference between the consent string for `extensionConfig` and
@@ -41,4 +50,12 @@ export declare function requestConsentInteractive(consentDescription: string, ad
  *
  * Throws if the user does not consent.
  */
-export declare function maybeRequestConsentOrFail(extensionConfig: ExtensionConfig, requestConsent: (consent: string) => Promise<boolean>, hasHooks: boolean, previousExtensionConfig?: ExtensionConfig, previousHasHooks?: boolean, skills?: SkillDefinition[], previousSkills?: SkillDefinition[]): Promise<void>;
+export declare function maybeRequestConsentOrFail(
+  extensionConfig: ExtensionConfig,
+  requestConsent: (consent: string) => Promise<boolean>,
+  hasHooks: boolean,
+  previousExtensionConfig?: ExtensionConfig,
+  previousHasHooks?: boolean,
+  skills?: SkillDefinition[],
+  previousSkills?: SkillDefinition[],
+): Promise<void>;

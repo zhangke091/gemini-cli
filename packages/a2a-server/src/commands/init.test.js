@@ -13,137 +13,151 @@ import { CoderAgentEvent } from '../types.js';
 import { createMockConfig } from '../utils/testing_utils.js';
 import { logger } from '../utils/logger.js';
 vi.mock('@google/gemini-cli-core', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        performInit: vi.fn(),
-    };
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    performInit: vi.fn(),
+  };
 });
 vi.mock('node:fs', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        existsSync: vi.fn(),
-        writeFileSync: vi.fn(),
-    };
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    existsSync: vi.fn(),
+    writeFileSync: vi.fn(),
+  };
 });
 vi.mock('../agent/executor.js', () => ({
-    CoderAgentExecutor: vi.fn().mockImplementation(() => ({
-        execute: vi.fn(),
-    })),
+  CoderAgentExecutor: vi.fn().mockImplementation(() => ({
+    execute: vi.fn(),
+  })),
 }));
 vi.mock('../utils/logger.js', () => ({
-    logger: {
-        info: vi.fn(),
-        error: vi.fn(),
-    },
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+  },
 }));
 describe('InitCommand', () => {
-    let eventBus;
-    let command;
-    let context;
-    let publishSpy;
-    let mockExecute;
-    const mockWorkspacePath = path.resolve('/tmp');
-    beforeEach(() => {
-        process.env['CODER_AGENT_WORKSPACE_PATH'] = mockWorkspacePath;
-        eventBus = {
-            publish: vi.fn(),
-        };
-        command = new InitCommand();
-        const mockConfig = createMockConfig({
-            getModel: () => 'gemini-pro',
-        });
-        const mockExecutorInstance = new CoderAgentExecutor();
-        context = {
-            config: mockConfig,
-            agentExecutor: mockExecutorInstance,
-            eventBus,
-        };
-        publishSpy = vi.spyOn(eventBus, 'publish');
-        mockExecute = vi.fn();
-        vi.spyOn(mockExecutorInstance, 'execute').mockImplementation(mockExecute);
-        vi.clearAllMocks();
+  let eventBus;
+  let command;
+  let context;
+  let publishSpy;
+  let mockExecute;
+  const mockWorkspacePath = path.resolve('/tmp');
+  beforeEach(() => {
+    process.env['CODER_AGENT_WORKSPACE_PATH'] = mockWorkspacePath;
+    eventBus = {
+      publish: vi.fn(),
+    };
+    command = new InitCommand();
+    const mockConfig = createMockConfig({
+      getModel: () => 'gemini-pro',
     });
-    it('has requiresWorkspace set to true', () => {
-        expect(command.requiresWorkspace).toBe(true);
+    const mockExecutorInstance = new CoderAgentExecutor();
+    context = {
+      config: mockConfig,
+      agentExecutor: mockExecutorInstance,
+      eventBus,
+    };
+    publishSpy = vi.spyOn(eventBus, 'publish');
+    mockExecute = vi.fn();
+    vi.spyOn(mockExecutorInstance, 'execute').mockImplementation(mockExecute);
+    vi.clearAllMocks();
+  });
+  it('has requiresWorkspace set to true', () => {
+    expect(command.requiresWorkspace).toBe(true);
+  });
+  describe('execute', () => {
+    it('handles info from performInit', async () => {
+      vi.mocked(performInit).mockReturnValue({
+        type: 'message',
+        messageType: 'info',
+        content: 'GEMINI.md already exists.',
+      });
+      await command.execute(context, []);
+      expect(logger.info).toHaveBeenCalledWith(
+        '[EventBus event]: ',
+        expect.objectContaining({
+          kind: 'status-update',
+          status: expect.objectContaining({
+            state: 'completed',
+            message: expect.objectContaining({
+              parts: [{ kind: 'text', text: 'GEMINI.md already exists.' }],
+            }),
+          }),
+        }),
+      );
+      expect(publishSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'status-update',
+          status: expect.objectContaining({
+            state: 'completed',
+            message: expect.objectContaining({
+              parts: [{ kind: 'text', text: 'GEMINI.md already exists.' }],
+            }),
+          }),
+        }),
+      );
     });
-    describe('execute', () => {
-        it('handles info from performInit', async () => {
-            vi.mocked(performInit).mockReturnValue({
-                type: 'message',
-                messageType: 'info',
-                content: 'GEMINI.md already exists.',
-            });
-            await command.execute(context, []);
-            expect(logger.info).toHaveBeenCalledWith('[EventBus event]: ', expect.objectContaining({
-                kind: 'status-update',
-                status: expect.objectContaining({
-                    state: 'completed',
-                    message: expect.objectContaining({
-                        parts: [{ kind: 'text', text: 'GEMINI.md already exists.' }],
-                    }),
-                }),
-            }));
-            expect(publishSpy).toHaveBeenCalledWith(expect.objectContaining({
-                kind: 'status-update',
-                status: expect.objectContaining({
-                    state: 'completed',
-                    message: expect.objectContaining({
-                        parts: [{ kind: 'text', text: 'GEMINI.md already exists.' }],
-                    }),
-                }),
-            }));
-        });
-        it('handles error from performInit', async () => {
-            vi.mocked(performInit).mockReturnValue({
-                type: 'message',
-                messageType: 'error',
-                content: 'An error occurred.',
-            });
-            await command.execute(context, []);
-            expect(publishSpy).toHaveBeenCalledWith(expect.objectContaining({
-                kind: 'status-update',
-                status: expect.objectContaining({
-                    state: 'failed',
-                    message: expect.objectContaining({
-                        parts: [{ kind: 'text', text: 'An error occurred.' }],
-                    }),
-                }),
-            }));
-        });
-        describe('when handling submit_prompt', () => {
-            beforeEach(() => {
-                vi.mocked(performInit).mockReturnValue({
-                    type: 'submit_prompt',
-                    content: 'Create a new GEMINI.md file.',
-                });
-            });
-            it('writes the file and executes the agent', async () => {
-                await command.execute(context, []);
-                expect(fs.writeFileSync).toHaveBeenCalledWith(path.join(mockWorkspacePath, 'GEMINI.md'), '', 'utf8');
-                expect(mockExecute).toHaveBeenCalled();
-            });
-            it('passes autoExecute to the agent executor', async () => {
-                await command.execute(context, []);
-                expect(mockExecute).toHaveBeenCalledWith(expect.objectContaining({
-                    userMessage: expect.objectContaining({
-                        parts: expect.arrayContaining([
-                            expect.objectContaining({
-                                text: 'Create a new GEMINI.md file.',
-                            }),
-                        ]),
-                        metadata: {
-                            coderAgent: {
-                                kind: CoderAgentEvent.StateAgentSettingsEvent,
-                                workspacePath: mockWorkspacePath,
-                                autoExecute: true,
-                            },
-                        },
-                    }),
-                }), eventBus);
-            });
-        });
+    it('handles error from performInit', async () => {
+      vi.mocked(performInit).mockReturnValue({
+        type: 'message',
+        messageType: 'error',
+        content: 'An error occurred.',
+      });
+      await command.execute(context, []);
+      expect(publishSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'status-update',
+          status: expect.objectContaining({
+            state: 'failed',
+            message: expect.objectContaining({
+              parts: [{ kind: 'text', text: 'An error occurred.' }],
+            }),
+          }),
+        }),
+      );
     });
+    describe('when handling submit_prompt', () => {
+      beforeEach(() => {
+        vi.mocked(performInit).mockReturnValue({
+          type: 'submit_prompt',
+          content: 'Create a new GEMINI.md file.',
+        });
+      });
+      it('writes the file and executes the agent', async () => {
+        await command.execute(context, []);
+        expect(fs.writeFileSync).toHaveBeenCalledWith(
+          path.join(mockWorkspacePath, 'GEMINI.md'),
+          '',
+          'utf8',
+        );
+        expect(mockExecute).toHaveBeenCalled();
+      });
+      it('passes autoExecute to the agent executor', async () => {
+        await command.execute(context, []);
+        expect(mockExecute).toHaveBeenCalledWith(
+          expect.objectContaining({
+            userMessage: expect.objectContaining({
+              parts: expect.arrayContaining([
+                expect.objectContaining({
+                  text: 'Create a new GEMINI.md file.',
+                }),
+              ]),
+              metadata: {
+                coderAgent: {
+                  kind: CoderAgentEvent.StateAgentSettingsEvent,
+                  workspacePath: mockWorkspacePath,
+                  autoExecute: true,
+                },
+              },
+            }),
+          }),
+          eventBus,
+        );
+      });
+    });
+  });
 });
 //# sourceMappingURL=init.test.js.map

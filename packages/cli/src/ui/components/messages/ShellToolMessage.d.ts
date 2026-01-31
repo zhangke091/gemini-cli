@@ -7,8 +7,8 @@ import React from 'react';
 import type { ToolMessageProps } from './ToolMessage.js';
 import type { Config } from '@google/gemini-cli-core';
 export interface ShellToolMessageProps extends ToolMessageProps {
-    activeShellPtyId?: number | null;
-    embeddedShellFocused?: boolean;
-    config?: Config;
+  activeShellPtyId?: number | null;
+  embeddedShellFocused?: boolean;
+  config?: Config;
 }
 export declare const ShellToolMessage: React.FC<ShellToolMessageProps>;

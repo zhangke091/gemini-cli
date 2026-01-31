@@ -19,43 +19,43 @@ import * as util from 'node:util';
  * will intercept these calls and route them to the debug drawer UI.
  */
 class DebugLogger {
-    logStream;
-    constructor() {
-        this.logStream = process.env['GEMINI_DEBUG_LOG_FILE']
-            ? fs.createWriteStream(process.env['GEMINI_DEBUG_LOG_FILE'], {
-                flags: 'a',
-            })
-            : undefined;
-        // Handle potential errors with the stream
-        this.logStream?.on('error', (err) => {
-            // Log to console as a fallback, but don't crash the app
-            console.error('Error writing to debug log stream:', err);
-        });
+  logStream;
+  constructor() {
+    this.logStream = process.env['GEMINI_DEBUG_LOG_FILE']
+      ? fs.createWriteStream(process.env['GEMINI_DEBUG_LOG_FILE'], {
+          flags: 'a',
+        })
+      : undefined;
+    // Handle potential errors with the stream
+    this.logStream?.on('error', (err) => {
+      // Log to console as a fallback, but don't crash the app
+      console.error('Error writing to debug log stream:', err);
+    });
+  }
+  writeToFile(level, args) {
+    if (this.logStream) {
+      const message = util.format(...args);
+      const timestamp = new Date().toISOString();
+      const logEntry = `[${timestamp}] [${level}] ${message}\n`;
+      this.logStream.write(logEntry);
     }
-    writeToFile(level, args) {
-        if (this.logStream) {
-            const message = util.format(...args);
-            const timestamp = new Date().toISOString();
-            const logEntry = `[${timestamp}] [${level}] ${message}\n`;
-            this.logStream.write(logEntry);
-        }
-    }
-    log(...args) {
-        this.writeToFile('LOG', args);
-        console.log(...args);
-    }
-    warn(...args) {
-        this.writeToFile('WARN', args);
-        console.warn(...args);
-    }
-    error(...args) {
-        this.writeToFile('ERROR', args);
-        console.error(...args);
-    }
-    debug(...args) {
-        this.writeToFile('DEBUG', args);
-        console.debug(...args);
-    }
+  }
+  log(...args) {
+    this.writeToFile('LOG', args);
+    console.log(...args);
+  }
+  warn(...args) {
+    this.writeToFile('WARN', args);
+    console.warn(...args);
+  }
+  error(...args) {
+    this.writeToFile('ERROR', args);
+    console.error(...args);
+  }
+  debug(...args) {
+    this.writeToFile('DEBUG', args);
+    console.debug(...args);
+  }
 }
 export const debugLogger = new DebugLogger();
 //# sourceMappingURL=debugLogger.js.map

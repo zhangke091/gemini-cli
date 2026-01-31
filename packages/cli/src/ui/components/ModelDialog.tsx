@@ -212,7 +212,9 @@ export function ModelDialog({ onClose }: ModelDialogProps): React.JSX.Element {
           config.setModel(model, persistMode ? false : true);
           // Default back to Gemini API key if available, otherwise Google login
           const hasGeminiKey = !!process.env['GEMINI_API_KEY'];
-          await config.refreshAuth(hasGeminiKey ? AuthType.USE_GEMINI : AuthType.LOGIN_WITH_GOOGLE);
+          await config.refreshAuth(
+            hasGeminiKey ? AuthType.USE_GEMINI : AuthType.LOGIN_WITH_GOOGLE,
+          );
         } else {
           config.setModel(model, persistMode ? false : true);
         }

@@ -121,8 +121,12 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     request: GenerateContentParameters,
     _userPromptId: string,
   ): Promise<GenerateContentResponse> {
-    const messages = this.convertToOpenAIMessages(request.contents as Content[]);
-    const tools = this.convertToOpenAITools(request.config?.tools as Tool[] | undefined);
+    const messages = this.convertToOpenAIMessages(
+      request.contents as Content[],
+    );
+    const tools = this.convertToOpenAITools(
+      request.config?.tools as Tool[] | undefined,
+    );
     const model = request.model || this.defaultModel;
 
     const response = await fetch(`${this.baseURL}/v1/chat/completions`, {
@@ -155,8 +159,12 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     request: GenerateContentParameters,
     _userPromptId: string,
   ): Promise<AsyncGenerator<GenerateContentResponse>> {
-    const messages = this.convertToOpenAIMessages(request.contents as Content[]);
-    const tools = this.convertToOpenAITools(request.config?.tools as Tool[] | undefined);
+    const messages = this.convertToOpenAIMessages(
+      request.contents as Content[],
+    );
+    const tools = this.convertToOpenAITools(
+      request.config?.tools as Tool[] | undefined,
+    );
     const model = request.model || this.defaultModel;
 
     // eslint-disable-next-line no-console
@@ -165,7 +173,9 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     console.error('[DeepSeek] Messages being sent:');
     for (const msg of messages) {
       // eslint-disable-next-line no-console
-      console.error(`  [${msg.role}]: ${msg.content?.substring(0, 500) || '(no content)'}${msg.tool_calls ? ' (has tool_calls)' : ''}`);
+      console.error(
+        `  [${msg.role}]: ${msg.content?.substring(0, 500) || '(no content)'}${msg.tool_calls ? ' (has tool_calls)' : ''}`,
+      );
     }
     debugLogger.debug('DeepSeek stream request:', {
       model,
@@ -222,7 +232,9 @@ export class DeepSeekContentGenerator implements ContentGenerator {
             const trimmed = buffer.trim();
             if (trimmed.startsWith('data: ') && trimmed !== 'data: [DONE]') {
               try {
-                const chunk: OpenAIChatCompletionChunk = JSON.parse(trimmed.slice(6));
+                const chunk: OpenAIChatCompletionChunk = JSON.parse(
+                  trimmed.slice(6),
+                );
                 const choice = chunk.choices[0];
                 if (choice?.delta?.content) {
                   accumulatedContent += choice.delta.content;
@@ -281,18 +293,31 @@ export class DeepSeekContentGenerator implements ContentGenerator {
             // Check for finish reason
             if (choice.finish_reason) {
               // eslint-disable-next-line no-console
-              console.error('[DeepSeek] finish_reason:', choice.finish_reason, 'toolCalls:', accumulatedToolCalls.size);
+              console.error(
+                '[DeepSeek] finish_reason:',
+                choice.finish_reason,
+                'toolCalls:',
+                accumulatedToolCalls.size,
+              );
               if (
                 choice.finish_reason === 'tool_calls' &&
                 accumulatedToolCalls.size > 0
               ) {
                 // eslint-disable-next-line no-console
-                console.error('[DeepSeek] Yielding tool calls:', Array.from(accumulatedToolCalls.values()).map(tc => tc.name));
+                console.error(
+                  '[DeepSeek] Yielding tool calls:',
+                  Array.from(accumulatedToolCalls.values()).map(
+                    (tc) => tc.name,
+                  ),
+                );
                 yield this.createToolCallResponse(
                   accumulatedToolCalls,
                   chunk.usage,
                 );
-              } else if (choice.finish_reason === 'stop' && accumulatedContent) {
+              } else if (
+                choice.finish_reason === 'stop' &&
+                accumulatedContent
+              ) {
                 // Send final response with STOP finish reason
                 yield this.createFinalResponse(accumulatedContent, chunk.usage);
                 accumulatedContent = ''; // Mark as sent
@@ -303,7 +328,7 @@ export class DeepSeekContentGenerator implements ContentGenerator {
           }
         }
       }
-      
+
       // Handle any remaining content that wasn't finalized (edge case)
       if (accumulatedContent) {
         yield this.createFinalResponse(accumulatedContent, undefined);
@@ -378,8 +403,11 @@ export class DeepSeekContentGenerator implements ContentGenerator {
 
       // Check for function response (tool result)
       const functionResponseParts = parts.filter(
-        (p): p is Part & { functionResponse: { name: string; response: unknown } } =>
-          'functionResponse' in p && p.functionResponse !== undefined,
+        (
+          p,
+        ): p is Part & {
+          functionResponse: { name: string; response: unknown };
+        } => 'functionResponse' in p && p.functionResponse !== undefined,
       );
 
       if (functionResponseParts.length > 0) {
@@ -399,7 +427,10 @@ export class DeepSeekContentGenerator implements ContentGenerator {
 
       // Regular text content
       const textParts = parts
-        .filter((p): p is Part & { text: string } => 'text' in p && typeof p.text === 'string')
+        .filter(
+          (p): p is Part & { text: string } =>
+            'text' in p && typeof p.text === 'string',
+        )
         .map((p) => p.text);
 
       if (textParts.length > 0) {
@@ -415,12 +446,16 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     const cleanedMessages: OpenAIMessage[] = [];
     for (let i = 0; i < messages.length; i++) {
       const msg = messages[i];
-      if (msg.role === 'assistant' && msg.tool_calls && msg.tool_calls.length > 0) {
+      if (
+        msg.role === 'assistant' &&
+        msg.tool_calls &&
+        msg.tool_calls.length > 0
+      ) {
         // Check if the next message(s) are tool responses
-        const toolCallIds = new Set(msg.tool_calls.map(tc => tc.id));
+        const toolCallIds = new Set(msg.tool_calls.map((tc) => tc.id));
         let hasAllResponses = true;
         let j = i + 1;
-        
+
         while (j < messages.length && messages[j].role === 'tool') {
           const toolMsg = messages[j];
           if (toolMsg.tool_call_id) {
@@ -428,9 +463,9 @@ export class DeepSeekContentGenerator implements ContentGenerator {
           }
           j++;
         }
-        
+
         hasAllResponses = toolCallIds.size === 0;
-        
+
         if (!hasAllResponses) {
           // Skip this tool_calls message and any partial responses
           // Just add the text content if any
@@ -449,8 +484,9 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     const openAITools: OpenAITool[] = [];
 
     for (const tool of tools) {
-      const functionDeclarations = (tool as { functionDeclarations?: FunctionDeclaration[] })
-        .functionDeclarations;
+      const functionDeclarations = (
+        tool as { functionDeclarations?: FunctionDeclaration[] }
+      ).functionDeclarations;
       if (functionDeclarations) {
         for (const fn of functionDeclarations) {
           openAITools.push({
@@ -468,7 +504,9 @@ export class DeepSeekContentGenerator implements ContentGenerator {
     return openAITools;
   }
 
-  private convertToGeminiResponse(data: OpenAIChatCompletion): GenerateContentResponse {
+  private convertToGeminiResponse(
+    data: OpenAIChatCompletion,
+  ): GenerateContentResponse {
     const choice = data.choices[0];
     const message = choice?.message;
     const parts: Part[] = [];
@@ -533,7 +571,11 @@ export class DeepSeekContentGenerator implements ContentGenerator {
 
   private createToolCallResponse(
     toolCalls: Map<number, { id: string; name: string; arguments: string }>,
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number },
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    },
   ): GenerateContentResponse {
     const parts: Part[] = [];
 
@@ -574,7 +616,11 @@ export class DeepSeekContentGenerator implements ContentGenerator {
 
   private createFinalResponse(
     _text: string,
-    usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number },
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    },
   ): GenerateContentResponse {
     // Don't send text again - it was already sent via streaming chunks
     // Just send finish reason and usage metadata

@@ -5,13 +5,13 @@
  */
 import { CommandKind } from './types.js';
 export const shellsCommand = {
-    name: 'shells',
-    altNames: ['bashes'],
-    kind: CommandKind.BUILT_IN,
-    description: 'Toggle background shells view',
-    autoExecute: true,
-    action: async (context) => {
-        context.ui.toggleBackgroundShell();
-    },
+  name: 'shells',
+  altNames: ['bashes'],
+  kind: CommandKind.BUILT_IN,
+  description: 'Toggle background shells view',
+  autoExecute: true,
+  action: async (context) => {
+    context.ui.toggleBackgroundShell();
+  },
 };
 //# sourceMappingURL=shellsCommand.js.map

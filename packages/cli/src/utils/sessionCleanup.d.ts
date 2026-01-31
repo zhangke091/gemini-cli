@@ -10,27 +10,34 @@ export declare const DEFAULT_MIN_RETENTION: string;
  * Result of session cleanup operation
  */
 export interface CleanupResult {
-    disabled: boolean;
-    scanned: number;
-    deleted: number;
-    skipped: number;
-    failed: number;
+  disabled: boolean;
+  scanned: number;
+  deleted: number;
+  skipped: number;
+  failed: number;
 }
 /**
  * Main entry point for session cleanup during CLI startup
  */
-export declare function cleanupExpiredSessions(config: Config, settings: Settings): Promise<CleanupResult>;
+export declare function cleanupExpiredSessions(
+  config: Config,
+  settings: Settings,
+): Promise<CleanupResult>;
 /**
  * Result of tool output cleanup operation
  */
 export interface ToolOutputCleanupResult {
-    disabled: boolean;
-    scanned: number;
-    deleted: number;
-    failed: number;
+  disabled: boolean;
+  scanned: number;
+  deleted: number;
+  failed: number;
 }
 /**
  * Cleans up tool output files based on age and count limits.
  * Uses the same retention settings as session cleanup.
  */
-export declare function cleanupToolOutputFiles(settings: Settings, debugMode?: boolean, projectTempDir?: string): Promise<ToolOutputCleanupResult>;
+export declare function cleanupToolOutputFiles(
+  settings: Settings,
+  debugMode?: boolean,
+  projectTempDir?: string,
+): Promise<ToolOutputCleanupResult>;

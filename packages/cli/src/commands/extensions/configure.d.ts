@@ -5,9 +5,9 @@
  */
 import type { CommandModule } from 'yargs';
 interface ConfigureArgs {
-    name?: string;
-    setting?: string;
-    scope: string;
+  name?: string;
+  setting?: string;
+  scope: string;
 }
 export declare const configureCommand: CommandModule<object, ConfigureArgs>;
 export {};

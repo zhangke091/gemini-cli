@@ -12,10 +12,12 @@ export declare function serializeHistoryToMarkdown(history: Content[]): string;
  * Options for exporting chat history.
  */
 export interface ExportHistoryOptions {
-    history: Content[];
-    filePath: string;
+  history: Content[];
+  filePath: string;
 }
 /**
  * Exports chat history to a file (JSON or Markdown).
  */
-export declare function exportHistoryToFile(options: ExportHistoryOptions): Promise<void>;
+export declare function exportHistoryToFile(
+  options: ExportHistoryOptions,
+): Promise<void>;

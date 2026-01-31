@@ -9,48 +9,54 @@ import { exitCli } from '../utils.js';
 import { uninstallSkill } from '../../utils/skillUtils.js';
 import chalk from 'chalk';
 export async function handleUninstall(args) {
-    try {
-        const { name } = args;
-        const scope = args.scope ?? 'user';
-        const result = await uninstallSkill(name, scope);
-        if (result) {
-            debugLogger.log(chalk.green(`Successfully uninstalled skill: ${chalk.bold(name)} (scope: ${scope}, location: ${result.location})`));
-        }
-        else {
-            debugLogger.error(`Skill "${name}" is not installed in the ${scope} scope.`);
-        }
+  try {
+    const { name } = args;
+    const scope = args.scope ?? 'user';
+    const result = await uninstallSkill(name, scope);
+    if (result) {
+      debugLogger.log(
+        chalk.green(
+          `Successfully uninstalled skill: ${chalk.bold(name)} (scope: ${scope}, location: ${result.location})`,
+        ),
+      );
+    } else {
+      debugLogger.error(
+        `Skill "${name}" is not installed in the ${scope} scope.`,
+      );
     }
-    catch (error) {
-        debugLogger.error(getErrorMessage(error));
-        await exitCli(1);
-    }
+  } catch (error) {
+    debugLogger.error(getErrorMessage(error));
+    await exitCli(1);
+  }
 }
 export const uninstallCommand = {
-    command: 'uninstall <name> [--scope]',
-    describe: 'Uninstalls an agent skill by name.',
-    builder: (yargs) => yargs
-        .positional('name', {
+  command: 'uninstall <name> [--scope]',
+  describe: 'Uninstalls an agent skill by name.',
+  builder: (yargs) =>
+    yargs
+      .positional('name', {
         describe: 'The name of the skill to uninstall.',
         type: 'string',
         demandOption: true,
-    })
-        .option('scope', {
-        describe: 'The scope to uninstall the skill from. Defaults to "user" (global).',
+      })
+      .option('scope', {
+        describe:
+          'The scope to uninstall the skill from. Defaults to "user" (global).',
         choices: ['user', 'workspace'],
         default: 'user',
-    })
-        .check((argv) => {
+      })
+      .check((argv) => {
         if (!argv.name) {
-            throw new Error('The skill name must be provided.');
+          throw new Error('The skill name must be provided.');
         }
         return true;
-    }),
-    handler: async (argv) => {
-        await handleUninstall({
-            name: argv['name'],
-            scope: argv['scope'],
-        });
-        await exitCli();
-    },
+      }),
+  handler: async (argv) => {
+    await handleUninstall({
+      name: argv['name'],
+      scope: argv['scope'],
+    });
+    await exitCli();
+  },
 };
 //# sourceMappingURL=uninstall.js.map

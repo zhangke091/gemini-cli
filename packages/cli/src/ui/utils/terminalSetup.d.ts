@@ -3,11 +3,11 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-export declare const VSCODE_SHIFT_ENTER_SEQUENCE = "\\\r\n";
+export declare const VSCODE_SHIFT_ENTER_SEQUENCE = '\\\r\n';
 export interface TerminalSetupResult {
-    success: boolean;
-    message: string;
-    requiresRestart?: boolean;
+  success: boolean;
+  message: string;
+  requiresRestart?: boolean;
 }
 type SupportedTerminal = 'vscode' | 'cursor' | 'windsurf' | 'antigravity';
 export declare function getTerminalProgram(): SupportedTerminal | null;

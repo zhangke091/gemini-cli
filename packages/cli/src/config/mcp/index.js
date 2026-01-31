@@ -3,5 +3,10 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-export { McpServerEnablementManager, canLoadServer, normalizeServerId, isInSettingsList, } from './mcpServerEnablement.js';
+export {
+  McpServerEnablementManager,
+  canLoadServer,
+  normalizeServerId,
+  isInSettingsList,
+} from './mcpServerEnablement.js';
 //# sourceMappingURL=index.js.map

@@ -7,18 +7,18 @@
 export declare const SIGKILL_TIMEOUT_MS = 200;
 /** Configuration for process termination. */
 export interface KillOptions {
-    /** The process ID to terminate. */
-    pid: number;
-    /** Whether to attempt SIGTERM before SIGKILL on Unix systems. */
-    escalate?: boolean;
-    /** Initial signal to use (defaults to SIGTERM if escalate is true, else SIGKILL). */
-    signal?: NodeJS.Signals | number;
-    /** Callback to check if the process has already exited. */
-    isExited?: () => boolean;
-    /** Optional PTY object for PTY-specific kill methods. */
-    pty?: {
-        kill: (signal?: string) => void;
-    };
+  /** The process ID to terminate. */
+  pid: number;
+  /** Whether to attempt SIGTERM before SIGKILL on Unix systems. */
+  escalate?: boolean;
+  /** Initial signal to use (defaults to SIGTERM if escalate is true, else SIGKILL). */
+  signal?: NodeJS.Signals | number;
+  /** Callback to check if the process has already exited. */
+  isExited?: () => boolean;
+  /** Optional PTY object for PTY-specific kill methods. */
+  pty?: {
+    kill: (signal?: string) => void;
+  };
 }
 /**
  * Robustly terminates a process or process group across platforms.

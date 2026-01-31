@@ -6,8 +6,8 @@
 import type React from 'react';
 import type { AgentDefinitionJson } from '../../types.js';
 interface AgentsStatusProps {
-    agents: AgentDefinitionJson[];
-    terminalWidth: number;
+  agents: AgentDefinitionJson[];
+  terminalWidth: number;
 }
 export declare const AgentsStatus: React.FC<AgentsStatusProps>;
 export {};

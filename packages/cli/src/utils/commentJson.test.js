@@ -10,27 +10,27 @@ import * as os from 'node:os';
 import { updateSettingsFilePreservingFormat } from './commentJson.js';
 import { coreEvents } from '@google/gemini-cli-core';
 vi.mock('@google/gemini-cli-core', () => ({
-    coreEvents: {
-        emitFeedback: vi.fn(),
-    },
+  coreEvents: {
+    emitFeedback: vi.fn(),
+  },
 }));
 describe('commentJson', () => {
-    let tempDir;
-    let testFilePath;
-    beforeEach(() => {
-        // Create a temporary directory for test files
-        tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'preserve-format-test-'));
-        testFilePath = path.join(tempDir, 'settings.json');
-    });
-    afterEach(() => {
-        // Clean up temporary directory
-        if (fs.existsSync(tempDir)) {
-            fs.rmSync(tempDir, { recursive: true, force: true });
-        }
-    });
-    describe('updateSettingsFilePreservingFormat', () => {
-        it('should preserve comments when updating settings', () => {
-            const originalContent = `{
+  let tempDir;
+  let testFilePath;
+  beforeEach(() => {
+    // Create a temporary directory for test files
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'preserve-format-test-'));
+    testFilePath = path.join(tempDir, 'settings.json');
+  });
+  afterEach(() => {
+    // Clean up temporary directory
+    if (fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+  describe('updateSettingsFilePreservingFormat', () => {
+    it('should preserve comments when updating settings', () => {
+      const originalContent = `{
         // Model configuration
         "model": "gemini-2.5-pro",
         "ui": {
@@ -38,61 +38,61 @@ describe('commentJson', () => {
           "theme": "dark"
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-flash',
-                ui: {
-                    theme: 'dark',
-                },
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// Model configuration');
-            expect(updatedContent).toContain('// Theme setting');
-            expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
-            expect(updatedContent).toContain('"theme": "dark"');
-        });
-        it('should handle nested object updates', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-flash',
+        ui: {
+          theme: 'dark',
+        },
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// Model configuration');
+      expect(updatedContent).toContain('// Theme setting');
+      expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
+      expect(updatedContent).toContain('"theme": "dark"');
+    });
+    it('should handle nested object updates', () => {
+      const originalContent = `{
         "ui": {
           "theme": "dark",
           "showLineNumbers": true
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                ui: {
-                    theme: 'light',
-                    showLineNumbers: true,
-                },
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('"theme": "light"');
-            expect(updatedContent).toContain('"showLineNumbers": true');
-        });
-        it('should add new fields while preserving existing structure', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        ui: {
+          theme: 'light',
+          showLineNumbers: true,
+        },
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('"theme": "light"');
+      expect(updatedContent).toContain('"showLineNumbers": true');
+    });
+    it('should add new fields while preserving existing structure', () => {
+      const originalContent = `{
         // Existing config
         "model": "gemini-2.5-pro"
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-pro',
-                newField: 'newValue',
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// Existing config');
-            expect(updatedContent).toContain('"newField": "newValue"');
-        });
-        it('should create file if it does not exist', () => {
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-pro',
-            });
-            expect(fs.existsSync(testFilePath)).toBe(true);
-            const content = fs.readFileSync(testFilePath, 'utf-8');
-            expect(content).toContain('"model": "gemini-2.5-pro"');
-        });
-        it('should handle complex real-world scenario', () => {
-            const complexContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-pro',
+        newField: 'newValue',
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// Existing config');
+      expect(updatedContent).toContain('"newField": "newValue"');
+    });
+    it('should create file if it does not exist', () => {
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-pro',
+      });
+      expect(fs.existsSync(testFilePath)).toBe(true);
+      const content = fs.readFileSync(testFilePath, 'utf-8');
+      expect(content).toContain('"model": "gemini-2.5-pro"');
+    });
+    it('should handle complex real-world scenario', () => {
+      const complexContent = `{
         // Settings
         "model": "gemini-2.5-pro",
         "mcpServers": {
@@ -104,49 +104,53 @@ describe('commentJson', () => {
           }
         }
       }`;
-            fs.writeFileSync(testFilePath, complexContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-flash',
-                mcpServers: {
-                    context7: {
-                        headers: {
-                            API_KEY: 'new-test-key',
-                        },
-                    },
-                },
-                newSection: {
-                    setting: 'value',
-                },
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            // Verify comments preserved
-            expect(updatedContent).toContain('// Settings');
-            expect(updatedContent).toContain('// Active server');
-            expect(updatedContent).toContain('// API key');
-            // Verify updates applied
-            expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
-            expect(updatedContent).toContain('"newSection"');
-            expect(updatedContent).toContain('"API_KEY": "new-test-key"');
-        });
-        it('should handle corrupted JSON files gracefully', () => {
-            const corruptedContent = `{
+      fs.writeFileSync(testFilePath, complexContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-flash',
+        mcpServers: {
+          context7: {
+            headers: {
+              API_KEY: 'new-test-key',
+            },
+          },
+        },
+        newSection: {
+          setting: 'value',
+        },
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      // Verify comments preserved
+      expect(updatedContent).toContain('// Settings');
+      expect(updatedContent).toContain('// Active server');
+      expect(updatedContent).toContain('// API key');
+      // Verify updates applied
+      expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
+      expect(updatedContent).toContain('"newSection"');
+      expect(updatedContent).toContain('"API_KEY": "new-test-key"');
+    });
+    it('should handle corrupted JSON files gracefully', () => {
+      const corruptedContent = `{
         "model": "gemini-2.5-pro",
         "ui": {
           "theme": "dark"
         // Missing closing brace
       `;
-            fs.writeFileSync(testFilePath, corruptedContent, 'utf-8');
-            expect(() => {
-                updateSettingsFilePreservingFormat(testFilePath, {
-                    model: 'gemini-2.5-flash',
-                });
-            }).not.toThrow();
-            expect(coreEvents.emitFeedback).toHaveBeenCalledWith('error', 'Error parsing settings file. Please check the JSON syntax.', expect.any(Error));
-            const unchangedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(unchangedContent).toBe(corruptedContent);
+      fs.writeFileSync(testFilePath, corruptedContent, 'utf-8');
+      expect(() => {
+        updateSettingsFilePreservingFormat(testFilePath, {
+          model: 'gemini-2.5-flash',
         });
-        it('should handle array updates while preserving comments', () => {
-            const originalContent = `{
+      }).not.toThrow();
+      expect(coreEvents.emitFeedback).toHaveBeenCalledWith(
+        'error',
+        'Error parsing settings file. Please check the JSON syntax.',
+        expect.any(Error),
+      );
+      const unchangedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(unchangedContent).toBe(corruptedContent);
+    });
+    it('should handle array updates while preserving comments', () => {
+      const originalContent = `{
         // Server configurations
         "servers": [
           // First server
@@ -154,18 +158,18 @@ describe('commentJson', () => {
           "server2" // Second server
         ]
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                servers: ['server1', 'server3'],
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// Server configurations');
-            expect(updatedContent).toContain('"server1"');
-            expect(updatedContent).toContain('"server3"');
-            expect(updatedContent).not.toContain('"server2"');
-        });
-        it('should sync nested objects, removing omitted fields', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        servers: ['server1', 'server3'],
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// Server configurations');
+      expect(updatedContent).toContain('"server1"');
+      expect(updatedContent).toContain('"server3"');
+      expect(updatedContent).not.toContain('"server2"');
+    });
+    it('should sync nested objects, removing omitted fields', () => {
+      const originalContent = `{
         // Configuration
         "model": "gemini-2.5-pro",
         "ui": {
@@ -174,23 +178,23 @@ describe('commentJson', () => {
         },
         "preservedField": "keep me"
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-flash',
-                ui: {
-                    theme: 'light',
-                },
-                preservedField: 'keep me',
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// Configuration');
-            expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
-            expect(updatedContent).toContain('"theme": "light"');
-            expect(updatedContent).not.toContain('"existingSetting": "value"');
-            expect(updatedContent).toContain('"preservedField": "keep me"');
-        });
-        it('should handle mcpServers field deletion properly', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-flash',
+        ui: {
+          theme: 'light',
+        },
+        preservedField: 'keep me',
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// Configuration');
+      expect(updatedContent).toContain('"model": "gemini-2.5-flash"');
+      expect(updatedContent).toContain('"theme": "light"');
+      expect(updatedContent).not.toContain('"existingSetting": "value"');
+      expect(updatedContent).toContain('"preservedField": "keep me"');
+    });
+    it('should handle mcpServers field deletion properly', () => {
+      const originalContent = `{
         "model": "gemini-2.5-pro",
         "mcpServers": {
           // Server to keep
@@ -205,25 +209,25 @@ describe('commentJson', () => {
           }
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                model: 'gemini-2.5-pro',
-                mcpServers: {
-                    context7: {
-                        command: 'node',
-                        args: ['server.js'],
-                    },
-                },
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// Server to keep');
-            expect(updatedContent).toContain('"context7"');
-            expect(updatedContent).not.toContain('"oldServer"');
-            // The comment for the removed server should still be preserved
-            expect(updatedContent).toContain('// Server to remove');
-        });
-        it('preserves sibling-level commented-out blocks when removing another key', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        model: 'gemini-2.5-pro',
+        mcpServers: {
+          context7: {
+            command: 'node',
+            args: ['server.js'],
+          },
+        },
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// Server to keep');
+      expect(updatedContent).toContain('"context7"');
+      expect(updatedContent).not.toContain('"oldServer"');
+      // The comment for the removed server should still be preserved
+      expect(updatedContent).toContain('// Server to remove');
+    });
+    it('preserves sibling-level commented-out blocks when removing another key', () => {
+      const originalContent = `{
         "mcpServers": {
           // "sleep": {
           //   "command": "node",
@@ -242,32 +246,32 @@ describe('commentJson', () => {
           }
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                mcpServers: {},
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('// "sleep": {');
-            expect(updatedContent).toContain('"mcpServers"');
-            expect(updatedContent).not.toContain('"playwright"');
-        });
-        it('should handle type conversion from object to array', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        mcpServers: {},
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('// "sleep": {');
+      expect(updatedContent).toContain('"mcpServers"');
+      expect(updatedContent).not.toContain('"playwright"');
+    });
+    it('should handle type conversion from object to array', () => {
+      const originalContent = `{
         "data": {
           "key": "value"
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                data: ['item1', 'item2'],
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).toContain('"data": [');
-            expect(updatedContent).toContain('"item1"');
-            expect(updatedContent).toContain('"item2"');
-        });
-        it('should remove both nested and non-nested objects when omitted', () => {
-            const originalContent = `{
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        data: ['item1', 'item2'],
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).toContain('"data": [');
+      expect(updatedContent).toContain('"item1"');
+      expect(updatedContent).toContain('"item2"');
+    });
+    it('should remove both nested and non-nested objects when omitted', () => {
+      const originalContent = `{
         // Top-level config
         "topLevelObject": {
           "field1": "value1",
@@ -286,23 +290,23 @@ describe('commentJson', () => {
           "data": "keep"
         }
       }`;
-            fs.writeFileSync(testFilePath, originalContent, 'utf-8');
-            updateSettingsFilePreservingFormat(testFilePath, {
-                parent: {
-                    keepThis: 'value',
-                },
-                preservedObject: {
-                    data: 'keep',
-                },
-            });
-            const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
-            expect(updatedContent).not.toContain('"topLevelObject"');
-            expect(updatedContent).not.toContain('"nestedObject"');
-            expect(updatedContent).toContain('"keepThis": "value"');
-            expect(updatedContent).toContain('"preservedObject"');
-            expect(updatedContent).toContain('"data": "keep"');
-            expect(updatedContent).toContain('// This should be preserved');
-        });
+      fs.writeFileSync(testFilePath, originalContent, 'utf-8');
+      updateSettingsFilePreservingFormat(testFilePath, {
+        parent: {
+          keepThis: 'value',
+        },
+        preservedObject: {
+          data: 'keep',
+        },
+      });
+      const updatedContent = fs.readFileSync(testFilePath, 'utf-8');
+      expect(updatedContent).not.toContain('"topLevelObject"');
+      expect(updatedContent).not.toContain('"nestedObject"');
+      expect(updatedContent).toContain('"keepThis": "value"');
+      expect(updatedContent).toContain('"preservedObject"');
+      expect(updatedContent).toContain('"data": "keep"');
+      expect(updatedContent).toContain('// This should be preserved');
     });
+  });
 });
 //# sourceMappingURL=commentJson.test.js.map

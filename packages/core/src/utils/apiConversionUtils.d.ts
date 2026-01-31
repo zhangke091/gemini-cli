@@ -9,4 +9,6 @@ import type { GenerateContentParameters } from '@google/genai';
  * equivalent REST API payload format. This is primarily used for debugging
  * and exporting requests.
  */
-export declare function convertToRestPayload(req: GenerateContentParameters): Record<string, unknown>;
+export declare function convertToRestPayload(
+  req: GenerateContentParameters,
+): Record<string, unknown>;

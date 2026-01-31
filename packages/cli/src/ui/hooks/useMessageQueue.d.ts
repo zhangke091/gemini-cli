@@ -5,21 +5,26 @@
  */
 import { StreamingState } from '../types.js';
 export interface UseMessageQueueOptions {
-    isConfigInitialized: boolean;
-    streamingState: StreamingState;
-    submitQuery: (query: string) => void;
-    isMcpReady: boolean;
+  isConfigInitialized: boolean;
+  streamingState: StreamingState;
+  submitQuery: (query: string) => void;
+  isMcpReady: boolean;
 }
 export interface UseMessageQueueReturn {
-    messageQueue: string[];
-    addMessage: (message: string) => void;
-    clearQueue: () => void;
-    getQueuedMessagesText: () => string;
-    popAllMessages: () => string | undefined;
+  messageQueue: string[];
+  addMessage: (message: string) => void;
+  clearQueue: () => void;
+  getQueuedMessagesText: () => string;
+  popAllMessages: () => string | undefined;
 }
 /**
  * Hook for managing message queuing during streaming responses.
  * Allows users to queue messages while the AI is responding and automatically
  * sends them when streaming completes.
  */
-export declare function useMessageQueue({ isConfigInitialized, streamingState, submitQuery, isMcpReady, }: UseMessageQueueOptions): UseMessageQueueReturn;
+export declare function useMessageQueue({
+  isConfigInitialized,
+  streamingState,
+  submitQuery,
+  isMcpReady,
+}: UseMessageQueueOptions): UseMessageQueueReturn;

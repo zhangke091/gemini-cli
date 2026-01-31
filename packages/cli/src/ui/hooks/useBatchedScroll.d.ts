@@ -9,6 +9,6 @@
  * by keeping track of a 'pending' state that resets after render.
  */
 export declare function useBatchedScroll(currentScrollTop: number): {
-    getScrollTop: () => number;
-    setPendingScrollTop: (newScrollTop: number) => void;
+  getScrollTop: () => number;
+  setPendingScrollTop: (newScrollTop: number) => void;
 };

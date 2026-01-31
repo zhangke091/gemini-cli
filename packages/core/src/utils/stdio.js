@@ -11,13 +11,13 @@ const originalStderrWrite = process.stderr.write.bind(process.stderr);
  * Writes to the real stdout, bypassing any monkey patching on process.stdout.write.
  */
 export function writeToStdout(...args) {
-    return originalStdoutWrite(...args);
+  return originalStdoutWrite(...args);
 }
 /**
  * Writes to the real stderr, bypassing any monkey patching on process.stderr.write.
  */
 export function writeToStderr(...args) {
-    return originalStderrWrite(...args);
+  return originalStderrWrite(...args);
 }
 /**
  * Monkey patches process.stdout.write and process.stderr.write to redirect output to the provided logger.
@@ -25,30 +25,32 @@ export function writeToStderr(...args) {
  * Returns a cleanup function that restores the original write methods.
  */
 export function patchStdio() {
-    const previousStdoutWrite = process.stdout.write;
-    const previousStderrWrite = process.stderr.write;
-    process.stdout.write = (chunk, encodingOrCb, cb) => {
-        const encoding = typeof encodingOrCb === 'string' ? encodingOrCb : undefined;
-        coreEvents.emitOutput(false, chunk, encoding);
-        const callback = typeof encodingOrCb === 'function' ? encodingOrCb : cb;
-        if (callback) {
-            callback();
-        }
-        return true;
-    };
-    process.stderr.write = (chunk, encodingOrCb, cb) => {
-        const encoding = typeof encodingOrCb === 'string' ? encodingOrCb : undefined;
-        coreEvents.emitOutput(true, chunk, encoding);
-        const callback = typeof encodingOrCb === 'function' ? encodingOrCb : cb;
-        if (callback) {
-            callback();
-        }
-        return true;
-    };
-    return () => {
-        process.stdout.write = previousStdoutWrite;
-        process.stderr.write = previousStderrWrite;
-    };
+  const previousStdoutWrite = process.stdout.write;
+  const previousStderrWrite = process.stderr.write;
+  process.stdout.write = (chunk, encodingOrCb, cb) => {
+    const encoding =
+      typeof encodingOrCb === 'string' ? encodingOrCb : undefined;
+    coreEvents.emitOutput(false, chunk, encoding);
+    const callback = typeof encodingOrCb === 'function' ? encodingOrCb : cb;
+    if (callback) {
+      callback();
+    }
+    return true;
+  };
+  process.stderr.write = (chunk, encodingOrCb, cb) => {
+    const encoding =
+      typeof encodingOrCb === 'string' ? encodingOrCb : undefined;
+    coreEvents.emitOutput(true, chunk, encoding);
+    const callback = typeof encodingOrCb === 'function' ? encodingOrCb : cb;
+    if (callback) {
+      callback();
+    }
+    return true;
+  };
+  return () => {
+    process.stdout.write = previousStdoutWrite;
+    process.stderr.write = previousStderrWrite;
+  };
 }
 /**
  * Creates proxies for process.stdout and process.stderr that use the real write methods
@@ -56,30 +58,30 @@ export function patchStdio() {
  * This is used to write to the real output even when stdio is patched.
  */
 export function createWorkingStdio() {
-    const inkStdout = new Proxy(process.stdout, {
-        get(target, prop, receiver) {
-            if (prop === 'write') {
-                return writeToStdout;
-            }
-            const value = Reflect.get(target, prop, receiver);
-            if (typeof value === 'function') {
-                return value.bind(target);
-            }
-            return value;
-        },
-    });
-    const inkStderr = new Proxy(process.stderr, {
-        get(target, prop, receiver) {
-            if (prop === 'write') {
-                return writeToStderr;
-            }
-            const value = Reflect.get(target, prop, receiver);
-            if (typeof value === 'function') {
-                return value.bind(target);
-            }
-            return value;
-        },
-    });
-    return { stdout: inkStdout, stderr: inkStderr };
+  const inkStdout = new Proxy(process.stdout, {
+    get(target, prop, receiver) {
+      if (prop === 'write') {
+        return writeToStdout;
+      }
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof value === 'function') {
+        return value.bind(target);
+      }
+      return value;
+    },
+  });
+  const inkStderr = new Proxy(process.stderr, {
+    get(target, prop, receiver) {
+      if (prop === 'write') {
+        return writeToStderr;
+      }
+      const value = Reflect.get(target, prop, receiver);
+      if (typeof value === 'function') {
+        return value.bind(target);
+      }
+      return value;
+    },
+  });
+  return { stdout: inkStdout, stderr: inkStderr };
 }
 //# sourceMappingURL=stdio.js.map

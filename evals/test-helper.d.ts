@@ -8,10 +8,10 @@ export * from '@google/gemini-cli-test-utils';
 export type EvalPolicy = 'ALWAYS_PASSES' | 'USUALLY_PASSES';
 export declare function evalTest(policy: EvalPolicy, evalCase: EvalCase): void;
 export interface EvalCase {
-    name: string;
-    params?: Record<string, any>;
-    prompt: string;
-    files?: Record<string, string>;
-    approvalMode?: 'default' | 'auto_edit' | 'yolo' | 'plan';
-    assert: (rig: TestRig, result: string) => Promise<void>;
+  name: string;
+  params?: Record<string, any>;
+  prompt: string;
+  files?: Record<string, string>;
+  approvalMode?: 'default' | 'auto_edit' | 'yolo' | 'plan';
+  assert: (rig: TestRig, result: string) => Promise<void>;
 }

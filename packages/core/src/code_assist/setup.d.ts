@@ -7,19 +7,19 @@ import { UserTierId } from './types.js';
 import type { AuthClient } from 'google-auth-library';
 import type { ValidationHandler } from '../fallback/types.js';
 export declare class ProjectIdRequiredError extends Error {
-    constructor();
+  constructor();
 }
 /**
  * Error thrown when user cancels the validation process.
  * This is a non-recoverable error that should result in auth failure.
  */
 export declare class ValidationCancelledError extends Error {
-    constructor();
+  constructor();
 }
 export interface UserData {
-    projectId: string;
-    userTier: UserTierId;
-    userTierName?: string;
+  projectId: string;
+  userTier: UserTierId;
+  userTierName?: string;
 }
 /**
  * Sets up the user by loading their Code Assist configuration and onboarding if needed.
@@ -43,4 +43,7 @@ export interface UserData {
  * @throws {ValidationCancelledError} If user cancels validation
  * @throws {ChangeAuthRequestedError} If user requests to change auth method
  */
-export declare function setupUser(client: AuthClient, validationHandler?: ValidationHandler): Promise<UserData>;
+export declare function setupUser(
+  client: AuthClient,
+  validationHandler?: ValidationHandler,
+): Promise<UserData>;

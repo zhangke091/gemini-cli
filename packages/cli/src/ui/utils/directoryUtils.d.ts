@@ -12,13 +12,18 @@ export declare function expandHomeDir(p: string): string;
  * @param partialPath The partial path typed by the user.
  * @returns A promise resolving to an array of directory path suggestions.
  */
-export declare function getDirectorySuggestions(partialPath: string): Promise<string[]>;
+export declare function getDirectorySuggestions(
+  partialPath: string,
+): Promise<string[]>;
 export interface BatchAddResult {
-    added: string[];
-    errors: string[];
+  added: string[];
+  errors: string[];
 }
 /**
  * Helper to batch add directories to the workspace context.
  * Handles expansion and error formatting.
  */
-export declare function batchAddDirectories(workspaceContext: WorkspaceContext, paths: string[]): BatchAddResult;
+export declare function batchAddDirectories(
+  workspaceContext: WorkspaceContext,
+  paths: string[],
+): BatchAddResult;

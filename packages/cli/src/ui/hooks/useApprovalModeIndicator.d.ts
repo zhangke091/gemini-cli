@@ -6,9 +6,14 @@
 import { ApprovalMode, type Config } from '@google/gemini-cli-core';
 import type { HistoryItemWithoutId } from '../types.js';
 export interface UseApprovalModeIndicatorArgs {
-    config: Config;
-    addItem?: (item: HistoryItemWithoutId, timestamp: number) => void;
-    onApprovalModeChange?: (mode: ApprovalMode) => void;
-    isActive?: boolean;
+  config: Config;
+  addItem?: (item: HistoryItemWithoutId, timestamp: number) => void;
+  onApprovalModeChange?: (mode: ApprovalMode) => void;
+  isActive?: boolean;
 }
-export declare function useApprovalModeIndicator({ config, addItem, onApprovalModeChange, isActive, }: UseApprovalModeIndicatorArgs): ApprovalMode;
+export declare function useApprovalModeIndicator({
+  config,
+  addItem,
+  onApprovalModeChange,
+  isActive,
+}: UseApprovalModeIndicatorArgs): ApprovalMode;

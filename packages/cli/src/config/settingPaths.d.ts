@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export declare const SettingPaths: {
-    readonly General: {
-        readonly PreferredEditor: "general.preferredEditor";
-    };
+  readonly General: {
+    readonly PreferredEditor: 'general.preferredEditor';
+  };
 };

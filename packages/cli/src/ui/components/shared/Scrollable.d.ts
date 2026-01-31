@@ -5,14 +5,14 @@
  */
 import React from 'react';
 interface ScrollableProps {
-    children?: React.ReactNode;
-    width?: number;
-    height?: number | string;
-    maxWidth?: number;
-    maxHeight?: number;
-    hasFocus: boolean;
-    scrollToBottom?: boolean;
-    flexGrow?: number;
+  children?: React.ReactNode;
+  width?: number;
+  height?: number | string;
+  maxWidth?: number;
+  maxHeight?: number;
+  hasFocus: boolean;
+  scrollToBottom?: boolean;
+  flexGrow?: number;
 }
 export declare const Scrollable: React.FC<ScrollableProps>;
 export {};

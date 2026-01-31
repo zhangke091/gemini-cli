@@ -9,23 +9,23 @@
  * are not applicable.
  */
 export function createNonInteractiveUI() {
-    return {
-        addItem: (_item, _timestamp) => 0,
-        clear: () => { },
-        setDebugMessage: (_message) => { },
-        loadHistory: (_newHistory) => { },
-        pendingItem: null,
-        setPendingItem: (_item) => { },
-        toggleCorgiMode: () => { },
-        toggleDebugProfiler: () => { },
-        toggleVimEnabled: async () => false,
-        reloadCommands: () => { },
-        openAgentConfigDialog: () => { },
-        extensionsUpdateState: new Map(),
-        dispatchExtensionStateUpdate: (_action) => { },
-        addConfirmUpdateExtensionRequest: (_request) => { },
-        removeComponent: () => { },
-        toggleBackgroundShell: () => { },
-    };
+  return {
+    addItem: (_item, _timestamp) => 0,
+    clear: () => {},
+    setDebugMessage: (_message) => {},
+    loadHistory: (_newHistory) => {},
+    pendingItem: null,
+    setPendingItem: (_item) => {},
+    toggleCorgiMode: () => {},
+    toggleDebugProfiler: () => {},
+    toggleVimEnabled: async () => false,
+    reloadCommands: () => {},
+    openAgentConfigDialog: () => {},
+    extensionsUpdateState: new Map(),
+    dispatchExtensionStateUpdate: (_action) => {},
+    addConfirmUpdateExtensionRequest: (_request) => {},
+    removeComponent: () => {},
+    toggleBackgroundShell: () => {},
+  };
 }
 //# sourceMappingURL=nonInteractiveUi.js.map

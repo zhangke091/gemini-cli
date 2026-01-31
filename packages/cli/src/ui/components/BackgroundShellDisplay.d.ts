@@ -5,12 +5,19 @@
  */
 import { type BackgroundShell } from '../hooks/shellCommandProcessor.js';
 interface BackgroundShellDisplayProps {
-    shells: Map<number, BackgroundShell>;
-    activePid: number;
-    width: number;
-    height: number;
-    isFocused: boolean;
-    isListOpenProp: boolean;
+  shells: Map<number, BackgroundShell>;
+  activePid: number;
+  width: number;
+  height: number;
+  isFocused: boolean;
+  isListOpenProp: boolean;
 }
-export declare const BackgroundShellDisplay: ({ shells, activePid, width, height, isFocused, isListOpenProp, }: BackgroundShellDisplayProps) => import("react/jsx-runtime").JSX.Element;
+export declare const BackgroundShellDisplay: ({
+  shells,
+  activePid,
+  width,
+  height,
+  isFocused,
+  isListOpenProp,
+}: BackgroundShellDisplayProps) => import('react/jsx-runtime').JSX.Element;
 export {};

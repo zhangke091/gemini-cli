@@ -9,7 +9,7 @@ import path from 'node:path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 export async function getVersion() {
-    const pkgJson = await getPackageJson(__dirname);
-    return process.env['CLI_VERSION'] || pkgJson?.version || 'unknown';
+  const pkgJson = await getPackageJson(__dirname);
+  return process.env['CLI_VERSION'] || pkgJson?.version || 'unknown';
 }
 //# sourceMappingURL=version.js.map

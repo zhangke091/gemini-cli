@@ -19,4 +19,7 @@ export declare function enableLineWrapping(): void;
 export declare function disableLineWrapping(): void;
 export declare function enterAlternateScreen(): void;
 export declare function exitAlternateScreen(): void;
-export declare function shouldEnterAlternateScreen(useAlternateBuffer: boolean, isScreenReader: boolean): boolean;
+export declare function shouldEnterAlternateScreen(
+  useAlternateBuffer: boolean,
+  isScreenReader: boolean,
+): boolean;

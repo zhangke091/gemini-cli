@@ -11,4 +11,8 @@
  * @param trigger Any value that, when changed, resets the inactivity timer.
  * @param delayMs The delay in milliseconds before considering the state inactive.
  */
-export declare const useInactivityTimer: (isActive: boolean, trigger: unknown, delayMs?: number) => boolean;
+export declare const useInactivityTimer: (
+  isActive: boolean,
+  trigger: unknown,
+  delayMs?: number,
+) => boolean;

@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -10,39 +10,68 @@ import { Text, useIsScreenReaderEnabled } from 'ink';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { isITerm2 } from '../../utils/terminalUtils.js';
 vi.mock('ink', async () => {
-    const actual = await vi.importActual('ink');
-    return {
-        ...actual,
-        useIsScreenReaderEnabled: vi.fn(() => false),
-    };
+  const actual = await vi.importActual('ink');
+  return {
+    ...actual,
+    useIsScreenReaderEnabled: vi.fn(() => false),
+  };
 });
 describe('<HalfLinePaddedBox />', () => {
-    const mockUseIsScreenReaderEnabled = vi.mocked(useIsScreenReaderEnabled);
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-    it('renders standard background and blocks when not iTerm2', async () => {
-        vi.mocked(isITerm2).mockReturnValue(false);
-        const { lastFrame, unmount } = renderWithProviders(_jsx(HalfLinePaddedBox, { backgroundBaseColor: "blue", backgroundOpacity: 0.5, children: _jsx(Text, { children: "Content" }) }), { width: 10 });
-        expect(lastFrame()).toMatchSnapshot();
-        unmount();
-    });
-    it('renders iTerm2-specific blocks when iTerm2 is detected', async () => {
-        vi.mocked(isITerm2).mockReturnValue(true);
-        const { lastFrame, unmount } = renderWithProviders(_jsx(HalfLinePaddedBox, { backgroundBaseColor: "blue", backgroundOpacity: 0.5, children: _jsx(Text, { children: "Content" }) }), { width: 10 });
-        expect(lastFrame()).toMatchSnapshot();
-        unmount();
-    });
-    it('renders nothing when useBackgroundColor is false', async () => {
-        const { lastFrame, unmount } = renderWithProviders(_jsx(HalfLinePaddedBox, { backgroundBaseColor: "blue", backgroundOpacity: 0.5, useBackgroundColor: false, children: _jsx(Text, { children: "Content" }) }), { width: 10 });
-        expect(lastFrame()).toMatchSnapshot();
-        unmount();
-    });
-    it('renders nothing when screen reader is enabled', async () => {
-        mockUseIsScreenReaderEnabled.mockReturnValue(true);
-        const { lastFrame, unmount } = renderWithProviders(_jsx(HalfLinePaddedBox, { backgroundBaseColor: "blue", backgroundOpacity: 0.5, children: _jsx(Text, { children: "Content" }) }), { width: 10 });
-        expect(lastFrame()).toMatchSnapshot();
-        unmount();
-    });
+  const mockUseIsScreenReaderEnabled = vi.mocked(useIsScreenReaderEnabled);
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+  it('renders standard background and blocks when not iTerm2', async () => {
+    vi.mocked(isITerm2).mockReturnValue(false);
+    const { lastFrame, unmount } = renderWithProviders(
+      _jsx(HalfLinePaddedBox, {
+        backgroundBaseColor: 'blue',
+        backgroundOpacity: 0.5,
+        children: _jsx(Text, { children: 'Content' }),
+      }),
+      { width: 10 },
+    );
+    expect(lastFrame()).toMatchSnapshot();
+    unmount();
+  });
+  it('renders iTerm2-specific blocks when iTerm2 is detected', async () => {
+    vi.mocked(isITerm2).mockReturnValue(true);
+    const { lastFrame, unmount } = renderWithProviders(
+      _jsx(HalfLinePaddedBox, {
+        backgroundBaseColor: 'blue',
+        backgroundOpacity: 0.5,
+        children: _jsx(Text, { children: 'Content' }),
+      }),
+      { width: 10 },
+    );
+    expect(lastFrame()).toMatchSnapshot();
+    unmount();
+  });
+  it('renders nothing when useBackgroundColor is false', async () => {
+    const { lastFrame, unmount } = renderWithProviders(
+      _jsx(HalfLinePaddedBox, {
+        backgroundBaseColor: 'blue',
+        backgroundOpacity: 0.5,
+        useBackgroundColor: false,
+        children: _jsx(Text, { children: 'Content' }),
+      }),
+      { width: 10 },
+    );
+    expect(lastFrame()).toMatchSnapshot();
+    unmount();
+  });
+  it('renders nothing when screen reader is enabled', async () => {
+    mockUseIsScreenReaderEnabled.mockReturnValue(true);
+    const { lastFrame, unmount } = renderWithProviders(
+      _jsx(HalfLinePaddedBox, {
+        backgroundBaseColor: 'blue',
+        backgroundOpacity: 0.5,
+        children: _jsx(Text, { children: 'Content' }),
+      }),
+      { width: 10 },
+    );
+    expect(lastFrame()).toMatchSnapshot();
+    unmount();
+  });
 });
 //# sourceMappingURL=HalfLinePaddedBox.test.js.map

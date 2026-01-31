@@ -8,18 +8,23 @@ import { ValidationRequiredError } from './googleQuotaErrors.js';
 import type { RetryAvailabilityContext } from '../availability/modelPolicy.js';
 export type { RetryAvailabilityContext };
 export interface RetryOptions {
-    maxAttempts: number;
-    initialDelayMs: number;
-    maxDelayMs: number;
-    shouldRetryOnError: (error: Error, retryFetchErrors?: boolean) => boolean;
-    shouldRetryOnContent?: (content: GenerateContentResponse) => boolean;
-    onPersistent429?: (authType?: string, error?: unknown) => Promise<string | boolean | null>;
-    onValidationRequired?: (error: ValidationRequiredError) => Promise<'verify' | 'change_auth' | 'cancel'>;
-    authType?: string;
-    retryFetchErrors?: boolean;
-    signal?: AbortSignal;
-    getAvailabilityContext?: () => RetryAvailabilityContext | undefined;
-    onRetry?: (attempt: number, error: unknown, delayMs: number) => void;
+  maxAttempts: number;
+  initialDelayMs: number;
+  maxDelayMs: number;
+  shouldRetryOnError: (error: Error, retryFetchErrors?: boolean) => boolean;
+  shouldRetryOnContent?: (content: GenerateContentResponse) => boolean;
+  onPersistent429?: (
+    authType?: string,
+    error?: unknown,
+  ) => Promise<string | boolean | null>;
+  onValidationRequired?: (
+    error: ValidationRequiredError,
+  ) => Promise<'verify' | 'change_auth' | 'cancel'>;
+  authType?: string;
+  retryFetchErrors?: boolean;
+  signal?: AbortSignal;
+  getAvailabilityContext?: () => RetryAvailabilityContext | undefined;
+  onRetry?: (attempt: number, error: unknown, delayMs: number) => void;
 }
 /**
  * Default predicate function to determine if a retry should be attempted.
@@ -28,7 +33,10 @@ export interface RetryOptions {
  * @param retryFetchErrors Whether to retry on specific fetch errors.
  * @returns True if the error is a transient error, false otherwise.
  */
-export declare function isRetryableError(error: Error | unknown, retryFetchErrors?: boolean): boolean;
+export declare function isRetryableError(
+  error: Error | unknown,
+  retryFetchErrors?: boolean,
+): boolean;
 /**
  * Retries a function with exponential backoff and jitter.
  * @param fn The asynchronous function to retry.
@@ -36,4 +44,7 @@ export declare function isRetryableError(error: Error | unknown, retryFetchError
  * @returns A promise that resolves with the result of the function if successful.
  * @throws The last error encountered if all attempts fail.
  */
-export declare function retryWithBackoff<T>(fn: () => Promise<T>, options?: Partial<RetryOptions>): Promise<T>;
+export declare function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  options?: Partial<RetryOptions>,
+): Promise<T>;

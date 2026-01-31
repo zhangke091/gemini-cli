@@ -15,36 +15,38 @@ import { StreamingState } from '../types.js';
  * rather than potentially sending multiple paste events separated by line
  * breaks which could trigger unintended command execution.
  */
-export declare function isTerminalPasteTrusted(kittyProtocolSupported: boolean): boolean;
+export declare function isTerminalPasteTrusted(
+  kittyProtocolSupported: boolean,
+): boolean;
 export interface InputPromptProps {
-    buffer: TextBuffer;
-    onSubmit: (value: string) => void;
-    userMessages: readonly string[];
-    onClearScreen: () => void;
-    config: Config;
-    slashCommands: readonly SlashCommand[];
-    commandContext: CommandContext;
-    placeholder?: string;
-    focus?: boolean;
-    inputWidth: number;
-    suggestionsWidth: number;
-    shellModeActive: boolean;
-    setShellModeActive: (value: boolean) => void;
-    approvalMode: ApprovalMode;
-    onEscapePromptChange?: (showPrompt: boolean) => void;
-    onSuggestionsVisibilityChange?: (visible: boolean) => void;
-    vimHandleInput?: (key: Key) => boolean;
-    isEmbeddedShellFocused?: boolean;
-    setQueueErrorMessage: (message: string | null) => void;
-    streamingState: StreamingState;
-    popAllMessages?: () => string | undefined;
-    suggestionsPosition?: 'above' | 'below';
-    setBannerVisible: (visible: boolean) => void;
+  buffer: TextBuffer;
+  onSubmit: (value: string) => void;
+  userMessages: readonly string[];
+  onClearScreen: () => void;
+  config: Config;
+  slashCommands: readonly SlashCommand[];
+  commandContext: CommandContext;
+  placeholder?: string;
+  focus?: boolean;
+  inputWidth: number;
+  suggestionsWidth: number;
+  shellModeActive: boolean;
+  setShellModeActive: (value: boolean) => void;
+  approvalMode: ApprovalMode;
+  onEscapePromptChange?: (showPrompt: boolean) => void;
+  onSuggestionsVisibilityChange?: (visible: boolean) => void;
+  vimHandleInput?: (key: Key) => boolean;
+  isEmbeddedShellFocused?: boolean;
+  setQueueErrorMessage: (message: string | null) => void;
+  streamingState: StreamingState;
+  popAllMessages?: () => string | undefined;
+  suggestionsPosition?: 'above' | 'below';
+  setBannerVisible: (visible: boolean) => void;
 }
 export declare const calculatePromptWidths: (mainContentWidth: number) => {
-    readonly inputWidth: number;
-    readonly containerWidth: number;
-    readonly suggestionsWidth: number;
-    readonly frameOverhead: number;
+  readonly inputWidth: number;
+  readonly containerWidth: number;
+  readonly suggestionsWidth: number;
+  readonly frameOverhead: number;
 };
 export declare const InputPrompt: React.FC<InputPromptProps>;

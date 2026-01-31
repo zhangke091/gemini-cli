@@ -5,7 +5,7 @@
  */
 import type { ConsoleMessageItem } from '../types.js';
 export interface UseConsoleMessagesReturn {
-    consoleMessages: ConsoleMessageItem[];
-    clearConsoleMessages: () => void;
+  consoleMessages: ConsoleMessageItem[];
+  clearConsoleMessages: () => void;
 }
 export declare function useConsoleMessages(): UseConsoleMessagesReturn;

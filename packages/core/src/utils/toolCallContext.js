@@ -16,7 +16,7 @@ export const toolCallContext = new AsyncLocalStorage();
  * @returns The result of the function.
  */
 export function runWithToolCallContext(context, fn) {
-    return toolCallContext.run(context, fn);
+  return toolCallContext.run(context, fn);
 }
 /**
  * Retrieves the current tool call context.
@@ -24,6 +24,6 @@ export function runWithToolCallContext(context, fn) {
  * @returns The current ToolCallContext, or undefined if not in a context.
  */
 export function getToolCallContext() {
-    return toolCallContext.getStore();
+  return toolCallContext.getStore();
 }
 //# sourceMappingURL=toolCallContext.js.map

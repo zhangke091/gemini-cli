@@ -5,10 +5,13 @@
  */
 import type { Config } from '@google/gemini-cli-core';
 interface BannerData {
-    defaultText: string;
-    warningText: string;
+  defaultText: string;
+  warningText: string;
 }
-export declare function useBanner(bannerData: BannerData, config: Config): {
-    bannerText: string;
+export declare function useBanner(
+  bannerData: BannerData,
+  config: Config,
+): {
+  bannerText: string;
 };
 export {};

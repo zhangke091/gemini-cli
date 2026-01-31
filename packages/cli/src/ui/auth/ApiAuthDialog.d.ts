@@ -5,10 +5,15 @@
  */
 import type React from 'react';
 interface ApiAuthDialogProps {
-    onSubmit: (apiKey: string) => void;
-    onCancel: () => void;
-    error?: string | null;
-    defaultValue?: string;
+  onSubmit: (apiKey: string) => void;
+  onCancel: () => void;
+  error?: string | null;
+  defaultValue?: string;
 }
-export declare function ApiAuthDialog({ onSubmit, onCancel, error, defaultValue, }: ApiAuthDialogProps): React.JSX.Element;
+export declare function ApiAuthDialog({
+  onSubmit,
+  onCancel,
+  error,
+  defaultValue,
+}: ApiAuthDialogProps): React.JSX.Element;
 export {};

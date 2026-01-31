@@ -6,8 +6,8 @@
 import type { CommandModule } from 'yargs';
 import { SettingScope } from '../../config/settings.js';
 interface DisableArgs {
-    name: string;
-    scope: SettingScope;
+  name: string;
+  scope: SettingScope;
 }
 export declare function handleDisable(args: DisableArgs): Promise<void>;
 export declare const disableCommand: CommandModule;

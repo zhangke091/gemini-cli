@@ -14,15 +14,15 @@ import { useKeypressContext } from '../contexts/KeypressContext.js';
  * @param options.priority - Whether the hook should have priority over normal subscribers.
  */
 export function useKeypress(onKeypress, { isActive, priority }) {
-    const { subscribe, unsubscribe } = useKeypressContext();
-    useEffect(() => {
-        if (!isActive) {
-            return;
-        }
-        subscribe(onKeypress, priority);
-        return () => {
-            unsubscribe(onKeypress);
-        };
-    }, [isActive, onKeypress, subscribe, unsubscribe, priority]);
+  const { subscribe, unsubscribe } = useKeypressContext();
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+    subscribe(onKeypress, priority);
+    return () => {
+      unsubscribe(onKeypress);
+    };
+  }, [isActive, onKeypress, subscribe, unsubscribe, priority]);
 }
 //# sourceMappingURL=useKeypress.js.map

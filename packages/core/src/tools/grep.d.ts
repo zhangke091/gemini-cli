@@ -11,31 +11,39 @@ import type { Config } from '../config/config.js';
  * Parameters for the GrepTool
  */
 export interface GrepToolParams {
-    /**
-     * The regular expression pattern to search for in file contents
-     */
-    pattern: string;
-    /**
-     * The directory to search in (optional, defaults to current directory relative to root)
-     */
-    dir_path?: string;
-    /**
-     * File pattern to include in the search (e.g. "*.js", "*.{ts,tsx}")
-     */
-    include?: string;
+  /**
+   * The regular expression pattern to search for in file contents
+   */
+  pattern: string;
+  /**
+   * The directory to search in (optional, defaults to current directory relative to root)
+   */
+  dir_path?: string;
+  /**
+   * File pattern to include in the search (e.g. "*.js", "*.{ts,tsx}")
+   */
+  include?: string;
 }
 /**
  * Implementation of the Grep tool logic (moved from CLI)
  */
-export declare class GrepTool extends BaseDeclarativeTool<GrepToolParams, ToolResult> {
-    private readonly config;
-    static readonly Name = "search_file_content";
-    constructor(config: Config, messageBus: MessageBus);
-    /**
-     * Validates the parameters for the tool
-     * @param params Parameters to validate
-     * @returns An error message string if invalid, null otherwise
-     */
-    protected validateToolParamValues(params: GrepToolParams): string | null;
-    protected createInvocation(params: GrepToolParams, messageBus: MessageBus, _toolName?: string, _toolDisplayName?: string): ToolInvocation<GrepToolParams, ToolResult>;
+export declare class GrepTool extends BaseDeclarativeTool<
+  GrepToolParams,
+  ToolResult
+> {
+  private readonly config;
+  static readonly Name = 'search_file_content';
+  constructor(config: Config, messageBus: MessageBus);
+  /**
+   * Validates the parameters for the tool
+   * @param params Parameters to validate
+   * @returns An error message string if invalid, null otherwise
+   */
+  protected validateToolParamValues(params: GrepToolParams): string | null;
+  protected createInvocation(
+    params: GrepToolParams,
+    messageBus: MessageBus,
+    _toolName?: string,
+    _toolDisplayName?: string,
+  ): ToolInvocation<GrepToolParams, ToolResult>;
 }

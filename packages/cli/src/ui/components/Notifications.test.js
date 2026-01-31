@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -16,149 +16,158 @@ import { act } from 'react';
 vi.mock('../contexts/AppContext.js');
 vi.mock('../contexts/UIStateContext.js');
 vi.mock('ink', async () => {
-    const actual = await vi.importActual('ink');
-    return {
-        ...actual,
-        useIsScreenReaderEnabled: vi.fn(),
-    };
+  const actual = await vi.importActual('ink');
+  return {
+    ...actual,
+    useIsScreenReaderEnabled: vi.fn(),
+  };
 });
 vi.mock('node:fs/promises', async () => {
-    const actual = await vi.importActual('node:fs/promises');
-    return {
-        ...actual,
-        access: vi.fn(),
-        writeFile: vi.fn(),
-        mkdir: vi.fn().mockResolvedValue(undefined),
-        unlink: vi.fn().mockResolvedValue(undefined),
-    };
+  const actual = await vi.importActual('node:fs/promises');
+  return {
+    ...actual,
+    access: vi.fn(),
+    writeFile: vi.fn(),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    unlink: vi.fn().mockResolvedValue(undefined),
+  };
 });
 vi.mock('node:os', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        default: {
-            ...actual,
-            homedir: () => '/mock/home',
-        },
-        homedir: () => '/mock/home',
-    };
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    default: {
+      ...actual,
+      homedir: () => '/mock/home',
+    },
+    homedir: () => '/mock/home',
+  };
 });
 vi.mock('node:path', async () => {
-    const actual = await vi.importActual('node:path');
-    return {
-        ...actual,
-        default: actual.posix,
-    };
+  const actual = await vi.importActual('node:path');
+  return {
+    ...actual,
+    default: actual.posix,
+  };
 });
 vi.mock('@google/gemini-cli-core', async (importOriginal) => {
-    const actual = await importOriginal();
-    return {
-        ...actual,
-        GEMINI_DIR: '.gemini',
-        homedir: () => '/mock/home',
-        Storage: {
-            ...actual.Storage,
-            getGlobalTempDir: () => '/mock/temp',
-        },
-    };
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    GEMINI_DIR: '.gemini',
+    homedir: () => '/mock/home',
+    Storage: {
+      ...actual.Storage,
+      getGlobalTempDir: () => '/mock/temp',
+    },
+  };
 });
 vi.mock('../../config/settings.js', () => ({
-    DEFAULT_MODEL_CONFIGS: {},
-    LoadedSettings: class {
-        constructor() {
-            // this.merged = {};
-        }
-    },
+  DEFAULT_MODEL_CONFIGS: {},
+  LoadedSettings: class {
+    constructor() {
+      // this.merged = {};
+    }
+  },
 }));
 describe('Notifications', () => {
-    const mockUseAppContext = vi.mocked(useAppContext);
-    const mockUseUIState = vi.mocked(useUIState);
-    const mockUseIsScreenReaderEnabled = vi.mocked(useIsScreenReaderEnabled);
-    const mockFsAccess = vi.mocked(fs.access);
-    const mockFsUnlink = vi.mocked(fs.unlink);
-    beforeEach(() => {
-        vi.clearAllMocks();
-        persistentStateMock.reset();
-        mockUseAppContext.mockReturnValue({
-            startupWarnings: [],
-            version: '1.0.0',
-        });
-        mockUseUIState.mockReturnValue({
-            initError: null,
-            streamingState: 'idle',
-            updateInfo: null,
-        });
-        mockUseIsScreenReaderEnabled.mockReturnValue(false);
+  const mockUseAppContext = vi.mocked(useAppContext);
+  const mockUseUIState = vi.mocked(useUIState);
+  const mockUseIsScreenReaderEnabled = vi.mocked(useIsScreenReaderEnabled);
+  const mockFsAccess = vi.mocked(fs.access);
+  const mockFsUnlink = vi.mocked(fs.unlink);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    persistentStateMock.reset();
+    mockUseAppContext.mockReturnValue({
+      startupWarnings: [],
+      version: '1.0.0',
     });
-    it('renders nothing when no notifications', () => {
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toBe('');
+    mockUseUIState.mockReturnValue({
+      initError: null,
+      streamingState: 'idle',
+      updateInfo: null,
     });
-    it.each([[['Warning 1']], [['Warning 1', 'Warning 2']]])('renders startup warnings: %s', (warnings) => {
-        mockUseAppContext.mockReturnValue({
-            startupWarnings: warnings,
-            version: '1.0.0',
-        });
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        const output = lastFrame();
-        warnings.forEach((warning) => {
-            expect(output).toContain(warning);
-        });
+    mockUseIsScreenReaderEnabled.mockReturnValue(false);
+  });
+  it('renders nothing when no notifications', () => {
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toBe('');
+  });
+  it.each([[['Warning 1']], [['Warning 1', 'Warning 2']]])(
+    'renders startup warnings: %s',
+    (warnings) => {
+      mockUseAppContext.mockReturnValue({
+        startupWarnings: warnings,
+        version: '1.0.0',
+      });
+      const { lastFrame } = render(_jsx(Notifications, {}));
+      const output = lastFrame();
+      warnings.forEach((warning) => {
+        expect(output).toContain(warning);
+      });
+    },
+  );
+  it('renders init error', () => {
+    mockUseUIState.mockReturnValue({
+      initError: 'Something went wrong',
+      streamingState: 'idle',
+      updateInfo: null,
     });
-    it('renders init error', () => {
-        mockUseUIState.mockReturnValue({
-            initError: 'Something went wrong',
-            streamingState: 'idle',
-            updateInfo: null,
-        });
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toMatchSnapshot();
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toMatchSnapshot();
+  });
+  it('does not render init error when streaming', () => {
+    mockUseUIState.mockReturnValue({
+      initError: 'Something went wrong',
+      streamingState: 'responding',
+      updateInfo: null,
     });
-    it('does not render init error when streaming', () => {
-        mockUseUIState.mockReturnValue({
-            initError: 'Something went wrong',
-            streamingState: 'responding',
-            updateInfo: null,
-        });
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toBe('');
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toBe('');
+  });
+  it('renders update notification', () => {
+    mockUseUIState.mockReturnValue({
+      initError: null,
+      streamingState: 'idle',
+      updateInfo: { message: 'Update available' },
     });
-    it('renders update notification', () => {
-        mockUseUIState.mockReturnValue({
-            initError: null,
-            streamingState: 'idle',
-            updateInfo: { message: 'Update available' },
-        });
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toMatchSnapshot();
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toMatchSnapshot();
+  });
+  it('renders screen reader nudge when enabled and not seen (no legacy file)', async () => {
+    mockUseIsScreenReaderEnabled.mockReturnValue(true);
+    persistentStateMock.setData({ hasSeenScreenReaderNudge: false });
+    mockFsAccess.mockRejectedValue(new Error('No legacy file'));
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toContain('screen reader-friendly view');
+    expect(persistentStateMock.set).toHaveBeenCalledWith(
+      'hasSeenScreenReaderNudge',
+      true,
+    );
+    expect(lastFrame()).toMatchSnapshot();
+  });
+  it('migrates legacy screen reader nudge file', async () => {
+    mockUseIsScreenReaderEnabled.mockReturnValue(true);
+    persistentStateMock.setData({ hasSeenScreenReaderNudge: undefined });
+    mockFsAccess.mockResolvedValue(undefined);
+    render(_jsx(Notifications, {}));
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(persistentStateMock.set).toHaveBeenCalledWith(
+          'hasSeenScreenReaderNudge',
+          true,
+        );
+        expect(mockFsUnlink).toHaveBeenCalled();
+      });
     });
-    it('renders screen reader nudge when enabled and not seen (no legacy file)', async () => {
-        mockUseIsScreenReaderEnabled.mockReturnValue(true);
-        persistentStateMock.setData({ hasSeenScreenReaderNudge: false });
-        mockFsAccess.mockRejectedValue(new Error('No legacy file'));
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toContain('screen reader-friendly view');
-        expect(persistentStateMock.set).toHaveBeenCalledWith('hasSeenScreenReaderNudge', true);
-        expect(lastFrame()).toMatchSnapshot();
-    });
-    it('migrates legacy screen reader nudge file', async () => {
-        mockUseIsScreenReaderEnabled.mockReturnValue(true);
-        persistentStateMock.setData({ hasSeenScreenReaderNudge: undefined });
-        mockFsAccess.mockResolvedValue(undefined);
-        render(_jsx(Notifications, {}));
-        await act(async () => {
-            await vi.waitFor(() => {
-                expect(persistentStateMock.set).toHaveBeenCalledWith('hasSeenScreenReaderNudge', true);
-                expect(mockFsUnlink).toHaveBeenCalled();
-            });
-        });
-    });
-    it('does not render screen reader nudge when already seen in persistent state', async () => {
-        mockUseIsScreenReaderEnabled.mockReturnValue(true);
-        persistentStateMock.setData({ hasSeenScreenReaderNudge: true });
-        const { lastFrame } = render(_jsx(Notifications, {}));
-        expect(lastFrame()).toBe('');
-        expect(persistentStateMock.set).not.toHaveBeenCalled();
-    });
+  });
+  it('does not render screen reader nudge when already seen in persistent state', async () => {
+    mockUseIsScreenReaderEnabled.mockReturnValue(true);
+    persistentStateMock.setData({ hasSeenScreenReaderNudge: true });
+    const { lastFrame } = render(_jsx(Notifications, {}));
+    expect(lastFrame()).toBe('');
+    expect(persistentStateMock.set).not.toHaveBeenCalled();
+  });
 });
 //# sourceMappingURL=Notifications.test.js.map

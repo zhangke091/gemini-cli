@@ -5,9 +5,9 @@
  */
 export var CommandKind;
 (function (CommandKind) {
-    CommandKind["BUILT_IN"] = "built-in";
-    CommandKind["FILE"] = "file";
-    CommandKind["MCP_PROMPT"] = "mcp-prompt";
-    CommandKind["AGENT"] = "agent";
+  CommandKind['BUILT_IN'] = 'built-in';
+  CommandKind['FILE'] = 'file';
+  CommandKind['MCP_PROMPT'] = 'mcp-prompt';
+  CommandKind['AGENT'] = 'agent';
 })(CommandKind || (CommandKind = {}));
 //# sourceMappingURL=types.js.map

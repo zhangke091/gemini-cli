@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export interface HttpError extends Error {
-    status?: number;
+  status?: number;
 }
 /**
  * Extracts the HTTP status code from an error object.
@@ -13,6 +13,6 @@ export interface HttpError extends Error {
  */
 export declare function getErrorStatus(error: unknown): number | undefined;
 export declare class ModelNotFoundError extends Error {
-    code: number;
-    constructor(message: string, code?: number);
+  code: number;
+  constructor(message: string, code?: number);
 }

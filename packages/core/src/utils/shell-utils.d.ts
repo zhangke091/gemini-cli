@@ -13,28 +13,32 @@ export type ShellType = 'cmd' | 'powershell' | 'bash';
  * Defines the configuration required to execute a command string within a specific shell.
  */
 export interface ShellConfiguration {
-    /** The path or name of the shell executable (e.g., 'bash', 'powershell.exe'). */
-    executable: string;
-    /**
-     * The arguments required by the shell to execute a subsequent string argument.
-     */
-    argsPrefix: string[];
-    /** An identifier for the shell type. */
-    shell: ShellType;
+  /** The path or name of the shell executable (e.g., 'bash', 'powershell.exe'). */
+  executable: string;
+  /**
+   * The arguments required by the shell to execute a subsequent string argument.
+   */
+  argsPrefix: string[];
+  /** An identifier for the shell type. */
+  shell: ShellType;
 }
-export declare function resolveExecutable(exe: string): Promise<string | undefined>;
+export declare function resolveExecutable(
+  exe: string,
+): Promise<string | undefined>;
 export declare function initializeShellParsers(): Promise<void>;
 export interface ParsedCommandDetail {
-    name: string;
-    text: string;
-    startIndex: number;
+  name: string;
+  text: string;
+  startIndex: number;
 }
 interface CommandParseResult {
-    details: ParsedCommandDetail[];
-    hasError: boolean;
-    hasRedirection?: boolean;
+  details: ParsedCommandDetail[];
+  hasError: boolean;
+  hasRedirection?: boolean;
 }
-export declare function parseCommandDetails(command: string): CommandParseResult | null;
+export declare function parseCommandDetails(
+  command: string,
+): CommandParseResult | null;
 /**
  * Determines the appropriate shell configuration for the current platform.
  *
@@ -99,9 +103,13 @@ export declare function stripShellWrapper(command: string): string;
  * @param config The application configuration.
  * @returns An object with 'allowed' boolean and optional 'reason' string if not allowed.
  */
-export declare const spawnAsync: (command: string, args: string[], options?: SpawnOptionsWithoutStdio) => Promise<{
-    stdout: string;
-    stderr: string;
+export declare const spawnAsync: (
+  command: string,
+  args: string[],
+  options?: SpawnOptionsWithoutStdio,
+) => Promise<{
+  stdout: string;
+  stderr: string;
 }>;
 /**
  * Executes a command and yields lines of output as they appear.
@@ -111,8 +119,12 @@ export declare const spawnAsync: (command: string, args: string[], options?: Spa
  * @param args Arguments for the executable
  * @param options Spawn options (cwd, env, etc.)
  */
-export declare function execStreaming(command: string, args: string[], options?: SpawnOptionsWithoutStdio & {
+export declare function execStreaming(
+  command: string,
+  args: string[],
+  options?: SpawnOptionsWithoutStdio & {
     signal?: AbortSignal;
     allowedExitCodes?: number[];
-}): AsyncGenerator<string, void, void>;
+  },
+): AsyncGenerator<string, void, void>;
 export {};

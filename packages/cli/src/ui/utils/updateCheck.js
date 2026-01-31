@@ -16,71 +16,67 @@ export const FETCH_TIMEOUT_MS = 2000;
  * The rule is to always prefer nightly if the base versions are the same.
  */
 function getBestAvailableUpdate(nightly, stable) {
-    if (!nightly)
-        return stable || null;
-    if (!stable)
-        return nightly || null;
-    if (semver.coerce(stable)?.version === semver.coerce(nightly)?.version) {
-        return nightly;
-    }
-    return semver.gt(stable, nightly) ? stable : nightly;
+  if (!nightly) return stable || null;
+  if (!stable) return nightly || null;
+  if (semver.coerce(stable)?.version === semver.coerce(nightly)?.version) {
+    return nightly;
+  }
+  return semver.gt(stable, nightly) ? stable : nightly;
 }
 export async function checkForUpdates(settings) {
-    try {
-        if (!settings.merged.general.enableAutoUpdateNotification) {
-            return null;
-        }
-        // Skip update check when running from source (development mode)
-        if (process.env['DEV'] === 'true') {
-            return null;
-        }
-        const packageJson = await getPackageJson(__dirname);
-        if (!packageJson || !packageJson.name || !packageJson.version) {
-            return null;
-        }
-        const { name, version: currentVersion } = packageJson;
-        const isNightly = currentVersion.includes('nightly');
-        if (isNightly) {
-            const [nightlyUpdate, latestUpdate] = await Promise.all([
-                latestVersion(name, { version: 'nightly' }),
-                latestVersion(name),
-            ]);
-            const bestUpdate = getBestAvailableUpdate(nightlyUpdate, latestUpdate);
-            if (bestUpdate && semver.gt(bestUpdate, currentVersion)) {
-                const message = `A new version of Gemini CLI is available! ${currentVersion} → ${bestUpdate}`;
-                const type = semver.diff(bestUpdate, currentVersion) || undefined;
-                return {
-                    message,
-                    update: {
-                        latest: bestUpdate,
-                        current: currentVersion,
-                        name,
-                        type,
-                    },
-                };
-            }
-        }
-        else {
-            const latestUpdate = await latestVersion(name);
-            if (latestUpdate && semver.gt(latestUpdate, currentVersion)) {
-                const message = `Gemini CLI update available! ${currentVersion} → ${latestUpdate}`;
-                const type = semver.diff(latestUpdate, currentVersion) || undefined;
-                return {
-                    message,
-                    update: {
-                        latest: latestUpdate,
-                        current: currentVersion,
-                        name,
-                        type,
-                    },
-                };
-            }
-        }
-        return null;
+  try {
+    if (!settings.merged.general.enableAutoUpdateNotification) {
+      return null;
     }
-    catch (e) {
-        debugLogger.warn('Failed to check for updates: ' + e);
-        return null;
+    // Skip update check when running from source (development mode)
+    if (process.env['DEV'] === 'true') {
+      return null;
     }
+    const packageJson = await getPackageJson(__dirname);
+    if (!packageJson || !packageJson.name || !packageJson.version) {
+      return null;
+    }
+    const { name, version: currentVersion } = packageJson;
+    const isNightly = currentVersion.includes('nightly');
+    if (isNightly) {
+      const [nightlyUpdate, latestUpdate] = await Promise.all([
+        latestVersion(name, { version: 'nightly' }),
+        latestVersion(name),
+      ]);
+      const bestUpdate = getBestAvailableUpdate(nightlyUpdate, latestUpdate);
+      if (bestUpdate && semver.gt(bestUpdate, currentVersion)) {
+        const message = `A new version of Gemini CLI is available! ${currentVersion} → ${bestUpdate}`;
+        const type = semver.diff(bestUpdate, currentVersion) || undefined;
+        return {
+          message,
+          update: {
+            latest: bestUpdate,
+            current: currentVersion,
+            name,
+            type,
+          },
+        };
+      }
+    } else {
+      const latestUpdate = await latestVersion(name);
+      if (latestUpdate && semver.gt(latestUpdate, currentVersion)) {
+        const message = `Gemini CLI update available! ${currentVersion} → ${latestUpdate}`;
+        const type = semver.diff(latestUpdate, currentVersion) || undefined;
+        return {
+          message,
+          update: {
+            latest: latestUpdate,
+            current: currentVersion,
+            name,
+            type,
+          },
+        };
+      }
+    }
+    return null;
+  } catch (e) {
+    debugLogger.warn('Failed to check for updates: ' + e);
+    return null;
+  }
 }
 //# sourceMappingURL=updateCheck.js.map

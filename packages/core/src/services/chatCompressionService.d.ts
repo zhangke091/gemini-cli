@@ -31,11 +31,22 @@ export declare const COMPRESSION_TRUNCATE_LINES = 30;
  *
  * Exported for testing purposes.
  */
-export declare function findCompressSplitPoint(contents: Content[], fraction: number): number;
+export declare function findCompressSplitPoint(
+  contents: Content[],
+  fraction: number,
+): number;
 export declare function modelStringToModelConfigAlias(model: string): string;
 export declare class ChatCompressionService {
-    compress(chat: GeminiChat, promptId: string, force: boolean, model: string, config: Config, hasFailedCompressionAttempt: boolean, abortSignal?: AbortSignal): Promise<{
-        newHistory: Content[] | null;
-        info: ChatCompressionInfo;
-    }>;
+  compress(
+    chat: GeminiChat,
+    promptId: string,
+    force: boolean,
+    model: string,
+    config: Config,
+    hasFailedCompressionAttempt: boolean,
+    abortSignal?: AbortSignal,
+  ): Promise<{
+    newHistory: Content[] | null;
+    info: ChatCompressionInfo;
+  }>;
 }

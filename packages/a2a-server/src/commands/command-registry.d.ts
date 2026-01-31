@@ -5,11 +5,11 @@
  */
 import type { Command } from './types.js';
 export declare class CommandRegistry {
-    private readonly commands;
-    constructor();
-    initialize(): void;
-    register(command: Command): void;
-    get(commandName: string): Command | undefined;
-    getAllCommands(): Command[];
+  private readonly commands;
+  constructor();
+  initialize(): void;
+  register(command: Command): void;
+  get(commandName: string): Command | undefined;
+  getAllCommands(): Command[];
 }
 export declare const commandRegistry: CommandRegistry;

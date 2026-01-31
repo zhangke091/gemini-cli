@@ -5,9 +5,9 @@
  */
 import React from 'react';
 export interface ToolResultDisplayProps {
-    resultDisplay: string | object | undefined;
-    availableTerminalHeight?: number;
-    terminalWidth: number;
-    renderOutputAsMarkdown?: boolean;
+  resultDisplay: string | object | undefined;
+  availableTerminalHeight?: number;
+  terminalWidth: number;
+  renderOutputAsMarkdown?: boolean;
 }
 export declare const ToolResultDisplay: React.FC<ToolResultDisplayProps>;

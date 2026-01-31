@@ -9,12 +9,13 @@ import {} from 'zod';
  */
 export var AgentTerminateMode;
 (function (AgentTerminateMode) {
-    AgentTerminateMode["ERROR"] = "ERROR";
-    AgentTerminateMode["TIMEOUT"] = "TIMEOUT";
-    AgentTerminateMode["GOAL"] = "GOAL";
-    AgentTerminateMode["MAX_TURNS"] = "MAX_TURNS";
-    AgentTerminateMode["ABORTED"] = "ABORTED";
-    AgentTerminateMode["ERROR_NO_COMPLETE_TASK_CALL"] = "ERROR_NO_COMPLETE_TASK_CALL";
+  AgentTerminateMode['ERROR'] = 'ERROR';
+  AgentTerminateMode['TIMEOUT'] = 'TIMEOUT';
+  AgentTerminateMode['GOAL'] = 'GOAL';
+  AgentTerminateMode['MAX_TURNS'] = 'MAX_TURNS';
+  AgentTerminateMode['ABORTED'] = 'ABORTED';
+  AgentTerminateMode['ERROR_NO_COMPLETE_TASK_CALL'] =
+    'ERROR_NO_COMPLETE_TASK_CALL';
 })(AgentTerminateMode || (AgentTerminateMode = {}));
 /**
  * The default query string provided to an agent as input.

@@ -9,4 +9,7 @@ import type { HookActionResult } from './hookSettings.js';
  * caller to control how each scope and its path are rendered (e.g., bolding or
  * dimming).
  */
-export declare function renderHookActionFeedback(result: HookActionResult, formatScope: (label: string, path: string) => string): string;
+export declare function renderHookActionFeedback(
+  result: HookActionResult,
+  formatScope: (label: string, path: string) => string,
+): string;

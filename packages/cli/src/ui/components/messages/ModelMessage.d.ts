@@ -5,7 +5,7 @@
  */
 import type React from 'react';
 interface ModelMessageProps {
-    model: string;
+  model: string;
 }
 export declare const ModelMessage: React.FC<ModelMessageProps>;
 export {};

@@ -5,12 +5,12 @@
  */
 import type React from 'react';
 export interface DialogFooterProps {
-    /** The main shortcut (e.g., "Enter to submit") */
-    primaryAction: string;
-    /** Secondary navigation shortcuts (e.g., "Tab/Shift+Tab to switch questions") */
-    navigationActions?: string;
-    /** Exit shortcut (defaults to "Esc to cancel") */
-    cancelAction?: string;
+  /** The main shortcut (e.g., "Enter to submit") */
+  primaryAction: string;
+  /** Secondary navigation shortcuts (e.g., "Tab/Shift+Tab to switch questions") */
+  navigationActions?: string;
+  /** Exit shortcut (defaults to "Esc to cancel") */
+  cancelAction?: string;
 }
 /**
  * A shared footer component for dialogs to ensure consistent styling and formatting

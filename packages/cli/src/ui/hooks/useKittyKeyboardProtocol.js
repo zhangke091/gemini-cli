@@ -10,10 +10,10 @@ import { terminalCapabilityManager } from '../utils/terminalCapabilityManager.js
  * Detection is done once at app startup to avoid repeated queries.
  */
 export function useKittyKeyboardProtocol() {
-    const [status] = useState({
-        enabled: terminalCapabilityManager.isKittyProtocolEnabled(),
-        checking: false,
-    });
-    return status;
+  const [status] = useState({
+    enabled: terminalCapabilityManager.isKittyProtocolEnabled(),
+    checking: false,
+  });
+  return status;
 }
 //# sourceMappingURL=useKittyKeyboardProtocol.js.map

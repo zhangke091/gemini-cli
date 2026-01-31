@@ -12,4 +12,7 @@ import type { AgentActionResult } from './agentSettings.js';
  * This function ONLY returns the description of what happened. It is up to the
  * caller to append any interface-specific guidance.
  */
-export declare function renderAgentActionFeedback(result: AgentActionResult, formatScope: (label: string, path: string) => string): string;
+export declare function renderAgentActionFeedback(
+  result: AgentActionResult,
+  formatScope: (label: string, path: string) => string,
+): string;

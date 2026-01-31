@@ -8,14 +8,14 @@
  * Escapes $ characters to prevent template interpretation.
  */
 export function safeLiteralReplace(str, oldString, newString) {
-    if (oldString === '' || !str.includes(oldString)) {
-        return str;
-    }
-    if (!newString.includes('$')) {
-        return str.replaceAll(oldString, newString);
-    }
-    const escapedNewString = newString.replaceAll('$', '$$$$');
-    return str.replaceAll(oldString, escapedNewString);
+  if (oldString === '' || !str.includes(oldString)) {
+    return str;
+  }
+  if (!newString.includes('$')) {
+    return str.replaceAll(oldString, newString);
+  }
+  const escapedNewString = newString.replaceAll('$', '$$$$');
+  return str.replaceAll(oldString, escapedNewString);
 }
 /**
  * Checks if a Buffer is likely binary by testing for the presence of a NULL byte.
@@ -25,19 +25,19 @@ export function safeLiteralReplace(str, oldString, newString) {
  * @returns True if a NULL byte is found, false otherwise.
  */
 export function isBinary(data, sampleSize = 512) {
-    if (!data) {
-        return false;
-    }
-    const sample = data.length > sampleSize ? data.subarray(0, sampleSize) : data;
-    for (const byte of sample) {
-        // The presence of a NULL byte (0x00) is one of the most reliable
-        // indicators of a binary file. Text files should not contain them.
-        if (byte === 0) {
-            return true;
-        }
-    }
-    // If no NULL bytes were found in the sample, we assume it's text.
+  if (!data) {
     return false;
+  }
+  const sample = data.length > sampleSize ? data.subarray(0, sampleSize) : data;
+  for (const byte of sample) {
+    // The presence of a NULL byte (0x00) is one of the most reliable
+    // indicators of a binary file. Text files should not contain them.
+    if (byte === 0) {
+      return true;
+    }
+  }
+  // If no NULL bytes were found in the sample, we assume it's text.
+  return false;
 }
 /**
  * Detects the line ending style of a string.
@@ -45,9 +45,9 @@ export function isBinary(data, sampleSize = 512) {
  * @returns '\r\n' for Windows-style, '\n' for Unix-style.
  */
 export function detectLineEnding(content) {
-    // If a Carriage Return is found, assume Windows-style endings.
-    // This is a simple but effective heuristic.
-    return content.includes('\r\n') ? '\r\n' : '\n';
+  // If a Carriage Return is found, assume Windows-style endings.
+  // This is a simple but effective heuristic.
+  return content.includes('\r\n') ? '\r\n' : '\n';
 }
 /**
  * Truncates a string to a maximum length, appending a suffix if truncated.
@@ -57,9 +57,9 @@ export function detectLineEnding(content) {
  * @returns The truncated string.
  */
 export function truncateString(str, maxLength, suffix = '...[TRUNCATED]') {
-    if (str.length <= maxLength) {
-        return str;
-    }
-    return str.slice(0, maxLength) + suffix;
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return str.slice(0, maxLength) + suffix;
 }
 //# sourceMappingURL=textUtils.js.map

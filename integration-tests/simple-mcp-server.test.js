@@ -161,57 +161,62 @@ rpc.send({
 });
 `;
 describe.skip('simple-mcp-server', () => {
-    let rig;
-    beforeEach(() => {
-        rig = new TestRig();
+  let rig;
+  beforeEach(() => {
+    rig = new TestRig();
+  });
+  afterEach(async () => await rig.cleanup());
+  it('should add two numbers', async () => {
+    // Setup test directory with MCP server configuration
+    await rig.setup('simple-mcp-server', {
+      settings: {
+        mcpServers: {
+          'addition-server': {
+            command: 'node',
+            args: ['mcp-server.cjs'],
+          },
+        },
+        tools: { core: [] },
+      },
     });
-    afterEach(async () => await rig.cleanup());
-    it('should add two numbers', async () => {
-        // Setup test directory with MCP server configuration
-        await rig.setup('simple-mcp-server', {
-            settings: {
-                mcpServers: {
-                    'addition-server': {
-                        command: 'node',
-                        args: ['mcp-server.cjs'],
-                    },
-                },
-                tools: { core: [] },
-            },
-        });
-        // Create server script in the test directory
-        const testServerPath = join(rig.testDir, 'mcp-server.cjs');
-        writeFileSync(testServerPath, serverScript);
-        // Make the script executable (though running with 'node' should work anyway)
-        if (process.platform !== 'win32') {
-            const { chmodSync } = await import('node:fs');
-            chmodSync(testServerPath, 0o755);
+    // Create server script in the test directory
+    const testServerPath = join(rig.testDir, 'mcp-server.cjs');
+    writeFileSync(testServerPath, serverScript);
+    // Make the script executable (though running with 'node' should work anyway)
+    if (process.platform !== 'win32') {
+      const { chmodSync } = await import('node:fs');
+      chmodSync(testServerPath, 0o755);
+    }
+    // Poll for script for up to 5s
+    const { accessSync, constants } = await import('node:fs');
+    const isReady = await poll(
+      () => {
+        try {
+          accessSync(testServerPath, constants.F_OK);
+          return true;
+        } catch {
+          return false;
         }
-        // Poll for script for up to 5s
-        const { accessSync, constants } = await import('node:fs');
-        const isReady = await poll(() => {
-            try {
-                accessSync(testServerPath, constants.F_OK);
-                return true;
-            }
-            catch {
-                return false;
-            }
-        }, 5000, // Max wait 5 seconds
-        100);
-        if (!isReady) {
-            throw new Error('MCP server script was not ready in time.');
-        }
-        // Test directory is already set up in before hook
-        // Just run the command - MCP server config is in settings.json
-        const output = await rig.run({
-            args: 'Use the `add` tool to calculate 5+10 and output only the resulting number.',
-        });
-        const foundToolCall = await rig.waitForToolCall('add');
-        expect(foundToolCall, 'Expected to find an add tool call').toBeTruthy();
-        // Validate model output - will throw if no output, fail if missing expected content
-        validateModelOutput(output, '15', 'MCP server test');
-        expect(output.includes('15'), 'Expected output to contain the sum (15)').toBeTruthy();
+      },
+      5000, // Max wait 5 seconds
+      100,
+    );
+    if (!isReady) {
+      throw new Error('MCP server script was not ready in time.');
+    }
+    // Test directory is already set up in before hook
+    // Just run the command - MCP server config is in settings.json
+    const output = await rig.run({
+      args: 'Use the `add` tool to calculate 5+10 and output only the resulting number.',
     });
+    const foundToolCall = await rig.waitForToolCall('add');
+    expect(foundToolCall, 'Expected to find an add tool call').toBeTruthy();
+    // Validate model output - will throw if no output, fail if missing expected content
+    validateModelOutput(output, '15', 'MCP server test');
+    expect(
+      output.includes('15'),
+      'Expected output to contain the sum (15)',
+    ).toBeTruthy();
+  });
 });
 //# sourceMappingURL=simple-mcp-server.test.js.map

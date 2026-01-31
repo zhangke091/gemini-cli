@@ -8,7 +8,9 @@ import type { Message, Task, Part } from '@a2a-js/sdk';
  * Extracts a human-readable text representation from a Message object.
  * Handles Text, Data (JSON), and File parts.
  */
-export declare function extractMessageText(message: Message | undefined): string;
+export declare function extractMessageText(
+  message: Message | undefined,
+): string;
 /**
  * Extracts text from a single Part.
  */
@@ -24,6 +26,6 @@ export declare function extractTaskText(task: Task): string;
  * Follows the pattern from the A2A CLI sample to maintain conversational continuity.
  */
 export declare function extractIdsFromResponse(result: Message | Task): {
-    contextId?: string;
-    taskId?: string;
+  contextId?: string;
+  taskId?: string;
 };

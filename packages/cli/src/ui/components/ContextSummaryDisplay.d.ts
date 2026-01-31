@@ -6,16 +6,16 @@
 import type React from 'react';
 import { type IdeContext, type MCPServerConfig } from '@google/gemini-cli-core';
 interface ContextSummaryDisplayProps {
-    geminiMdFileCount: number;
-    contextFileNames: string[];
-    mcpServers?: Record<string, MCPServerConfig>;
-    blockedMcpServers?: Array<{
-        name: string;
-        extensionName: string;
-    }>;
-    ideContext?: IdeContext;
-    skillCount: number;
-    backgroundProcessCount?: number;
+  geminiMdFileCount: number;
+  contextFileNames: string[];
+  mcpServers?: Record<string, MCPServerConfig>;
+  blockedMcpServers?: Array<{
+    name: string;
+    extensionName: string;
+  }>;
+  ideContext?: IdeContext;
+  skillCount: number;
+  backgroundProcessCount?: number;
 }
 export declare const ContextSummaryDisplay: React.FC<ContextSummaryDisplayProps>;
 export {};

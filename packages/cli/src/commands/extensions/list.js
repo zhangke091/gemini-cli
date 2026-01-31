@@ -11,53 +11,53 @@ import { loadSettings } from '../../config/settings.js';
 import { promptForSetting } from '../../config/extensions/extensionSettings.js';
 import { exitCli } from '../utils.js';
 export async function handleList(options) {
-    try {
-        const workspaceDir = process.cwd();
-        const extensionManager = new ExtensionManager({
-            workspaceDir,
-            requestConsent: requestConsentNonInteractive,
-            requestSetting: promptForSetting,
-            settings: loadSettings(workspaceDir).merged,
-        });
-        const extensions = await extensionManager.loadExtensions();
-        if (extensions.length === 0) {
-            if (options?.outputFormat === 'json') {
-                debugLogger.log('[]');
-            }
-            else {
-                debugLogger.log('No extensions installed.');
-            }
-            return;
-        }
-        if (options?.outputFormat === 'json') {
-            debugLogger.log(JSON.stringify(extensions, null, 2));
-        }
-        else {
-            debugLogger.log(extensions
-                .map((extension, _) => extensionManager.toOutputString(extension))
-                .join('\n\n'));
-        }
+  try {
+    const workspaceDir = process.cwd();
+    const extensionManager = new ExtensionManager({
+      workspaceDir,
+      requestConsent: requestConsentNonInteractive,
+      requestSetting: promptForSetting,
+      settings: loadSettings(workspaceDir).merged,
+    });
+    const extensions = await extensionManager.loadExtensions();
+    if (extensions.length === 0) {
+      if (options?.outputFormat === 'json') {
+        debugLogger.log('[]');
+      } else {
+        debugLogger.log('No extensions installed.');
+      }
+      return;
     }
-    catch (error) {
-        debugLogger.error(getErrorMessage(error));
-        process.exit(1);
+    if (options?.outputFormat === 'json') {
+      debugLogger.log(JSON.stringify(extensions, null, 2));
+    } else {
+      debugLogger.log(
+        extensions
+          .map((extension, _) => extensionManager.toOutputString(extension))
+          .join('\n\n'),
+      );
     }
+  } catch (error) {
+    debugLogger.error(getErrorMessage(error));
+    process.exit(1);
+  }
 }
 export const listCommand = {
-    command: 'list',
-    describe: 'Lists installed extensions.',
-    builder: (yargs) => yargs.option('output-format', {
-        alias: 'o',
-        type: 'string',
-        describe: 'The format of the CLI output.',
-        choices: ['text', 'json'],
-        default: 'text',
+  command: 'list',
+  describe: 'Lists installed extensions.',
+  builder: (yargs) =>
+    yargs.option('output-format', {
+      alias: 'o',
+      type: 'string',
+      describe: 'The format of the CLI output.',
+      choices: ['text', 'json'],
+      default: 'text',
     }),
-    handler: async (argv) => {
-        await handleList({
-            outputFormat: argv['output-format'],
-        });
-        await exitCli();
-    },
+  handler: async (argv) => {
+    await handleList({
+      outputFormat: argv['output-format'],
+    });
+    await exitCli();
+  },
 };
 //# sourceMappingURL=list.js.map

@@ -8,8 +8,8 @@
  */
 export var SafetyCheckDecision;
 (function (SafetyCheckDecision) {
-    SafetyCheckDecision["ALLOW"] = "allow";
-    SafetyCheckDecision["DENY"] = "deny";
-    SafetyCheckDecision["ASK_USER"] = "ask_user";
+  SafetyCheckDecision['ALLOW'] = 'allow';
+  SafetyCheckDecision['DENY'] = 'deny';
+  SafetyCheckDecision['ASK_USER'] = 'ask_user';
 })(SafetyCheckDecision || (SafetyCheckDecision = {}));
 //# sourceMappingURL=protocol.js.map

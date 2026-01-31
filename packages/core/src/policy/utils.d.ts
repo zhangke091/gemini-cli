@@ -18,4 +18,8 @@ export declare function escapeRegex(text: string): string;
  * @param commandRegex An optional command regex string to allow.
  * @returns An array of string patterns (or undefined) for the PolicyEngine.
  */
-export declare function buildArgsPatterns(argsPattern?: string, commandPrefix?: string | string[], commandRegex?: string): Array<string | undefined>;
+export declare function buildArgsPatterns(
+  argsPattern?: string,
+  commandPrefix?: string | string[],
+  commandRegex?: string,
+): Array<string | undefined>;

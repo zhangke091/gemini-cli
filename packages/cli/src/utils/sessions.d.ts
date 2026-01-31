@@ -5,4 +5,7 @@
  */
 import { type Config } from '@google/gemini-cli-core';
 export declare function listSessions(config: Config): Promise<void>;
-export declare function deleteSession(config: Config, sessionIndex: string): Promise<void>;
+export declare function deleteSession(
+  config: Config,
+  sessionIndex: string,
+): Promise<void>;

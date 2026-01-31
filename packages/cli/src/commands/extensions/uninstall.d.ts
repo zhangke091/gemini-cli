@@ -5,7 +5,7 @@
  */
 import type { CommandModule } from 'yargs';
 interface UninstallArgs {
-    names: string[];
+  names: string[];
 }
 export declare function handleUninstall(args: UninstallArgs): Promise<void>;
 export declare const uninstallCommand: CommandModule;

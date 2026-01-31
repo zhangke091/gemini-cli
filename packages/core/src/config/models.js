@@ -9,11 +9,11 @@ export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-pro';
 export const DEFAULT_GEMINI_FLASH_MODEL = 'gemini-2.5-flash';
 export const DEFAULT_GEMINI_FLASH_LITE_MODEL = 'gemini-2.5-flash-lite';
 export const VALID_GEMINI_MODELS = new Set([
-    PREVIEW_GEMINI_MODEL,
-    PREVIEW_GEMINI_FLASH_MODEL,
-    DEFAULT_GEMINI_MODEL,
-    DEFAULT_GEMINI_FLASH_MODEL,
-    DEFAULT_GEMINI_FLASH_LITE_MODEL,
+  PREVIEW_GEMINI_MODEL,
+  PREVIEW_GEMINI_FLASH_MODEL,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GEMINI_FLASH_MODEL,
+  DEFAULT_GEMINI_FLASH_LITE_MODEL,
 ]);
 export const PREVIEW_GEMINI_MODEL_AUTO = 'auto-gemini-3';
 export const DEFAULT_GEMINI_MODEL_AUTO = 'auto-gemini-2.5';
@@ -34,31 +34,31 @@ export const DEFAULT_THINKING_MODE = 8192;
  * @returns The resolved concrete model name.
  */
 export function resolveModel(requestedModel, previewFeaturesEnabled = false) {
-    switch (requestedModel) {
-        case PREVIEW_GEMINI_MODEL_AUTO: {
-            return PREVIEW_GEMINI_MODEL;
-        }
-        case DEFAULT_GEMINI_MODEL_AUTO: {
-            return DEFAULT_GEMINI_MODEL;
-        }
-        case GEMINI_MODEL_ALIAS_AUTO:
-        case GEMINI_MODEL_ALIAS_PRO: {
-            return previewFeaturesEnabled
-                ? PREVIEW_GEMINI_MODEL
-                : DEFAULT_GEMINI_MODEL;
-        }
-        case GEMINI_MODEL_ALIAS_FLASH: {
-            return previewFeaturesEnabled
-                ? PREVIEW_GEMINI_FLASH_MODEL
-                : DEFAULT_GEMINI_FLASH_MODEL;
-        }
-        case GEMINI_MODEL_ALIAS_FLASH_LITE: {
-            return DEFAULT_GEMINI_FLASH_LITE_MODEL;
-        }
-        default: {
-            return requestedModel;
-        }
+  switch (requestedModel) {
+    case PREVIEW_GEMINI_MODEL_AUTO: {
+      return PREVIEW_GEMINI_MODEL;
     }
+    case DEFAULT_GEMINI_MODEL_AUTO: {
+      return DEFAULT_GEMINI_MODEL;
+    }
+    case GEMINI_MODEL_ALIAS_AUTO:
+    case GEMINI_MODEL_ALIAS_PRO: {
+      return previewFeaturesEnabled
+        ? PREVIEW_GEMINI_MODEL
+        : DEFAULT_GEMINI_MODEL;
+    }
+    case GEMINI_MODEL_ALIAS_FLASH: {
+      return previewFeaturesEnabled
+        ? PREVIEW_GEMINI_FLASH_MODEL
+        : DEFAULT_GEMINI_FLASH_MODEL;
+    }
+    case GEMINI_MODEL_ALIAS_FLASH_LITE: {
+      return DEFAULT_GEMINI_FLASH_LITE_MODEL;
+    }
+    default: {
+      return requestedModel;
+    }
+  }
 }
 /**
  * Resolves the appropriate model based on the classifier's decision.
@@ -68,37 +68,45 @@ export function resolveModel(requestedModel, previewFeaturesEnabled = false) {
  * @param previewFeaturesEnabled Whether preview features are enabled.
  * @returns The resolved concrete model name.
  */
-export function resolveClassifierModel(requestedModel, modelAlias, previewFeaturesEnabled = false) {
-    if (modelAlias === GEMINI_MODEL_ALIAS_FLASH) {
-        if (requestedModel === DEFAULT_GEMINI_MODEL_AUTO ||
-            requestedModel === DEFAULT_GEMINI_MODEL) {
-            return DEFAULT_GEMINI_FLASH_MODEL;
-        }
-        if (requestedModel === PREVIEW_GEMINI_MODEL_AUTO ||
-            requestedModel === PREVIEW_GEMINI_MODEL) {
-            return PREVIEW_GEMINI_FLASH_MODEL;
-        }
-        return resolveModel(GEMINI_MODEL_ALIAS_FLASH, previewFeaturesEnabled);
+export function resolveClassifierModel(
+  requestedModel,
+  modelAlias,
+  previewFeaturesEnabled = false,
+) {
+  if (modelAlias === GEMINI_MODEL_ALIAS_FLASH) {
+    if (
+      requestedModel === DEFAULT_GEMINI_MODEL_AUTO ||
+      requestedModel === DEFAULT_GEMINI_MODEL
+    ) {
+      return DEFAULT_GEMINI_FLASH_MODEL;
     }
-    return resolveModel(requestedModel, previewFeaturesEnabled);
+    if (
+      requestedModel === PREVIEW_GEMINI_MODEL_AUTO ||
+      requestedModel === PREVIEW_GEMINI_MODEL
+    ) {
+      return PREVIEW_GEMINI_FLASH_MODEL;
+    }
+    return resolveModel(GEMINI_MODEL_ALIAS_FLASH, previewFeaturesEnabled);
+  }
+  return resolveModel(requestedModel, previewFeaturesEnabled);
 }
 export function getDisplayString(model, previewFeaturesEnabled = false) {
-    switch (model) {
-        case PREVIEW_GEMINI_MODEL_AUTO:
-            return 'Auto (Gemini 3)';
-        case DEFAULT_GEMINI_MODEL_AUTO:
-            return 'Auto (Gemini 2.5)';
-        case GEMINI_MODEL_ALIAS_PRO:
-            return previewFeaturesEnabled
-                ? PREVIEW_GEMINI_MODEL
-                : DEFAULT_GEMINI_MODEL;
-        case GEMINI_MODEL_ALIAS_FLASH:
-            return previewFeaturesEnabled
-                ? PREVIEW_GEMINI_FLASH_MODEL
-                : DEFAULT_GEMINI_FLASH_MODEL;
-        default:
-            return model;
-    }
+  switch (model) {
+    case PREVIEW_GEMINI_MODEL_AUTO:
+      return 'Auto (Gemini 3)';
+    case DEFAULT_GEMINI_MODEL_AUTO:
+      return 'Auto (Gemini 2.5)';
+    case GEMINI_MODEL_ALIAS_PRO:
+      return previewFeaturesEnabled
+        ? PREVIEW_GEMINI_MODEL
+        : DEFAULT_GEMINI_MODEL;
+    case GEMINI_MODEL_ALIAS_FLASH:
+      return previewFeaturesEnabled
+        ? PREVIEW_GEMINI_FLASH_MODEL
+        : DEFAULT_GEMINI_FLASH_MODEL;
+    default:
+      return model;
+  }
 }
 /**
  * Checks if the model is a preview model.
@@ -107,9 +115,11 @@ export function getDisplayString(model, previewFeaturesEnabled = false) {
  * @returns True if the model is a preview model.
  */
 export function isPreviewModel(model) {
-    return (model === PREVIEW_GEMINI_MODEL ||
-        model === PREVIEW_GEMINI_FLASH_MODEL ||
-        model === PREVIEW_GEMINI_MODEL_AUTO);
+  return (
+    model === PREVIEW_GEMINI_MODEL ||
+    model === PREVIEW_GEMINI_FLASH_MODEL ||
+    model === PREVIEW_GEMINI_MODEL_AUTO
+  );
 }
 /**
  * Checks if the model is a Gemini 2.x model.
@@ -118,7 +128,7 @@ export function isPreviewModel(model) {
  * @returns True if the model is a Gemini-2.x model.
  */
 export function isGemini2Model(model) {
-    return /^gemini-2(\.|$)/.test(model);
+  return /^gemini-2(\.|$)/.test(model);
 }
 /**
  * Checks if the model is an auto model.
@@ -127,9 +137,11 @@ export function isGemini2Model(model) {
  * @returns True if the model is an auto model.
  */
 export function isAutoModel(model) {
-    return (model === GEMINI_MODEL_ALIAS_AUTO ||
-        model === PREVIEW_GEMINI_MODEL_AUTO ||
-        model === DEFAULT_GEMINI_MODEL_AUTO);
+  return (
+    model === GEMINI_MODEL_ALIAS_AUTO ||
+    model === PREVIEW_GEMINI_MODEL_AUTO ||
+    model === DEFAULT_GEMINI_MODEL_AUTO
+  );
 }
 /**
  * Checks if the model supports multimodal function responses (multimodal data nested within function response).
@@ -139,6 +151,6 @@ export function isAutoModel(model) {
  * @returns True if the model supports multimodal function responses.
  */
 export function supportsMultimodalFunctionResponse(model) {
-    return model.startsWith('gemini-3-');
+  return model.startsWith('gemini-3-');
 }
 //# sourceMappingURL=models.js.map

@@ -1,4 +1,4 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2026 Google LLC
@@ -18,25 +18,60 @@ import { theme } from '../../semantic-colors.js';
  * - Supports special tabs (like "Review") with different icons
  * - Customizable status icons
  */
-export function TabHeader({ tabs, currentIndex, completedIndices = new Set(), showArrows = true, showStatusIcons = true, renderStatusIcon, }) {
-    if (tabs.length <= 1)
-        return null;
-    const getStatusIcon = (tab, index) => {
-        const isCompleted = completedIndices.has(index);
-        // Try custom renderer first
-        if (renderStatusIcon) {
-            const customIcon = renderStatusIcon(tab, index, isCompleted);
-            if (customIcon !== undefined)
-                return customIcon;
-        }
-        // Use tab's own icon if provided
-        if (tab.statusIcon)
-            return tab.statusIcon;
-        // Default icons
-        if (tab.isSpecial)
-            return '≡';
-        return isCompleted ? '✓' : '□';
-    };
-    return (_jsxs(Box, { flexDirection: "row", marginBottom: 1, "aria-role": "tablist", children: [showArrows && _jsx(Text, { color: theme.text.secondary, children: '← ' }), tabs.map((tab, i) => (_jsxs(React.Fragment, { children: [i > 0 && _jsx(Text, { color: theme.text.secondary, children: ' │ ' }), showStatusIcons && (_jsxs(Text, { color: theme.text.secondary, children: [getStatusIcon(tab, i), " "] })), _jsx(Text, { color: i === currentIndex ? theme.text.accent : theme.text.secondary, bold: i === currentIndex, "aria-current": i === currentIndex ? 'step' : undefined, children: tab.header })] }, tab.key))), showArrows && _jsx(Text, { color: theme.text.secondary, children: ' →' })] }));
+export function TabHeader({
+  tabs,
+  currentIndex,
+  completedIndices = new Set(),
+  showArrows = true,
+  showStatusIcons = true,
+  renderStatusIcon,
+}) {
+  if (tabs.length <= 1) return null;
+  const getStatusIcon = (tab, index) => {
+    const isCompleted = completedIndices.has(index);
+    // Try custom renderer first
+    if (renderStatusIcon) {
+      const customIcon = renderStatusIcon(tab, index, isCompleted);
+      if (customIcon !== undefined) return customIcon;
+    }
+    // Use tab's own icon if provided
+    if (tab.statusIcon) return tab.statusIcon;
+    // Default icons
+    if (tab.isSpecial) return '≡';
+    return isCompleted ? '✓' : '□';
+  };
+  return _jsxs(Box, {
+    flexDirection: 'row',
+    marginBottom: 1,
+    'aria-role': 'tablist',
+    children: [
+      showArrows && _jsx(Text, { color: theme.text.secondary, children: '← ' }),
+      tabs.map((tab, i) =>
+        _jsxs(
+          React.Fragment,
+          {
+            children: [
+              i > 0 &&
+                _jsx(Text, { color: theme.text.secondary, children: ' │ ' }),
+              showStatusIcons &&
+                _jsxs(Text, {
+                  color: theme.text.secondary,
+                  children: [getStatusIcon(tab, i), ' '],
+                }),
+              _jsx(Text, {
+                color:
+                  i === currentIndex ? theme.text.accent : theme.text.secondary,
+                bold: i === currentIndex,
+                'aria-current': i === currentIndex ? 'step' : undefined,
+                children: tab.header,
+              }),
+            ],
+          },
+          tab.key,
+        ),
+      ),
+      showArrows && _jsx(Text, { color: theme.text.secondary, children: ' →' }),
+    ],
+  });
 }
 //# sourceMappingURL=TabHeader.js.map

@@ -5,8 +5,11 @@
  */
 import { type Config } from '@google/gemini-cli-core';
 interface LoginWithGoogleRestartDialogProps {
-    onDismiss: () => void;
-    config: Config;
+  onDismiss: () => void;
+  config: Config;
 }
-export declare const LoginWithGoogleRestartDialog: ({ onDismiss, config, }: LoginWithGoogleRestartDialogProps) => import("react/jsx-runtime").JSX.Element;
+export declare const LoginWithGoogleRestartDialog: ({
+  onDismiss,
+  config,
+}: LoginWithGoogleRestartDialogProps) => import('react/jsx-runtime').JSX.Element;
 export {};

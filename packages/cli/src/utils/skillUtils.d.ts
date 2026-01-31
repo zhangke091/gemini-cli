@@ -14,17 +14,34 @@ import { type SkillDefinition } from '@google/gemini-cli-core';
  * caller to append any interface-specific guidance (like "Use /skills reload"
  * or "Restart required").
  */
-export declare function renderSkillActionFeedback(result: SkillActionResult, formatScope: (label: string, path: string) => string): string;
+export declare function renderSkillActionFeedback(
+  result: SkillActionResult,
+  formatScope: (label: string, path: string) => string,
+): string;
 /**
  * Central logic for installing a skill from a remote URL or local path.
  */
-export declare function installSkill(source: string, scope: 'user' | 'workspace', subpath: string | undefined, onLog: (msg: string) => void, requestConsent?: (skills: SkillDefinition[], targetDir: string) => Promise<boolean>): Promise<Array<{
+export declare function installSkill(
+  source: string,
+  scope: 'user' | 'workspace',
+  subpath: string | undefined,
+  onLog: (msg: string) => void,
+  requestConsent?: (
+    skills: SkillDefinition[],
+    targetDir: string,
+  ) => Promise<boolean>,
+): Promise<
+  Array<{
     name: string;
     location: string;
-}>>;
+  }>
+>;
 /**
  * Central logic for uninstalling a skill by name.
  */
-export declare function uninstallSkill(name: string, scope: 'user' | 'workspace'): Promise<{
-    location: string;
+export declare function uninstallSkill(
+  name: string,
+  scope: 'user' | 'workspace',
+): Promise<{
+  location: string;
 } | null>;

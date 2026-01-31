@@ -3,7 +3,10 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-export declare function safeJsonStringify(obj: unknown, space?: string | number): string;
+export declare function safeJsonStringify(
+  obj: unknown,
+  space?: string | number,
+): string;
 /**
  * Safely stringifies an object to JSON, retaining only non-null, Boolean-valued members.
  *

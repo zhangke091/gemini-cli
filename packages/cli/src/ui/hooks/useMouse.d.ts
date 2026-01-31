@@ -12,6 +12,11 @@ export type { MouseEvent };
  * @param options - Options to control the hook's behavior.
  * @param options.isActive - Whether the hook should be actively listening for input.
  */
-export declare function useMouse(onMouseEvent: MouseHandler, { isActive }: {
+export declare function useMouse(
+  onMouseEvent: MouseHandler,
+  {
+    isActive,
+  }: {
     isActive: boolean;
-}): void;
+  },
+): void;

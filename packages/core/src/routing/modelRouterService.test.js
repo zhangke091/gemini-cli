@@ -25,82 +25,117 @@ vi.mock('./strategies/numericalClassifierStrategy.js');
 vi.mock('../telemetry/loggers.js');
 vi.mock('../telemetry/types.js');
 describe('ModelRouterService', () => {
-    let service;
-    let mockConfig;
-    let mockBaseLlmClient;
-    let mockContext;
-    let mockCompositeStrategy;
-    beforeEach(() => {
-        vi.clearAllMocks();
-        mockConfig = new Config({});
-        mockBaseLlmClient = {};
-        vi.spyOn(mockConfig, 'getBaseLlmClient').mockReturnValue(mockBaseLlmClient);
-        vi.spyOn(mockConfig, 'getNumericalRoutingEnabled').mockResolvedValue(false);
-        vi.spyOn(mockConfig, 'getClassifierThreshold').mockResolvedValue(undefined);
-        mockCompositeStrategy = new CompositeStrategy([
-            new FallbackStrategy(),
-            new OverrideStrategy(),
-            new ClassifierStrategy(),
-            new NumericalClassifierStrategy(),
-            new DefaultStrategy(),
-        ], 'agent-router');
-        vi.mocked(CompositeStrategy).mockImplementation(() => mockCompositeStrategy);
-        service = new ModelRouterService(mockConfig);
-        mockContext = {
-            history: [],
-            request: [{ text: 'test prompt' }],
-            signal: new AbortController().signal,
-        };
+  let service;
+  let mockConfig;
+  let mockBaseLlmClient;
+  let mockContext;
+  let mockCompositeStrategy;
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockConfig = new Config({});
+    mockBaseLlmClient = {};
+    vi.spyOn(mockConfig, 'getBaseLlmClient').mockReturnValue(mockBaseLlmClient);
+    vi.spyOn(mockConfig, 'getNumericalRoutingEnabled').mockResolvedValue(false);
+    vi.spyOn(mockConfig, 'getClassifierThreshold').mockResolvedValue(undefined);
+    mockCompositeStrategy = new CompositeStrategy(
+      [
+        new FallbackStrategy(),
+        new OverrideStrategy(),
+        new ClassifierStrategy(),
+        new NumericalClassifierStrategy(),
+        new DefaultStrategy(),
+      ],
+      'agent-router',
+    );
+    vi.mocked(CompositeStrategy).mockImplementation(
+      () => mockCompositeStrategy,
+    );
+    service = new ModelRouterService(mockConfig);
+    mockContext = {
+      history: [],
+      request: [{ text: 'test prompt' }],
+      signal: new AbortController().signal,
+    };
+  });
+  it('should initialize with a CompositeStrategy', () => {
+    expect(CompositeStrategy).toHaveBeenCalled();
+    expect(service['strategy']).toBeInstanceOf(CompositeStrategy);
+  });
+  it('should initialize the CompositeStrategy with the correct child strategies in order', () => {
+    // This test relies on the mock implementation detail of the constructor
+    const compositeStrategyArgs = vi.mocked(CompositeStrategy).mock.calls[0];
+    const childStrategies = compositeStrategyArgs[0];
+    expect(childStrategies.length).toBe(5);
+    expect(childStrategies[0]).toBeInstanceOf(FallbackStrategy);
+    expect(childStrategies[1]).toBeInstanceOf(OverrideStrategy);
+    expect(childStrategies[2]).toBeInstanceOf(ClassifierStrategy);
+    expect(childStrategies[3]).toBeInstanceOf(NumericalClassifierStrategy);
+    expect(childStrategies[4]).toBeInstanceOf(DefaultStrategy);
+    expect(compositeStrategyArgs[1]).toBe('agent-router');
+  });
+  describe('route()', () => {
+    const strategyDecision = {
+      model: 'strategy-chosen-model',
+      metadata: {
+        source: 'test-router/fallback',
+        latencyMs: 10,
+        reasoning: 'Strategy reasoning',
+      },
+    };
+    it('should delegate routing to the composite strategy', async () => {
+      const strategySpy = vi
+        .spyOn(mockCompositeStrategy, 'route')
+        .mockResolvedValue(strategyDecision);
+      const decision = await service.route(mockContext);
+      expect(strategySpy).toHaveBeenCalledWith(
+        mockContext,
+        mockConfig,
+        mockBaseLlmClient,
+      );
+      expect(decision).toEqual(strategyDecision);
     });
-    it('should initialize with a CompositeStrategy', () => {
-        expect(CompositeStrategy).toHaveBeenCalled();
-        expect(service['strategy']).toBeInstanceOf(CompositeStrategy);
+    it('should log a telemetry event on a successful decision', async () => {
+      vi.spyOn(mockCompositeStrategy, 'route').mockResolvedValue(
+        strategyDecision,
+      );
+      await service.route(mockContext);
+      expect(ModelRoutingEvent).toHaveBeenCalledWith(
+        'strategy-chosen-model',
+        'test-router/fallback',
+        10,
+        'Strategy reasoning',
+        false,
+        undefined,
+        false,
+        undefined,
+      );
+      expect(logModelRouting).toHaveBeenCalledWith(
+        mockConfig,
+        expect.any(ModelRoutingEvent),
+      );
     });
-    it('should initialize the CompositeStrategy with the correct child strategies in order', () => {
-        // This test relies on the mock implementation detail of the constructor
-        const compositeStrategyArgs = vi.mocked(CompositeStrategy).mock.calls[0];
-        const childStrategies = compositeStrategyArgs[0];
-        expect(childStrategies.length).toBe(5);
-        expect(childStrategies[0]).toBeInstanceOf(FallbackStrategy);
-        expect(childStrategies[1]).toBeInstanceOf(OverrideStrategy);
-        expect(childStrategies[2]).toBeInstanceOf(ClassifierStrategy);
-        expect(childStrategies[3]).toBeInstanceOf(NumericalClassifierStrategy);
-        expect(childStrategies[4]).toBeInstanceOf(DefaultStrategy);
-        expect(compositeStrategyArgs[1]).toBe('agent-router');
+    it('should log a telemetry event and return fallback on a failed decision', async () => {
+      const testError = new Error('Strategy failed');
+      vi.spyOn(mockCompositeStrategy, 'route').mockRejectedValue(testError);
+      vi.spyOn(mockConfig, 'getModel').mockReturnValue('default-model');
+      const decision = await service.route(mockContext);
+      expect(decision.model).toBe('default-model');
+      expect(decision.metadata.source).toBe('router-exception');
+      expect(ModelRoutingEvent).toHaveBeenCalledWith(
+        'default-model',
+        'router-exception',
+        expect.any(Number),
+        'An exception occurred during routing.',
+        true,
+        'Strategy failed',
+        false,
+        undefined,
+      );
+      expect(logModelRouting).toHaveBeenCalledWith(
+        mockConfig,
+        expect.any(ModelRoutingEvent),
+      );
     });
-    describe('route()', () => {
-        const strategyDecision = {
-            model: 'strategy-chosen-model',
-            metadata: {
-                source: 'test-router/fallback',
-                latencyMs: 10,
-                reasoning: 'Strategy reasoning',
-            },
-        };
-        it('should delegate routing to the composite strategy', async () => {
-            const strategySpy = vi
-                .spyOn(mockCompositeStrategy, 'route')
-                .mockResolvedValue(strategyDecision);
-            const decision = await service.route(mockContext);
-            expect(strategySpy).toHaveBeenCalledWith(mockContext, mockConfig, mockBaseLlmClient);
-            expect(decision).toEqual(strategyDecision);
-        });
-        it('should log a telemetry event on a successful decision', async () => {
-            vi.spyOn(mockCompositeStrategy, 'route').mockResolvedValue(strategyDecision);
-            await service.route(mockContext);
-            expect(ModelRoutingEvent).toHaveBeenCalledWith('strategy-chosen-model', 'test-router/fallback', 10, 'Strategy reasoning', false, undefined, false, undefined);
-            expect(logModelRouting).toHaveBeenCalledWith(mockConfig, expect.any(ModelRoutingEvent));
-        });
-        it('should log a telemetry event and return fallback on a failed decision', async () => {
-            const testError = new Error('Strategy failed');
-            vi.spyOn(mockCompositeStrategy, 'route').mockRejectedValue(testError);
-            vi.spyOn(mockConfig, 'getModel').mockReturnValue('default-model');
-            const decision = await service.route(mockContext);
-            expect(decision.model).toBe('default-model');
-            expect(decision.metadata.source).toBe('router-exception');
-            expect(ModelRoutingEvent).toHaveBeenCalledWith('default-model', 'router-exception', expect.any(Number), 'An exception occurred during routing.', true, 'Strategy failed', false, undefined);
-            expect(logModelRouting).toHaveBeenCalledWith(mockConfig, expect.any(ModelRoutingEvent));
-        });
-    });
+  });
 });
 //# sourceMappingURL=modelRouterService.test.js.map

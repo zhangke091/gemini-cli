@@ -6,7 +6,7 @@
 import { type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type ZodRawShape } from 'zod';
 export declare class TestMcpServer {
-    private server;
-    start(tools?: Record<string, ToolCallback<ZodRawShape>>): Promise<number>;
-    stop(): Promise<void>;
+  private server;
+  start(tools?: Record<string, ToolCallback<ZodRawShape>>): Promise<number>;
+  stop(): Promise<void>;
 }

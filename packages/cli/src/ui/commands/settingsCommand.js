@@ -5,13 +5,13 @@
  */
 import { CommandKind } from './types.js';
 export const settingsCommand = {
-    name: 'settings',
-    description: 'View and edit Gemini CLI settings',
-    kind: CommandKind.BUILT_IN,
-    autoExecute: true,
-    action: (_context, _args) => ({
-        type: 'dialog',
-        dialog: 'settings',
-    }),
+  name: 'settings',
+  description: 'View and edit Gemini CLI settings',
+  kind: CommandKind.BUILT_IN,
+  autoExecute: true,
+  action: (_context, _args) => ({
+    type: 'dialog',
+    dialog: 'settings',
+  }),
 };
 //# sourceMappingURL=settingsCommand.js.map

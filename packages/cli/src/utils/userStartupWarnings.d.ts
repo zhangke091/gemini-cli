@@ -4,4 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import type { Settings } from '../config/settingsSchema.js';
-export declare function getUserStartupWarnings(settings: Settings, workspaceRoot?: string): Promise<string[]>;
+export declare function getUserStartupWarnings(
+  settings: Settings,
+  workspaceRoot?: string,
+): Promise<string[]>;

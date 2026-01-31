@@ -11,7 +11,11 @@ export declare function getErrorMessage(error: unknown): string;
  * In streaming JSON mode, emits a result event with error status.
  * In text mode, outputs error message and re-throws.
  */
-export declare function handleError(error: unknown, config: Config, customErrorCode?: string | number): never;
+export declare function handleError(
+  error: unknown,
+  config: Config,
+  customErrorCode?: string | number,
+): never;
 /**
  * Handles tool execution errors specifically.
  *
@@ -22,7 +26,13 @@ export declare function handleError(error: unknown, config: Config, customErrorC
  * are logged to stderr and the error response is sent back to the model,
  * allowing it to self-correct.
  */
-export declare function handleToolError(toolName: string, toolError: Error, config: Config, errorType?: string, resultDisplay?: string): void;
+export declare function handleToolError(
+  toolName: string,
+  toolError: Error,
+  config: Config,
+  errorType?: string,
+  resultDisplay?: string,
+): void;
 /**
  * Handles cancellation/abort signals consistently.
  */

@@ -7,11 +7,11 @@
  * Creates a ResolvedModelConfig with sensible defaults, allowing overrides.
  */
 export const makeResolvedModelConfig = (model, overrides = {}) => ({
-    model,
-    generateContentConfig: {
-        temperature: 0,
-        topP: 1,
-        ...overrides,
-    },
+  model,
+  generateContentConfig: {
+    temperature: 0,
+    topP: 1,
+    ...overrides,
+  },
 });
 //# sourceMappingURL=modelConfigServiceTestUtils.js.map

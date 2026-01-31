@@ -11,21 +11,24 @@ export const INITIAL_HISTORY_LENGTH = 1;
  * @returns {Promise<string>} A promise that resolves to the directory context string.
  */
 export async function getDirectoryContextString(config) {
-    const workspaceContext = config.getWorkspaceContext();
-    const workspaceDirectories = workspaceContext.getDirectories();
-    const folderStructures = await Promise.all(workspaceDirectories.map((dir) => getFolderStructure(dir, {
+  const workspaceContext = config.getWorkspaceContext();
+  const workspaceDirectories = workspaceContext.getDirectories();
+  const folderStructures = await Promise.all(
+    workspaceDirectories.map((dir) =>
+      getFolderStructure(dir, {
         fileService: config.getFileService(),
-    })));
-    const folderStructure = folderStructures.join('\n');
-    let workingDirPreamble;
-    if (workspaceDirectories.length === 1) {
-        workingDirPreamble = `I'm currently working in the directory: ${workspaceDirectories[0]}`;
-    }
-    else {
-        const dirList = workspaceDirectories.map((dir) => `  - ${dir}`).join('\n');
-        workingDirPreamble = `I'm currently working in the following directories:\n${dirList}`;
-    }
-    return `${workingDirPreamble}
+      }),
+    ),
+  );
+  const folderStructure = folderStructures.join('\n');
+  let workingDirPreamble;
+  if (workspaceDirectories.length === 1) {
+    workingDirPreamble = `I'm currently working in the directory: ${workspaceDirectories[0]}`;
+  } else {
+    const dirList = workspaceDirectories.map((dir) => `  - ${dir}`).join('\n');
+    workingDirPreamble = `I'm currently working in the following directories:\n${dirList}`;
+  }
+  return `${workingDirPreamble}
 Here is the folder structure of the current working directories:
 
 ${folderStructure}`;
@@ -38,17 +41,17 @@ ${folderStructure}`;
  * @returns A promise that resolves to an array of `Part` objects containing environment information.
  */
 export async function getEnvironmentContext(config) {
-    const today = new Date().toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-    const platform = process.platform;
-    const directoryContext = await getDirectoryContextString(config);
-    const tempDir = config.storage.getProjectTempDir();
-    const environmentMemory = config.getEnvironmentMemory();
-    const context = `
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const platform = process.platform;
+  const directoryContext = await getDirectoryContextString(config);
+  const tempDir = config.storage.getProjectTempDir();
+  const environmentMemory = config.getEnvironmentMemory();
+  const context = `
 This is the Gemini CLI. We are setting up the context for our chat.
 Today's date is ${today} (formatted according to the user's locale).
 My operating system is: ${platform}
@@ -57,25 +60,25 @@ ${directoryContext}
 
 ${environmentMemory}
         `.trim();
-    const initialParts = [{ text: context }];
-    return initialParts;
+  const initialParts = [{ text: context }];
+  return initialParts;
 }
 export async function getInitialChatHistory(config, extraHistory) {
-    const envParts = await getEnvironmentContext(config);
-    const envContextString = envParts.map((part) => part.text || '').join('\n\n');
-    const allSetupText = `
+  const envParts = await getEnvironmentContext(config);
+  const envContextString = envParts.map((part) => part.text || '').join('\n\n');
+  const allSetupText = `
 ${envContextString}
 
 Reminder: Do not return an empty response when a tool call is required.
 
 My setup is complete. I will provide my first command in the next turn.
     `.trim();
-    return [
-        {
-            role: 'user',
-            parts: [{ text: allSetupText }],
-        },
-        ...(extraHistory ?? []),
-    ];
+  return [
+    {
+      role: 'user',
+      parts: [{ text: allSetupText }],
+    },
+    ...(extraHistory ?? []),
+  ];
 }
 //# sourceMappingURL=environmentContext.js.map

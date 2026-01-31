@@ -6,12 +6,14 @@
 import type { CodeAssistServer } from '../server.js';
 import type { Flag } from './types.js';
 export interface Experiments {
-    flags: Record<string, Flag>;
-    experimentIds: number[];
+  flags: Record<string, Flag>;
+  experimentIds: number[];
 }
 /**
  * Gets the experiments from the server.
  *
  * The experiments are cached so that they are only fetched once.
  */
-export declare function getExperiments(server?: CodeAssistServer): Promise<Experiments>;
+export declare function getExperiments(
+  server?: CodeAssistServer,
+): Promise<Experiments>;

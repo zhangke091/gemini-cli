@@ -5,17 +5,20 @@
  */
 import { resolveModel } from '../../config/models.js';
 export class DefaultStrategy {
-    name = 'default';
-    async route(_context, config, _baseLlmClient) {
-        const defaultModel = resolveModel(config.getModel(), config.getPreviewFeatures());
-        return {
-            model: defaultModel,
-            metadata: {
-                source: this.name,
-                latencyMs: 0,
-                reasoning: `Routing to default model: ${defaultModel}`,
-            },
-        };
-    }
+  name = 'default';
+  async route(_context, config, _baseLlmClient) {
+    const defaultModel = resolveModel(
+      config.getModel(),
+      config.getPreviewFeatures(),
+    );
+    return {
+      model: defaultModel,
+      metadata: {
+        source: this.name,
+        latencyMs: 0,
+        reasoning: `Routing to default model: ${defaultModel}`,
+      },
+    };
+  }
 }
 //# sourceMappingURL=defaultStrategy.js.map

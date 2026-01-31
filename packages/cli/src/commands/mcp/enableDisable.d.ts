@@ -5,8 +5,8 @@
  */
 import type { CommandModule } from 'yargs';
 interface Args {
-    name: string;
-    session?: boolean;
+  name: string;
+  session?: boolean;
 }
 export declare const enableCommand: CommandModule<object, Args>;
 export declare const disableCommand: CommandModule<object, Args>;

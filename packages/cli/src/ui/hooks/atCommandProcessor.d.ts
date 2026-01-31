@@ -7,16 +7,16 @@ import type { PartListUnion } from '@google/genai';
 import type { Config } from '@google/gemini-cli-core';
 import type { UseHistoryManagerReturn } from './useHistoryManager.js';
 interface HandleAtCommandParams {
-    query: string;
-    config: Config;
-    addItem: UseHistoryManagerReturn['addItem'];
-    onDebugMessage: (message: string) => void;
-    messageId: number;
-    signal: AbortSignal;
+  query: string;
+  config: Config;
+  addItem: UseHistoryManagerReturn['addItem'];
+  onDebugMessage: (message: string) => void;
+  messageId: number;
+  signal: AbortSignal;
 }
 interface HandleAtCommandResult {
-    processedQuery: PartListUnion | null;
-    error?: string;
+  processedQuery: PartListUnion | null;
+  error?: string;
 }
 /**
  * Processes user input containing one or more '@<path>' commands.
@@ -28,5 +28,12 @@ interface HandleAtCommandResult {
  * @returns An object indicating whether the main hook should proceed with an
  *          LLM call and the processed query parts (including file/resource content).
  */
-export declare function handleAtCommand({ query, config, addItem, onDebugMessage, messageId: userMessageTimestamp, signal, }: HandleAtCommandParams): Promise<HandleAtCommandResult>;
+export declare function handleAtCommand({
+  query,
+  config,
+  addItem,
+  onDebugMessage,
+  messageId: userMessageTimestamp,
+  signal,
+}: HandleAtCommandParams): Promise<HandleAtCommandResult>;
 export {};

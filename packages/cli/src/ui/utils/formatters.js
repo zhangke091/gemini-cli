@@ -3,16 +3,19 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { REFERENCE_CONTENT_START, REFERENCE_CONTENT_END, } from '@google/gemini-cli-core';
+import {
+  REFERENCE_CONTENT_START,
+  REFERENCE_CONTENT_END,
+} from '@google/gemini-cli-core';
 export const formatBytes = (bytes) => {
-    const gb = bytes / (1024 * 1024 * 1024);
-    if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1)} KB`;
-    }
-    if (bytes < 1024 * 1024 * 1024) {
-        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-    }
-    return `${gb.toFixed(2)} GB`;
+  const gb = bytes / (1024 * 1024 * 1024);
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+  if (bytes < 1024 * 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  return `${gb.toFixed(2)} GB`;
 };
 /**
  * Formats a duration in milliseconds into a concise, human-readable string (e.g., "1h 5s").
@@ -21,50 +24,48 @@ export const formatBytes = (bytes) => {
  * @returns A formatted string representing the duration.
  */
 export const formatDuration = (milliseconds) => {
-    if (milliseconds <= 0) {
-        return '0s';
-    }
-    if (milliseconds < 1000) {
-        return `${Math.round(milliseconds)}ms`;
-    }
-    const totalSeconds = milliseconds / 1000;
-    if (totalSeconds < 60) {
-        return `${totalSeconds.toFixed(1)}s`;
-    }
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = Math.floor(totalSeconds % 60);
-    const parts = [];
-    if (hours > 0) {
-        parts.push(`${hours}h`);
-    }
-    if (minutes > 0) {
-        parts.push(`${minutes}m`);
-    }
-    if (seconds > 0) {
-        parts.push(`${seconds}s`);
-    }
-    // If all parts are zero (e.g., exactly 1 hour), return the largest unit.
-    if (parts.length === 0) {
-        if (hours > 0)
-            return `${hours}h`;
-        if (minutes > 0)
-            return `${minutes}m`;
-        return `${seconds}s`;
-    }
-    return parts.join(' ');
+  if (milliseconds <= 0) {
+    return '0s';
+  }
+  if (milliseconds < 1000) {
+    return `${Math.round(milliseconds)}ms`;
+  }
+  const totalSeconds = milliseconds / 1000;
+  if (totalSeconds < 60) {
+    return `${totalSeconds.toFixed(1)}s`;
+  }
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  const parts = [];
+  if (hours > 0) {
+    parts.push(`${hours}h`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes}m`);
+  }
+  if (seconds > 0) {
+    parts.push(`${seconds}s`);
+  }
+  // If all parts are zero (e.g., exactly 1 hour), return the largest unit.
+  if (parts.length === 0) {
+    if (hours > 0) return `${hours}h`;
+    if (minutes > 0) return `${minutes}m`;
+    return `${seconds}s`;
+  }
+  return parts.join(' ');
 };
 export const formatTimeAgo = (date) => {
-    const past = new Date(date);
-    if (isNaN(past.getTime())) {
-        return 'invalid date';
-    }
-    const now = new Date();
-    const diffMs = now.getTime() - past.getTime();
-    if (diffMs < 60000) {
-        return 'just now';
-    }
-    return `${formatDuration(diffMs)} ago`;
+  const past = new Date(date);
+  if (isNaN(past.getTime())) {
+    return 'invalid date';
+  }
+  const now = new Date();
+  const diffMs = now.getTime() - past.getTime();
+  if (diffMs < 60000) {
+    return 'just now';
+  }
+  return `${formatDuration(diffMs)} ago`;
 };
 /**
  * Removes content bounded by reference content markers from the given text.
@@ -74,8 +75,11 @@ export const formatTimeAgo = (date) => {
  * @returns The text with reference blocks removed and trimmed.
  */
 export function stripReferenceContent(text) {
-    // Match optional newline, the start marker, content (non-greedy), and the end marker
-    const pattern = new RegExp(`\\n?${REFERENCE_CONTENT_START}[\\s\\S]*?${REFERENCE_CONTENT_END}`, 'g');
-    return text.replace(pattern, '').trim();
+  // Match optional newline, the start marker, content (non-greedy), and the end marker
+  const pattern = new RegExp(
+    `\\n?${REFERENCE_CONTENT_START}[\\s\\S]*?${REFERENCE_CONTENT_END}`,
+    'g',
+  );
+  return text.replace(pattern, '').trim();
 }
 //# sourceMappingURL=formatters.js.map

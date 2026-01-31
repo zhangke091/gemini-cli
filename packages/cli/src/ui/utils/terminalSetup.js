@@ -36,221 +36,233 @@ const execAsync = promisify(exec);
  * VS Code style JSON files that may contain comments.
  */
 function stripJsonComments(content) {
-    // Remove single-line comments (// ...)
-    return content.replace(/^\s*\/\/.*$/gm, '');
+  // Remove single-line comments (// ...)
+  return content.replace(/^\s*\/\/.*$/gm, '');
 }
 export function getTerminalProgram() {
-    const termProgram = process.env['TERM_PROGRAM'];
-    // Check VS Code and its forks - check forks first to avoid false positives
-    // Check for Cursor-specific indicators
-    if (process.env['CURSOR_TRACE_ID'] ||
-        process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('cursor')) {
-        return 'cursor';
-    }
-    // Check for Windsurf-specific indicators
-    if (process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('windsurf')) {
-        return 'windsurf';
-    }
-    // Check for Antigravity-specific indicators
-    if (process.env['VSCODE_GIT_ASKPASS_MAIN']
-        ?.toLowerCase()
-        .includes('antigravity')) {
-        return 'antigravity';
-    }
-    // Check VS Code last since forks may also set VSCODE env vars
-    if (termProgram === 'vscode' || process.env['VSCODE_GIT_IPC_HANDLE']) {
-        return 'vscode';
-    }
-    return null;
+  const termProgram = process.env['TERM_PROGRAM'];
+  // Check VS Code and its forks - check forks first to avoid false positives
+  // Check for Cursor-specific indicators
+  if (
+    process.env['CURSOR_TRACE_ID'] ||
+    process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('cursor')
+  ) {
+    return 'cursor';
+  }
+  // Check for Windsurf-specific indicators
+  if (
+    process.env['VSCODE_GIT_ASKPASS_MAIN']?.toLowerCase().includes('windsurf')
+  ) {
+    return 'windsurf';
+  }
+  // Check for Antigravity-specific indicators
+  if (
+    process.env['VSCODE_GIT_ASKPASS_MAIN']
+      ?.toLowerCase()
+      .includes('antigravity')
+  ) {
+    return 'antigravity';
+  }
+  // Check VS Code last since forks may also set VSCODE env vars
+  if (termProgram === 'vscode' || process.env['VSCODE_GIT_IPC_HANDLE']) {
+    return 'vscode';
+  }
+  return null;
 }
 // Terminal detection
 async function detectTerminal() {
-    const envTerminal = getTerminalProgram();
-    if (envTerminal) {
-        return envTerminal;
+  const envTerminal = getTerminalProgram();
+  if (envTerminal) {
+    return envTerminal;
+  }
+  // Check parent process name
+  if (os.platform() !== 'win32') {
+    try {
+      const { stdout } = await execAsync('ps -o comm= -p $PPID');
+      const parentName = stdout.trim();
+      // Check forks before VS Code to avoid false positives
+      if (parentName.includes('windsurf') || parentName.includes('Windsurf'))
+        return 'windsurf';
+      if (
+        parentName.includes('antigravity') ||
+        parentName.includes('Antigravity')
+      )
+        return 'antigravity';
+      if (parentName.includes('cursor') || parentName.includes('Cursor'))
+        return 'cursor';
+      if (parentName.includes('code') || parentName.includes('Code'))
+        return 'vscode';
+    } catch (error) {
+      // Continue detection even if process check fails
+      debugLogger.debug('Parent process detection failed:', error);
     }
-    // Check parent process name
-    if (os.platform() !== 'win32') {
-        try {
-            const { stdout } = await execAsync('ps -o comm= -p $PPID');
-            const parentName = stdout.trim();
-            // Check forks before VS Code to avoid false positives
-            if (parentName.includes('windsurf') || parentName.includes('Windsurf'))
-                return 'windsurf';
-            if (parentName.includes('antigravity') ||
-                parentName.includes('Antigravity'))
-                return 'antigravity';
-            if (parentName.includes('cursor') || parentName.includes('Cursor'))
-                return 'cursor';
-            if (parentName.includes('code') || parentName.includes('Code'))
-                return 'vscode';
-        }
-        catch (error) {
-            // Continue detection even if process check fails
-            debugLogger.debug('Parent process detection failed:', error);
-        }
-    }
-    return null;
+  }
+  return null;
 }
 // Backup file helper
 async function backupFile(filePath) {
-    try {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const backupPath = `${filePath}.backup.${timestamp}`;
-        await fs.copyFile(filePath, backupPath);
-    }
-    catch (error) {
-        // Log backup errors but continue with operation
-        debugLogger.warn(`Failed to create backup of ${filePath}:`, error);
-    }
+  try {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupPath = `${filePath}.backup.${timestamp}`;
+    await fs.copyFile(filePath, backupPath);
+  } catch (error) {
+    // Log backup errors but continue with operation
+    debugLogger.warn(`Failed to create backup of ${filePath}:`, error);
+  }
 }
 // Helper function to get VS Code-style config directory
 function getVSCodeStyleConfigDir(appName) {
-    const platform = os.platform();
-    if (platform === 'darwin') {
-        return path.join(homedir(), 'Library', 'Application Support', appName, 'User');
+  const platform = os.platform();
+  if (platform === 'darwin') {
+    return path.join(
+      homedir(),
+      'Library',
+      'Application Support',
+      appName,
+      'User',
+    );
+  } else if (platform === 'win32') {
+    if (!process.env['APPDATA']) {
+      return null;
     }
-    else if (platform === 'win32') {
-        if (!process.env['APPDATA']) {
-            return null;
-        }
-        return path.join(process.env['APPDATA'], appName, 'User');
-    }
-    else {
-        return path.join(homedir(), '.config', appName, 'User');
-    }
+    return path.join(process.env['APPDATA'], appName, 'User');
+  } else {
+    return path.join(homedir(), '.config', appName, 'User');
+  }
 }
 // Generic VS Code-style terminal configuration
 async function configureVSCodeStyle(terminalName, appName) {
-    const configDir = getVSCodeStyleConfigDir(appName);
-    if (!configDir) {
-        return {
-            success: false,
-            message: `Could not determine ${terminalName} config path on Windows: APPDATA environment variable is not set.`,
-        };
-    }
-    const keybindingsFile = path.join(configDir, 'keybindings.json');
+  const configDir = getVSCodeStyleConfigDir(appName);
+  if (!configDir) {
+    return {
+      success: false,
+      message: `Could not determine ${terminalName} config path on Windows: APPDATA environment variable is not set.`,
+    };
+  }
+  const keybindingsFile = path.join(configDir, 'keybindings.json');
+  try {
+    await fs.mkdir(configDir, { recursive: true });
+    let keybindings = [];
     try {
-        await fs.mkdir(configDir, { recursive: true });
-        let keybindings = [];
-        try {
-            const content = await fs.readFile(keybindingsFile, 'utf8');
-            await backupFile(keybindingsFile);
-            try {
-                const cleanContent = stripJsonComments(content);
-                const parsedContent = JSON.parse(cleanContent);
-                if (!Array.isArray(parsedContent)) {
-                    return {
-                        success: false,
-                        message: `${terminalName} keybindings.json exists but is not a valid JSON array. ` +
-                            `Please fix the file manually or delete it to allow automatic configuration.\n` +
-                            `File: ${keybindingsFile}`,
-                    };
-                }
-                keybindings = parsedContent;
-            }
-            catch (parseError) {
-                return {
-                    success: false,
-                    message: `Failed to parse ${terminalName} keybindings.json. The file contains invalid JSON.\n` +
-                        `Please fix the file manually or delete it to allow automatic configuration.\n` +
-                        `File: ${keybindingsFile}\n` +
-                        `Error: ${parseError}`,
-                };
-            }
-        }
-        catch {
-            // File doesn't exist, will create new one
-        }
-        const shiftEnterBinding = {
-            key: 'shift+enter',
-            command: 'workbench.action.terminal.sendSequence',
-            when: 'terminalFocus',
-            args: { text: VSCODE_SHIFT_ENTER_SEQUENCE },
-        };
-        const ctrlEnterBinding = {
-            key: 'ctrl+enter',
-            command: 'workbench.action.terminal.sendSequence',
-            when: 'terminalFocus',
-            args: { text: VSCODE_SHIFT_ENTER_SEQUENCE },
-        };
-        // Check if our specific bindings already exist
-        const hasOurShiftEnter = keybindings.some((kb) => {
-            const binding = kb;
-            return (binding.key === 'shift+enter' &&
-                binding.command === 'workbench.action.terminal.sendSequence' &&
-                binding.args?.text === '\\\r\n');
-        });
-        const hasOurCtrlEnter = keybindings.some((kb) => {
-            const binding = kb;
-            return (binding.key === 'ctrl+enter' &&
-                binding.command === 'workbench.action.terminal.sendSequence' &&
-                binding.args?.text === '\\\r\n');
-        });
-        if (hasOurShiftEnter && hasOurCtrlEnter) {
-            return {
-                success: true,
-                message: `${terminalName} keybindings already configured.`,
-            };
-        }
-        // Check if ANY shift+enter or ctrl+enter bindings already exist (that are NOT ours)
-        const existingShiftEnter = keybindings.find((kb) => {
-            const binding = kb;
-            return binding.key === 'shift+enter';
-        });
-        const existingCtrlEnter = keybindings.find((kb) => {
-            const binding = kb;
-            return binding.key === 'ctrl+enter';
-        });
-        if (existingShiftEnter || existingCtrlEnter) {
-            const messages = [];
-            // Only report conflict if it's not our binding (though we checked above, partial matches might exist)
-            if (existingShiftEnter && !hasOurShiftEnter) {
-                messages.push(`- Shift+Enter binding already exists`);
-            }
-            if (existingCtrlEnter && !hasOurCtrlEnter) {
-                messages.push(`- Ctrl+Enter binding already exists`);
-            }
-            if (messages.length > 0) {
-                return {
-                    success: false,
-                    message: `Existing keybindings detected. Will not modify to avoid conflicts.\n` +
-                        messages.join('\n') +
-                        '\n' +
-                        `Please check and modify manually if needed: ${keybindingsFile}`,
-                };
-            }
-        }
-        if (!hasOurShiftEnter)
-            keybindings.unshift(shiftEnterBinding);
-        if (!hasOurCtrlEnter)
-            keybindings.unshift(ctrlEnterBinding);
-        await fs.writeFile(keybindingsFile, JSON.stringify(keybindings, null, 4));
-        return {
-            success: true,
-            message: `Added Shift+Enter and Ctrl+Enter keybindings to ${terminalName}.\nModified: ${keybindingsFile}`,
-            requiresRestart: true,
-        };
-    }
-    catch (error) {
-        return {
+      const content = await fs.readFile(keybindingsFile, 'utf8');
+      await backupFile(keybindingsFile);
+      try {
+        const cleanContent = stripJsonComments(content);
+        const parsedContent = JSON.parse(cleanContent);
+        if (!Array.isArray(parsedContent)) {
+          return {
             success: false,
-            message: `Failed to configure ${terminalName}.\nFile: ${keybindingsFile}\nError: ${error}`,
+            message:
+              `${terminalName} keybindings.json exists but is not a valid JSON array. ` +
+              `Please fix the file manually or delete it to allow automatic configuration.\n` +
+              `File: ${keybindingsFile}`,
+          };
+        }
+        keybindings = parsedContent;
+      } catch (parseError) {
+        return {
+          success: false,
+          message:
+            `Failed to parse ${terminalName} keybindings.json. The file contains invalid JSON.\n` +
+            `Please fix the file manually or delete it to allow automatic configuration.\n` +
+            `File: ${keybindingsFile}\n` +
+            `Error: ${parseError}`,
         };
+      }
+    } catch {
+      // File doesn't exist, will create new one
     }
+    const shiftEnterBinding = {
+      key: 'shift+enter',
+      command: 'workbench.action.terminal.sendSequence',
+      when: 'terminalFocus',
+      args: { text: VSCODE_SHIFT_ENTER_SEQUENCE },
+    };
+    const ctrlEnterBinding = {
+      key: 'ctrl+enter',
+      command: 'workbench.action.terminal.sendSequence',
+      when: 'terminalFocus',
+      args: { text: VSCODE_SHIFT_ENTER_SEQUENCE },
+    };
+    // Check if our specific bindings already exist
+    const hasOurShiftEnter = keybindings.some((kb) => {
+      const binding = kb;
+      return (
+        binding.key === 'shift+enter' &&
+        binding.command === 'workbench.action.terminal.sendSequence' &&
+        binding.args?.text === '\\\r\n'
+      );
+    });
+    const hasOurCtrlEnter = keybindings.some((kb) => {
+      const binding = kb;
+      return (
+        binding.key === 'ctrl+enter' &&
+        binding.command === 'workbench.action.terminal.sendSequence' &&
+        binding.args?.text === '\\\r\n'
+      );
+    });
+    if (hasOurShiftEnter && hasOurCtrlEnter) {
+      return {
+        success: true,
+        message: `${terminalName} keybindings already configured.`,
+      };
+    }
+    // Check if ANY shift+enter or ctrl+enter bindings already exist (that are NOT ours)
+    const existingShiftEnter = keybindings.find((kb) => {
+      const binding = kb;
+      return binding.key === 'shift+enter';
+    });
+    const existingCtrlEnter = keybindings.find((kb) => {
+      const binding = kb;
+      return binding.key === 'ctrl+enter';
+    });
+    if (existingShiftEnter || existingCtrlEnter) {
+      const messages = [];
+      // Only report conflict if it's not our binding (though we checked above, partial matches might exist)
+      if (existingShiftEnter && !hasOurShiftEnter) {
+        messages.push(`- Shift+Enter binding already exists`);
+      }
+      if (existingCtrlEnter && !hasOurCtrlEnter) {
+        messages.push(`- Ctrl+Enter binding already exists`);
+      }
+      if (messages.length > 0) {
+        return {
+          success: false,
+          message:
+            `Existing keybindings detected. Will not modify to avoid conflicts.\n` +
+            messages.join('\n') +
+            '\n' +
+            `Please check and modify manually if needed: ${keybindingsFile}`,
+        };
+      }
+    }
+    if (!hasOurShiftEnter) keybindings.unshift(shiftEnterBinding);
+    if (!hasOurCtrlEnter) keybindings.unshift(ctrlEnterBinding);
+    await fs.writeFile(keybindingsFile, JSON.stringify(keybindings, null, 4));
+    return {
+      success: true,
+      message: `Added Shift+Enter and Ctrl+Enter keybindings to ${terminalName}.\nModified: ${keybindingsFile}`,
+      requiresRestart: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: `Failed to configure ${terminalName}.\nFile: ${keybindingsFile}\nError: ${error}`,
+    };
+  }
 }
 // Terminal-specific configuration functions
 async function configureVSCode() {
-    return configureVSCodeStyle('VS Code', 'Code');
+  return configureVSCodeStyle('VS Code', 'Code');
 }
 async function configureCursor() {
-    return configureVSCodeStyle('Cursor', 'Cursor');
+  return configureVSCodeStyle('Cursor', 'Cursor');
 }
 async function configureWindsurf() {
-    return configureVSCodeStyle('Windsurf', 'Windsurf');
+  return configureVSCodeStyle('Windsurf', 'Windsurf');
 }
 async function configureAntigravity() {
-    return configureVSCodeStyle('Antigravity', 'Antigravity');
+  return configureVSCodeStyle('Antigravity', 'Antigravity');
 }
 /**
  * Main terminal setup function that detects and configures the current terminal.
@@ -272,34 +284,36 @@ async function configureAntigravity() {
  * }
  */
 export async function terminalSetup() {
-    // Check if terminal already has optimal keyboard support
-    if (terminalCapabilityManager.isKittyProtocolEnabled()) {
-        return {
-            success: true,
-            message: 'Your terminal is already configured for an optimal experience with multiline input (Shift+Enter and Ctrl+Enter).',
-        };
-    }
-    const terminal = await detectTerminal();
-    if (!terminal) {
-        return {
-            success: false,
-            message: 'Could not detect terminal type. Supported terminals: VS Code, Cursor, Windsurf, and Antigravity.',
-        };
-    }
-    switch (terminal) {
-        case 'vscode':
-            return configureVSCode();
-        case 'cursor':
-            return configureCursor();
-        case 'windsurf':
-            return configureWindsurf();
-        case 'antigravity':
-            return configureAntigravity();
-        default:
-            return {
-                success: false,
-                message: `Terminal "${terminal}" is not supported yet.`,
-            };
-    }
+  // Check if terminal already has optimal keyboard support
+  if (terminalCapabilityManager.isKittyProtocolEnabled()) {
+    return {
+      success: true,
+      message:
+        'Your terminal is already configured for an optimal experience with multiline input (Shift+Enter and Ctrl+Enter).',
+    };
+  }
+  const terminal = await detectTerminal();
+  if (!terminal) {
+    return {
+      success: false,
+      message:
+        'Could not detect terminal type. Supported terminals: VS Code, Cursor, Windsurf, and Antigravity.',
+    };
+  }
+  switch (terminal) {
+    case 'vscode':
+      return configureVSCode();
+    case 'cursor':
+      return configureCursor();
+    case 'windsurf':
+      return configureWindsurf();
+    case 'antigravity':
+      return configureAntigravity();
+    default:
+      return {
+        success: false,
+        message: `Terminal "${terminal}" is not supported yet.`,
+      };
+  }
 }
 //# sourceMappingURL=terminalSetup.js.map

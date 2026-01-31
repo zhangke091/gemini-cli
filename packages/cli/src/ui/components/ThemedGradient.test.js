@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx } from 'react/jsx-runtime';
 /**
  * @license
  * Copyright 2025 Google LLC
@@ -9,22 +9,22 @@ import { ThemedGradient } from './ThemedGradient.js';
 import { describe, it, expect, vi } from 'vitest';
 // Mock theme to control gradient
 vi.mock('../semantic-colors.js', () => ({
-    theme: {
-        ui: {
-            gradient: ['red', 'blue'],
-        },
-        text: {
-            accent: 'cyan',
-        },
+  theme: {
+    ui: {
+      gradient: ['red', 'blue'],
     },
+    text: {
+      accent: 'cyan',
+    },
+  },
 }));
 describe('ThemedGradient', () => {
-    it('renders children', () => {
-        const { lastFrame } = render(_jsx(ThemedGradient, { children: "Hello" }));
-        expect(lastFrame()).toContain('Hello');
-    });
-    // Note: Testing actual gradient application is hard with ink-testing-library
-    // as it often renders as plain text or ANSI codes.
-    // We mainly ensure it doesn't crash and renders content.
+  it('renders children', () => {
+    const { lastFrame } = render(_jsx(ThemedGradient, { children: 'Hello' }));
+    expect(lastFrame()).toContain('Hello');
+  });
+  // Note: Testing actual gradient application is hard with ink-testing-library
+  // as it often renders as plain text or ANSI codes.
+  // We mainly ensure it doesn't crash and renders content.
 });
 //# sourceMappingURL=ThemedGradient.test.js.map

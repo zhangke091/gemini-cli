@@ -3,7 +3,7 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { readPackageUp, } from 'read-package-up';
+import { readPackageUp } from 'read-package-up';
 import { debugLogger } from './debugLogger.js';
 /**
  * Reads package.json from the current directory or any parent directory.
@@ -20,16 +20,15 @@ import { debugLogger } from './debugLogger.js';
  * ```
  */
 export async function getPackageJson(cwd) {
-    try {
-        const result = await readPackageUp({ cwd, normalize: false });
-        if (!result) {
-            return undefined;
-        }
-        return result.packageJson;
+  try {
+    const result = await readPackageUp({ cwd, normalize: false });
+    if (!result) {
+      return undefined;
     }
-    catch (error) {
-        debugLogger.error('Error occurred while reading package.json', error);
-        return undefined;
-    }
+    return result.packageJson;
+  } catch (error) {
+    debugLogger.error('Error occurred while reading package.json', error);
+    return undefined;
+  }
 }
 //# sourceMappingURL=package.js.map

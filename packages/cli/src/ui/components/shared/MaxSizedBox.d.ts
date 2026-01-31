@@ -11,11 +11,11 @@ import type React from 'react';
  */
 export declare const MINIMUM_MAX_HEIGHT = 2;
 interface MaxSizedBoxProps {
-    children?: React.ReactNode;
-    maxWidth?: number;
-    maxHeight?: number;
-    overflowDirection?: 'top' | 'bottom';
-    additionalHiddenLinesCount?: number;
+  children?: React.ReactNode;
+  maxWidth?: number;
+  maxHeight?: number;
+  overflowDirection?: 'top' | 'bottom';
+  additionalHiddenLinesCount?: number;
 }
 /**
  * A React component that constrains the size of its children and provides

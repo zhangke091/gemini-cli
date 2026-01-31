@@ -4,23 +4,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import type { Config } from '../config/config.js';
-import type { ToolCallRequestInfo, CompletedToolCall } from '../scheduler/types.js';
+import type {
+  ToolCallRequestInfo,
+  CompletedToolCall,
+} from '../scheduler/types.js';
 import type { ToolRegistry } from '../tools/tool-registry.js';
 import type { EditorType } from '../utils/editor.js';
 /**
  * Options for scheduling agent tools.
  */
 export interface AgentSchedulingOptions {
-    /** The unique ID for this agent's scheduler. */
-    schedulerId: string;
-    /** The ID of the tool call that invoked this agent. */
-    parentCallId?: string;
-    /** The tool registry specific to this agent. */
-    toolRegistry: ToolRegistry;
-    /** AbortSignal for cancellation. */
-    signal: AbortSignal;
-    /** Optional function to get the preferred editor for tool modifications. */
-    getPreferredEditor?: () => EditorType | undefined;
+  /** The unique ID for this agent's scheduler. */
+  schedulerId: string;
+  /** The ID of the tool call that invoked this agent. */
+  parentCallId?: string;
+  /** The tool registry specific to this agent. */
+  toolRegistry: ToolRegistry;
+  /** AbortSignal for cancellation. */
+  signal: AbortSignal;
+  /** Optional function to get the preferred editor for tool modifications. */
+  getPreferredEditor?: () => EditorType | undefined;
 }
 /**
  * Schedules a batch of tool calls for an agent using the new event-driven Scheduler.
@@ -30,4 +33,8 @@ export interface AgentSchedulingOptions {
  * @param options Scheduling options including registry and IDs.
  * @returns A promise that resolves to the completed tool calls.
  */
-export declare function scheduleAgentTools(config: Config, requests: ToolCallRequestInfo[], options: AgentSchedulingOptions): Promise<CompletedToolCall[]>;
+export declare function scheduleAgentTools(
+  config: Config,
+  requests: ToolCallRequestInfo[],
+  options: AgentSchedulingOptions,
+): Promise<CompletedToolCall[]>;

@@ -8,38 +8,42 @@ import type { AgentDefinition } from './types.js';
  * DTO for Markdown parsing - represents the structure from frontmatter.
  */
 interface FrontmatterBaseAgentDefinition {
-    name: string;
-    display_name?: string;
+  name: string;
+  display_name?: string;
 }
-interface FrontmatterLocalAgentDefinition extends FrontmatterBaseAgentDefinition {
-    kind: 'local';
-    description: string;
-    tools?: string[];
-    system_prompt: string;
-    model?: string;
-    temperature?: number;
-    max_turns?: number;
-    timeout_mins?: number;
+interface FrontmatterLocalAgentDefinition
+  extends FrontmatterBaseAgentDefinition {
+  kind: 'local';
+  description: string;
+  tools?: string[];
+  system_prompt: string;
+  model?: string;
+  temperature?: number;
+  max_turns?: number;
+  timeout_mins?: number;
 }
-interface FrontmatterRemoteAgentDefinition extends FrontmatterBaseAgentDefinition {
-    kind: 'remote';
-    description?: string;
-    agent_card_url: string;
+interface FrontmatterRemoteAgentDefinition
+  extends FrontmatterBaseAgentDefinition {
+  kind: 'remote';
+  description?: string;
+  agent_card_url: string;
 }
-type FrontmatterAgentDefinition = FrontmatterLocalAgentDefinition | FrontmatterRemoteAgentDefinition;
+type FrontmatterAgentDefinition =
+  | FrontmatterLocalAgentDefinition
+  | FrontmatterRemoteAgentDefinition;
 /**
  * Error thrown when an agent definition is invalid or cannot be loaded.
  */
 export declare class AgentLoadError extends Error {
-    filePath: string;
-    constructor(filePath: string, message: string);
+  filePath: string;
+  constructor(filePath: string, message: string);
 }
 /**
  * Result of loading agents from a directory.
  */
 export interface AgentLoadResult {
-    agents: AgentDefinition[];
-    errors: AgentLoadError[];
+  agents: AgentDefinition[];
+  errors: AgentLoadError[];
 }
 /**
  * Parses and validates an agent Markdown file with frontmatter.
@@ -49,7 +53,10 @@ export interface AgentLoadResult {
  * @returns An array containing the single parsed agent definition.
  * @throws AgentLoadError if parsing or validation fails.
  */
-export declare function parseAgentMarkdown(filePath: string, content?: string): Promise<FrontmatterAgentDefinition[]>;
+export declare function parseAgentMarkdown(
+  filePath: string,
+  content?: string,
+): Promise<FrontmatterAgentDefinition[]>;
 /**
  * Converts a FrontmatterAgentDefinition DTO to the internal AgentDefinition structure.
  *
@@ -57,10 +64,13 @@ export declare function parseAgentMarkdown(filePath: string, content?: string): 
  * @param metadata Optional metadata including hash and file path.
  * @returns The internal AgentDefinition.
  */
-export declare function markdownToAgentDefinition(markdown: FrontmatterAgentDefinition, metadata?: {
+export declare function markdownToAgentDefinition(
+  markdown: FrontmatterAgentDefinition,
+  metadata?: {
     hash?: string;
     filePath?: string;
-}): AgentDefinition;
+  },
+): AgentDefinition;
 /**
  * Loads all agents from a specific directory.
  * Ignores files starting with _ and non-supported extensions.
@@ -69,5 +79,7 @@ export declare function markdownToAgentDefinition(markdown: FrontmatterAgentDefi
  * @param dir Directory path to scan.
  * @returns Object containing successfully loaded agents and any errors.
  */
-export declare function loadAgentsFromDirectory(dir: string): Promise<AgentLoadResult>;
+export declare function loadAgentsFromDirectory(
+  dir: string,
+): Promise<AgentLoadResult>;
 export {};

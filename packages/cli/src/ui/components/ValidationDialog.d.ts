@@ -6,10 +6,14 @@
 import type React from 'react';
 import { type ValidationIntent } from '@google/gemini-cli-core';
 interface ValidationDialogProps {
-    validationLink?: string;
-    validationDescription?: string;
-    learnMoreUrl?: string;
-    onChoice: (choice: ValidationIntent) => void;
+  validationLink?: string;
+  validationDescription?: string;
+  learnMoreUrl?: string;
+  onChoice: (choice: ValidationIntent) => void;
 }
-export declare function ValidationDialog({ validationLink, learnMoreUrl, onChoice, }: ValidationDialogProps): React.JSX.Element;
+export declare function ValidationDialog({
+  validationLink,
+  learnMoreUrl,
+  onChoice,
+}: ValidationDialogProps): React.JSX.Element;
 export {};

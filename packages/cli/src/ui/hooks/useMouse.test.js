@@ -8,50 +8,56 @@ import { renderHook } from '../../test-utils/render.js';
 import { useMouse } from './useMouse.js';
 import { MouseProvider, useMouseContext } from '../contexts/MouseContext.js';
 vi.mock('../contexts/MouseContext.js', async (importOriginal) => {
-    const actual = await importOriginal();
-    const subscribe = vi.fn();
-    const unsubscribe = vi.fn();
-    return {
-        ...actual,
-        useMouseContext: () => ({
-            subscribe,
-            unsubscribe,
-        }),
-    };
+  const actual = await importOriginal();
+  const subscribe = vi.fn();
+  const unsubscribe = vi.fn();
+  return {
+    ...actual,
+    useMouseContext: () => ({
+      subscribe,
+      unsubscribe,
+    }),
+  };
 });
 describe('useMouse', () => {
-    const mockOnMouseEvent = vi.fn();
-    beforeEach(() => {
-        vi.clearAllMocks();
+  const mockOnMouseEvent = vi.fn();
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+  it('should not subscribe when isActive is false', () => {
+    renderHook(() => useMouse(mockOnMouseEvent, { isActive: false }), {
+      wrapper: MouseProvider,
     });
-    it('should not subscribe when isActive is false', () => {
-        renderHook(() => useMouse(mockOnMouseEvent, { isActive: false }), {
-            wrapper: MouseProvider,
-        });
-        const { subscribe } = useMouseContext();
-        expect(subscribe).not.toHaveBeenCalled();
+    const { subscribe } = useMouseContext();
+    expect(subscribe).not.toHaveBeenCalled();
+  });
+  it('should subscribe when isActive is true', () => {
+    renderHook(() => useMouse(mockOnMouseEvent, { isActive: true }), {
+      wrapper: MouseProvider,
     });
-    it('should subscribe when isActive is true', () => {
-        renderHook(() => useMouse(mockOnMouseEvent, { isActive: true }), {
-            wrapper: MouseProvider,
-        });
-        const { subscribe } = useMouseContext();
-        expect(subscribe).toHaveBeenCalledWith(mockOnMouseEvent);
-    });
-    it('should unsubscribe on unmount', () => {
-        const { unmount } = renderHook(() => useMouse(mockOnMouseEvent, { isActive: true }), { wrapper: MouseProvider });
-        const { unsubscribe } = useMouseContext();
-        unmount();
-        expect(unsubscribe).toHaveBeenCalledWith(mockOnMouseEvent);
-    });
-    it('should unsubscribe when isActive becomes false', () => {
-        const { rerender } = renderHook(({ isActive }) => useMouse(mockOnMouseEvent, { isActive }), {
-            initialProps: { isActive: true },
-            wrapper: MouseProvider,
-        });
-        const { unsubscribe } = useMouseContext();
-        rerender({ isActive: false });
-        expect(unsubscribe).toHaveBeenCalledWith(mockOnMouseEvent);
-    });
+    const { subscribe } = useMouseContext();
+    expect(subscribe).toHaveBeenCalledWith(mockOnMouseEvent);
+  });
+  it('should unsubscribe on unmount', () => {
+    const { unmount } = renderHook(
+      () => useMouse(mockOnMouseEvent, { isActive: true }),
+      { wrapper: MouseProvider },
+    );
+    const { unsubscribe } = useMouseContext();
+    unmount();
+    expect(unsubscribe).toHaveBeenCalledWith(mockOnMouseEvent);
+  });
+  it('should unsubscribe when isActive becomes false', () => {
+    const { rerender } = renderHook(
+      ({ isActive }) => useMouse(mockOnMouseEvent, { isActive }),
+      {
+        initialProps: { isActive: true },
+        wrapper: MouseProvider,
+      },
+    );
+    const { unsubscribe } = useMouseContext();
+    rerender({ isActive: false });
+    expect(unsubscribe).toHaveBeenCalledWith(mockOnMouseEvent);
+  });
 });
 //# sourceMappingURL=useMouse.test.js.map

@@ -10,7 +10,9 @@ export declare function loadApiKey(): Promise<string | null>;
 /**
  * Save API key
  */
-export declare function saveApiKey(apiKey: string | null | undefined): Promise<void>;
+export declare function saveApiKey(
+  apiKey: string | null | undefined,
+): Promise<void>;
 /**
  * Clear cached API key
  */

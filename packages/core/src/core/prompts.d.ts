@@ -8,11 +8,17 @@ import type { Config } from '../config/config.js';
  * Resolves a path or switch value from an environment variable.
  * @deprecated Use resolvePathFromEnv from @google/gemini-cli-core/prompts/utils instead.
  */
-export declare function resolvePathFromEnv(envVar?: string): import("../prompts/utils.js").ResolvedPath;
+export declare function resolvePathFromEnv(
+  envVar?: string,
+): import('../prompts/utils.js').ResolvedPath;
 /**
  * Returns the core system prompt for the agent.
  */
-export declare function getCoreSystemPrompt(config: Config, userMemory?: string, interactiveOverride?: boolean): string;
+export declare function getCoreSystemPrompt(
+  config: Config,
+  userMemory?: string,
+  interactiveOverride?: boolean,
+): string;
 /**
  * Provides the system prompt for the history compression process.
  */

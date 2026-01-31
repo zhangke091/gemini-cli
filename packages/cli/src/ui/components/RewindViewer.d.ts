@@ -7,9 +7,13 @@ import type React from 'react';
 import { type ConversationRecord } from '@google/gemini-cli-core';
 import { RewindOutcome } from './RewindConfirmation.js';
 interface RewindViewerProps {
-    conversation: ConversationRecord;
-    onExit: () => void;
-    onRewind: (messageId: string, newText: string, outcome: RewindOutcome) => Promise<void>;
+  conversation: ConversationRecord;
+  onExit: () => void;
+  onRewind: (
+    messageId: string,
+    newText: string,
+    outcome: RewindOutcome,
+  ) => Promise<void>;
 }
 export declare const RewindViewer: React.FC<RewindViewerProps>;
 export {};

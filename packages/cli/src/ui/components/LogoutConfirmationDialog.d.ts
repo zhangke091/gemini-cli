@@ -5,11 +5,11 @@
  */
 import type React from 'react';
 export declare enum LogoutChoice {
-    LOGIN = "login",
-    EXIT = "exit"
+  LOGIN = 'login',
+  EXIT = 'exit',
 }
 interface LogoutConfirmationDialogProps {
-    onSelect: (choice: LogoutChoice) => void;
+  onSelect: (choice: LogoutChoice) => void;
 }
 export declare const LogoutConfirmationDialog: React.FC<LogoutConfirmationDialogProps>;
 export {};

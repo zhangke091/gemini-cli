@@ -8,12 +8,12 @@ import { UserAccountManager } from '../utils/userAccountManager.js';
 const userAccountManager = new UserAccountManager();
 const installationManager = new InstallationManager();
 export function getCommonAttributes(config) {
-    const email = userAccountManager.getCachedGoogleAccount();
-    return {
-        'session.id': config.getSessionId(),
-        'installation.id': installationManager.getInstallationId(),
-        interactive: config.isInteractive(),
-        ...(email && { 'user.email': email }),
-    };
+  const email = userAccountManager.getCachedGoogleAccount();
+  return {
+    'session.id': config.getSessionId(),
+    'installation.id': installationManager.getInstallationId(),
+    interactive: config.isInteractive(),
+    ...(email && { 'user.email': email }),
+  };
 }
 //# sourceMappingURL=telemetryAttributes.js.map

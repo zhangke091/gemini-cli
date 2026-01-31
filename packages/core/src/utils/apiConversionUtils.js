@@ -9,38 +9,40 @@
  * and exporting requests.
  */
 export function convertToRestPayload(req) {
-    // Extract top-level REST fields from the SDK config object.
-    // 'pureGenerationConfig' will capture any remaining hyperparameters (e.g., temperature, topP).
-    const { systemInstruction: sdkSystemInstruction, tools: sdkTools, toolConfig: sdkToolConfig, safetySettings: sdkSafetySettings, cachedContent: sdkCachedContent, abortSignal: _sdkAbortSignal, // Exclude JS-specific abort controller
-    ...pureGenerationConfig } = req.config || {};
-    // Normalize systemInstruction to the expected REST Content format.
-    let restSystemInstruction;
-    if (typeof sdkSystemInstruction === 'string') {
-        restSystemInstruction = {
-            parts: [{ text: sdkSystemInstruction }],
-        };
-    }
-    else if (sdkSystemInstruction !== undefined) {
-        restSystemInstruction = sdkSystemInstruction;
-    }
-    const restPayload = {
-        contents: req.contents,
+  // Extract top-level REST fields from the SDK config object.
+  // 'pureGenerationConfig' will capture any remaining hyperparameters (e.g., temperature, topP).
+  const {
+    systemInstruction: sdkSystemInstruction,
+    tools: sdkTools,
+    toolConfig: sdkToolConfig,
+    safetySettings: sdkSafetySettings,
+    cachedContent: sdkCachedContent,
+    abortSignal: _sdkAbortSignal, // Exclude JS-specific abort controller
+    ...pureGenerationConfig
+  } = req.config || {};
+  // Normalize systemInstruction to the expected REST Content format.
+  let restSystemInstruction;
+  if (typeof sdkSystemInstruction === 'string') {
+    restSystemInstruction = {
+      parts: [{ text: sdkSystemInstruction }],
     };
-    // Only include generationConfig if actual hyperparameters exist.
-    if (Object.keys(pureGenerationConfig).length > 0) {
-        restPayload['generationConfig'] = pureGenerationConfig;
-    }
-    // Assign extracted capabilities to the root level.
-    if (restSystemInstruction)
-        restPayload['systemInstruction'] = restSystemInstruction;
-    if (sdkTools)
-        restPayload['tools'] = sdkTools;
-    if (sdkToolConfig)
-        restPayload['toolConfig'] = sdkToolConfig;
-    if (sdkSafetySettings)
-        restPayload['safetySettings'] = sdkSafetySettings;
-    if (sdkCachedContent)
-        restPayload['cachedContent'] = sdkCachedContent;
-    return restPayload;
+  } else if (sdkSystemInstruction !== undefined) {
+    restSystemInstruction = sdkSystemInstruction;
+  }
+  const restPayload = {
+    contents: req.contents,
+  };
+  // Only include generationConfig if actual hyperparameters exist.
+  if (Object.keys(pureGenerationConfig).length > 0) {
+    restPayload['generationConfig'] = pureGenerationConfig;
+  }
+  // Assign extracted capabilities to the root level.
+  if (restSystemInstruction)
+    restPayload['systemInstruction'] = restSystemInstruction;
+  if (sdkTools) restPayload['tools'] = sdkTools;
+  if (sdkToolConfig) restPayload['toolConfig'] = sdkToolConfig;
+  if (sdkSafetySettings) restPayload['safetySettings'] = sdkSafetySettings;
+  if (sdkCachedContent) restPayload['cachedContent'] = sdkCachedContent;
+  return restPayload;
 }
 //# sourceMappingURL=apiConversionUtils.js.map

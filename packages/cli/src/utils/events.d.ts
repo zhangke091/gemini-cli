@@ -5,15 +5,15 @@
  */
 import { EventEmitter } from 'node:events';
 export declare enum AppEvent {
-    OpenDebugConsole = "open-debug-console",
-    Flicker = "flicker",
-    SelectionWarning = "selection-warning",
-    PasteTimeout = "paste-timeout"
+  OpenDebugConsole = 'open-debug-console',
+  Flicker = 'flicker',
+  SelectionWarning = 'selection-warning',
+  PasteTimeout = 'paste-timeout',
 }
 export interface AppEvents {
-    [AppEvent.OpenDebugConsole]: never[];
-    [AppEvent.Flicker]: never[];
-    [AppEvent.SelectionWarning]: never[];
-    [AppEvent.PasteTimeout]: never[];
+  [AppEvent.OpenDebugConsole]: never[];
+  [AppEvent.Flicker]: never[];
+  [AppEvent.SelectionWarning]: never[];
+  [AppEvent.PasteTimeout]: never[];
 }
 export declare const appEvents: EventEmitter<AppEvents>;

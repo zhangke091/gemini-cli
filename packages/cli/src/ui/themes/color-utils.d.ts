@@ -25,6 +25,14 @@ export declare function resolveColor(colorValue: string): string | undefined;
  * Returns undefined if no safe background color is available for the given
  * terminal background.
  */
-export declare function getSafeLowColorBackground(terminalBg: string): string | undefined;
-export declare function interpolateColor(color1: string, color2: string, factor: number): string;
-export declare function getThemeTypeFromBackgroundColor(backgroundColor: string | undefined): 'light' | 'dark' | undefined;
+export declare function getSafeLowColorBackground(
+  terminalBg: string,
+): string | undefined;
+export declare function interpolateColor(
+  color1: string,
+  color2: string,
+  factor: number,
+): string;
+export declare function getThemeTypeFromBackgroundColor(
+  backgroundColor: string | undefined,
+): 'light' | 'dark' | undefined;

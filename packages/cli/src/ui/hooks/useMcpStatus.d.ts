@@ -5,7 +5,7 @@
  */
 import { type Config, MCPDiscoveryState } from '@google/gemini-cli-core';
 export declare function useMcpStatus(config: Config): {
-    discoveryState: MCPDiscoveryState;
-    mcpServerCount: number;
-    isMcpReady: boolean;
+  discoveryState: MCPDiscoveryState;
+  mcpServerCount: number;
+  isMcpReady: boolean;
 };

@@ -12,71 +12,77 @@ import { safeJsonStringify } from '../utils/safeJsonStringify.js';
 //
 // Note that only the "interesting" bits of the responses are actually kept.
 export class RecordingContentGenerator {
-    realGenerator;
-    filePath;
-    constructor(realGenerator, filePath) {
-        this.realGenerator = realGenerator;
-        this.filePath = filePath;
+  realGenerator;
+  filePath;
+  constructor(realGenerator, filePath) {
+    this.realGenerator = realGenerator;
+    this.filePath = filePath;
+  }
+  get userTier() {
+    return this.realGenerator.userTier;
+  }
+  get userTierName() {
+    return this.realGenerator.userTierName;
+  }
+  async generateContent(request, userPromptId) {
+    const response = await this.realGenerator.generateContent(
+      request,
+      userPromptId,
+    );
+    const recordedResponse = {
+      method: 'generateContent',
+      response: {
+        candidates: response.candidates,
+        usageMetadata: response.usageMetadata,
+      },
+    };
+    appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
+    return response;
+  }
+  async generateContentStream(request, userPromptId) {
+    const recordedResponse = {
+      method: 'generateContentStream',
+      response: [],
+    };
+    const realResponses = await this.realGenerator.generateContentStream(
+      request,
+      userPromptId,
+    );
+    async function* stream(filePath) {
+      for await (const response of realResponses) {
+        recordedResponse.response.push({
+          candidates: response.candidates,
+          usageMetadata: response.usageMetadata,
+        });
+        yield response;
+      }
+      appendFileSync(filePath, `${safeJsonStringify(recordedResponse)}\n`);
     }
-    get userTier() {
-        return this.realGenerator.userTier;
-    }
-    get userTierName() {
-        return this.realGenerator.userTierName;
-    }
-    async generateContent(request, userPromptId) {
-        const response = await this.realGenerator.generateContent(request, userPromptId);
-        const recordedResponse = {
-            method: 'generateContent',
-            response: {
-                candidates: response.candidates,
-                usageMetadata: response.usageMetadata,
-            },
-        };
-        appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
-        return response;
-    }
-    async generateContentStream(request, userPromptId) {
-        const recordedResponse = {
-            method: 'generateContentStream',
-            response: [],
-        };
-        const realResponses = await this.realGenerator.generateContentStream(request, userPromptId);
-        async function* stream(filePath) {
-            for await (const response of realResponses) {
-                recordedResponse.response.push({
-                    candidates: response.candidates,
-                    usageMetadata: response.usageMetadata,
-                });
-                yield response;
-            }
-            appendFileSync(filePath, `${safeJsonStringify(recordedResponse)}\n`);
-        }
-        return Promise.resolve(stream(this.filePath));
-    }
-    async countTokens(request) {
-        const response = await this.realGenerator.countTokens(request);
-        const recordedResponse = {
-            method: 'countTokens',
-            response: {
-                totalTokens: response.totalTokens,
-                cachedContentTokenCount: response.cachedContentTokenCount,
-            },
-        };
-        appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
-        return response;
-    }
-    async embedContent(request) {
-        const response = await this.realGenerator.embedContent(request);
-        const recordedResponse = {
-            method: 'embedContent',
-            response: {
-                embeddings: response.embeddings,
-                metadata: response.metadata,
-            },
-        };
-        appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
-        return response;
-    }
+    return Promise.resolve(stream(this.filePath));
+  }
+  async countTokens(request) {
+    const response = await this.realGenerator.countTokens(request);
+    const recordedResponse = {
+      method: 'countTokens',
+      response: {
+        totalTokens: response.totalTokens,
+        cachedContentTokenCount: response.cachedContentTokenCount,
+      },
+    };
+    appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
+    return response;
+  }
+  async embedContent(request) {
+    const response = await this.realGenerator.embedContent(request);
+    const recordedResponse = {
+      method: 'embedContent',
+      response: {
+        embeddings: response.embeddings,
+        metadata: response.metadata,
+      },
+    };
+    appendFileSync(this.filePath, `${safeJsonStringify(recordedResponse)}\n`);
+    return response;
+  }
 }
 //# sourceMappingURL=recordingContentGenerator.js.map

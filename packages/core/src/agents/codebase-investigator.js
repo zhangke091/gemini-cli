@@ -3,98 +3,114 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { GLOB_TOOL_NAME, GREP_TOOL_NAME, LS_TOOL_NAME, READ_FILE_TOOL_NAME, } from '../tools/tool-names.js';
-import { DEFAULT_THINKING_MODE, DEFAULT_GEMINI_MODEL, PREVIEW_GEMINI_FLASH_MODEL, isPreviewModel, } from '../config/models.js';
+import {
+  GLOB_TOOL_NAME,
+  GREP_TOOL_NAME,
+  LS_TOOL_NAME,
+  READ_FILE_TOOL_NAME,
+} from '../tools/tool-names.js';
+import {
+  DEFAULT_THINKING_MODE,
+  DEFAULT_GEMINI_MODEL,
+  PREVIEW_GEMINI_FLASH_MODEL,
+  isPreviewModel,
+} from '../config/models.js';
 import { z } from 'zod';
 import { ThinkingLevel } from '@google/genai';
 // Define a type that matches the outputConfig schema for type safety.
 const CodebaseInvestigationReportSchema = z.object({
-    SummaryOfFindings: z
-        .string()
-        .describe("A summary of the investigation's conclusions and insights for the main agent."),
-    ExplorationTrace: z
-        .array(z.string())
-        .describe('A step-by-step list of actions and tools used during the investigation.'),
-    RelevantLocations: z
-        .array(z.object({
+  SummaryOfFindings: z
+    .string()
+    .describe(
+      "A summary of the investigation's conclusions and insights for the main agent.",
+    ),
+  ExplorationTrace: z
+    .array(z.string())
+    .describe(
+      'A step-by-step list of actions and tools used during the investigation.',
+    ),
+  RelevantLocations: z
+    .array(
+      z.object({
         FilePath: z.string(),
         Reasoning: z.string(),
         KeySymbols: z.array(z.string()),
-    }))
-        .describe('A list of relevant files and the key symbols within them.'),
+      }),
+    )
+    .describe('A list of relevant files and the key symbols within them.'),
 });
 /**
  * A Proof-of-Concept subagent specialized in analyzing codebase structure,
  * dependencies, and technologies.
  */
 export const CodebaseInvestigatorAgent = (config) => {
-    // Use Preview Flash model if the main model is any of the preview models.
-    // If the main model is not a preview model, use the default pro model.
-    const model = isPreviewModel(config.getModel())
-        ? PREVIEW_GEMINI_FLASH_MODEL
-        : DEFAULT_GEMINI_MODEL;
-    return {
-        name: 'codebase_investigator',
-        kind: 'local',
-        displayName: 'Codebase Investigator Agent',
-        description: `The specialized tool for codebase analysis, architectural mapping, and understanding system-wide dependencies.
+  // Use Preview Flash model if the main model is any of the preview models.
+  // If the main model is not a preview model, use the default pro model.
+  const model = isPreviewModel(config.getModel())
+    ? PREVIEW_GEMINI_FLASH_MODEL
+    : DEFAULT_GEMINI_MODEL;
+  return {
+    name: 'codebase_investigator',
+    kind: 'local',
+    displayName: 'Codebase Investigator Agent',
+    description: `The specialized tool for codebase analysis, architectural mapping, and understanding system-wide dependencies.
     Invoke this tool for tasks like vague requests, bug root-cause analysis, system refactoring, comprehensive feature implementation or to answer questions about the codebase that require investigation.
     It returns a structured report with key file paths, symbols, and actionable architectural insights.`,
-        inputConfig: {
-            inputSchema: {
-                type: 'object',
-                properties: {
-                    objective: {
-                        type: 'string',
-                        description: `A comprehensive and detailed description of the user's ultimate goal.
+    inputConfig: {
+      inputSchema: {
+        type: 'object',
+        properties: {
+          objective: {
+            type: 'string',
+            description: `A comprehensive and detailed description of the user's ultimate goal.
           You must include original user's objective as well as questions and any extra context and questions you may have.`,
-                    },
-                },
-                required: ['objective'],
+          },
+        },
+        required: ['objective'],
+      },
+    },
+    outputConfig: {
+      outputName: 'report',
+      description: 'The final investigation report as a JSON object.',
+      schema: CodebaseInvestigationReportSchema,
+    },
+    // The 'output' parameter is now strongly typed as CodebaseInvestigationReportSchema
+    processOutput: (output) => JSON.stringify(output, null, 2),
+    modelConfig: {
+      model,
+      generateContentConfig: {
+        temperature: 0.1,
+        topP: 0.95,
+        thinkingConfig: isPreviewModel(model)
+          ? {
+              includeThoughts: true,
+              thinkingLevel: ThinkingLevel.HIGH,
+            }
+          : {
+              includeThoughts: true,
+              thinkingBudget: DEFAULT_THINKING_MODE,
             },
-        },
-        outputConfig: {
-            outputName: 'report',
-            description: 'The final investigation report as a JSON object.',
-            schema: CodebaseInvestigationReportSchema,
-        },
-        // The 'output' parameter is now strongly typed as CodebaseInvestigationReportSchema
-        processOutput: (output) => JSON.stringify(output, null, 2),
-        modelConfig: {
-            model,
-            generateContentConfig: {
-                temperature: 0.1,
-                topP: 0.95,
-                thinkingConfig: isPreviewModel(model)
-                    ? {
-                        includeThoughts: true,
-                        thinkingLevel: ThinkingLevel.HIGH,
-                    }
-                    : {
-                        includeThoughts: true,
-                        thinkingBudget: DEFAULT_THINKING_MODE,
-                    },
-            },
-        },
-        runConfig: {
-            maxTimeMinutes: 3,
-            maxTurns: 10,
-        },
-        toolConfig: {
-            // Grant access only to read-only tools.
-            tools: [
-                LS_TOOL_NAME,
-                READ_FILE_TOOL_NAME,
-                GLOB_TOOL_NAME,
-                GREP_TOOL_NAME,
-            ],
-        },
-        promptConfig: {
-            query: `Your task is to do a deep investigation of the codebase to find all relevant files, code locations, architectural mental map and insights to solve  for the following user objective:
+      },
+    },
+    runConfig: {
+      maxTimeMinutes: 3,
+      maxTurns: 10,
+    },
+    toolConfig: {
+      // Grant access only to read-only tools.
+      tools: [
+        LS_TOOL_NAME,
+        READ_FILE_TOOL_NAME,
+        GLOB_TOOL_NAME,
+        GREP_TOOL_NAME,
+      ],
+    },
+    promptConfig: {
+      query: `Your task is to do a deep investigation of the codebase to find all relevant files, code locations, architectural mental map and insights to solve  for the following user objective:
 <objective>
 \${objective}
 </objective>`,
-            systemPrompt: `You are **Codebase Investigator**, a hyper-specialized AI agent and an expert in reverse-engineering complex software projects. You are a sub-agent within a larger development system.
+      systemPrompt: `You are **Codebase Investigator**, a hyper-specialized AI agent and an expert in reverse-engineering complex software projects. You are a sub-agent within a larger development system.
 Your **SOLE PURPOSE** is to build a complete mental model of the code relevant to a given investigation. You must identify all relevant files, understand their roles, and foresee the direct architectural consequences of potential changes.
 You are a sub-agent in a larger system. Your only responsibility is to provide deep, actionable context.
 - **DO:** Find the key modules, classes, and functions that are part of the problem and its solution.
@@ -153,7 +169,7 @@ When you are finished, you **MUST** call the \`complete_task\` tool. The \`repor
 }
 \`\`\`
 `,
-        },
-    };
+    },
+  };
 };
 //# sourceMappingURL=codebase-investigator.js.map

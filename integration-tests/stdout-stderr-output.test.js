@@ -7,32 +7,47 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { join } from 'node:path';
 import { TestRig } from './test-helper.js';
 describe('stdout-stderr-output', () => {
-    let rig;
-    beforeEach(() => {
-        rig = new TestRig();
+  let rig;
+  beforeEach(() => {
+    rig = new TestRig();
+  });
+  afterEach(async () => {
+    await rig.cleanup();
+  });
+  it('should send model response to stdout and app messages to stderr', async ({
+    signal,
+  }) => {
+    await rig.setup('prompt-output-test', {
+      fakeResponsesPath: join(
+        import.meta.dirname,
+        'stdout-stderr-output.responses',
+      ),
     });
-    afterEach(async () => {
-        await rig.cleanup();
+    const { stdout, exitCode } = await rig.runWithStreams(['-p', 'Say hello'], {
+      signal,
     });
-    it('should send model response to stdout and app messages to stderr', async ({ signal, }) => {
-        await rig.setup('prompt-output-test', {
-            fakeResponsesPath: join(import.meta.dirname, 'stdout-stderr-output.responses'),
-        });
-        const { stdout, exitCode } = await rig.runWithStreams(['-p', 'Say hello'], {
-            signal,
-        });
-        expect(exitCode).toBe(0);
-        expect(stdout.toLowerCase()).toContain('hello');
-        expect(stdout).not.toMatch(/^\[ERROR\]/m);
-        expect(stdout).not.toMatch(/^\[INFO\]/m);
+    expect(exitCode).toBe(0);
+    expect(stdout.toLowerCase()).toContain('hello');
+    expect(stdout).not.toMatch(/^\[ERROR\]/m);
+    expect(stdout).not.toMatch(/^\[INFO\]/m);
+  });
+  it('should handle missing file with message to stdout and error to stderr', async ({
+    signal,
+  }) => {
+    await rig.setup('error-output-test', {
+      fakeResponsesPath: join(
+        import.meta.dirname,
+        'stdout-stderr-output-error.responses',
+      ),
     });
-    it('should handle missing file with message to stdout and error to stderr', async ({ signal, }) => {
-        await rig.setup('error-output-test', {
-            fakeResponsesPath: join(import.meta.dirname, 'stdout-stderr-output-error.responses'),
-        });
-        const { stdout, exitCode } = await rig.runWithStreams(['-p', '@nonexistent-file-that-does-not-exist.txt explain this'], { signal });
-        expect(exitCode).toBe(0);
-        expect(stdout.toLowerCase()).toMatch(/could not find|not exist|does not exist/);
-    });
+    const { stdout, exitCode } = await rig.runWithStreams(
+      ['-p', '@nonexistent-file-that-does-not-exist.txt explain this'],
+      { signal },
+    );
+    expect(exitCode).toBe(0);
+    expect(stdout.toLowerCase()).toMatch(
+      /could not find|not exist|does not exist/,
+    );
+  });
 });
 //# sourceMappingURL=stdout-stderr-output.test.js.map

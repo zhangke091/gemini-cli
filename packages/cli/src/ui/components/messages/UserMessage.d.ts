@@ -5,8 +5,8 @@
  */
 import type React from 'react';
 interface UserMessageProps {
-    text: string;
-    width: number;
+  text: string;
+  width: number;
 }
 export declare const UserMessage: React.FC<UserMessageProps>;
 export {};

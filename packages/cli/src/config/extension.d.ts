@@ -3,7 +3,11 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import type { MCPServerConfig, ExtensionInstallMetadata, CustomTheme } from '@google/gemini-cli-core';
+import type {
+  MCPServerConfig,
+  ExtensionInstallMetadata,
+  CustomTheme,
+} from '@google/gemini-cli-core';
 import type { ExtensionSetting } from './extensions/extensionSettings.js';
 /**
  * Extension definition as written to disk in gemini-extension.json files.
@@ -13,21 +17,23 @@ import type { ExtensionSetting } from './extensions/extensionSettings.js';
  * GeminiCLIExtension class defined in Core.
  */
 export interface ExtensionConfig {
-    name: string;
-    version: string;
-    mcpServers?: Record<string, MCPServerConfig>;
-    contextFileName?: string | string[];
-    excludeTools?: string[];
-    settings?: ExtensionSetting[];
-    /**
-     * Custom themes contributed by this extension.
-     * These themes will be registered when the extension is activated.
-     */
-    themes?: CustomTheme[];
+  name: string;
+  version: string;
+  mcpServers?: Record<string, MCPServerConfig>;
+  contextFileName?: string | string[];
+  excludeTools?: string[];
+  settings?: ExtensionSetting[];
+  /**
+   * Custom themes contributed by this extension.
+   * These themes will be registered when the extension is activated.
+   */
+  themes?: CustomTheme[];
 }
 export interface ExtensionUpdateInfo {
-    name: string;
-    originalVersion: string;
-    updatedVersion: string;
+  name: string;
+  originalVersion: string;
+  updatedVersion: string;
 }
-export declare function loadInstallMetadata(extensionDir: string): ExtensionInstallMetadata | undefined;
+export declare function loadInstallMetadata(
+  extensionDir: string,
+): ExtensionInstallMetadata | undefined;

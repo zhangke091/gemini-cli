@@ -17,21 +17,21 @@ import { useUIState } from '../contexts/UIStateContext.js';
  * @param terminalHeight The height of the terminal.
  */
 export function useFlickerDetector(rootUiRef, terminalHeight) {
-    const config = useConfig();
-    const { constrainHeight } = useUIState();
-    useEffect(() => {
-        if (rootUiRef.current) {
-            const measurement = measureElement(rootUiRef.current);
-            if (measurement.height > terminalHeight) {
-                // If we are not constraining the height, we are intentionally
-                // overflowing the screen.
-                if (!constrainHeight) {
-                    return;
-                }
-                recordFlickerFrame(config);
-                appEvents.emit(AppEvent.Flicker);
-            }
+  const config = useConfig();
+  const { constrainHeight } = useUIState();
+  useEffect(() => {
+    if (rootUiRef.current) {
+      const measurement = measureElement(rootUiRef.current);
+      if (measurement.height > terminalHeight) {
+        // If we are not constraining the height, we are intentionally
+        // overflowing the screen.
+        if (!constrainHeight) {
+          return;
         }
-    });
+        recordFlickerFrame(config);
+        appEvents.emit(AppEvent.Flicker);
+      }
+    }
+  });
 }
 //# sourceMappingURL=useFlickerDetector.js.map

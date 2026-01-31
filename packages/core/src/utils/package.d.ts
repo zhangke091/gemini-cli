@@ -5,9 +5,9 @@
  */
 import { type PackageJson as BasePackageJson } from 'read-package-up';
 export type PackageJson = BasePackageJson & {
-    config?: {
-        sandboxImageUri?: string;
-    };
+  config?: {
+    sandboxImageUri?: string;
+  };
 };
 /**
  * Reads package.json from the current directory or any parent directory.
@@ -23,4 +23,6 @@ export type PackageJson = BasePackageJson & {
  * const version = pkg?.version ?? 'unknown';
  * ```
  */
-export declare function getPackageJson(cwd: string): Promise<PackageJson | undefined>;
+export declare function getPackageJson(
+  cwd: string,
+): Promise<PackageJson | undefined>;

@@ -12,12 +12,14 @@ export const promptIdContext = new AsyncLocalStorage();
  * @returns The retrieved or generated prompt ID.
  */
 export function getPromptIdWithFallback(componentName) {
-    const promptId = promptIdContext.getStore();
-    if (promptId) {
-        return promptId;
-    }
-    const fallbackId = `${componentName}-fallback-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    debugLogger.warn(`Could not find promptId in context for ${componentName}. This is unexpected. Using a fallback ID: ${fallbackId}`);
-    return fallbackId;
+  const promptId = promptIdContext.getStore();
+  if (promptId) {
+    return promptId;
+  }
+  const fallbackId = `${componentName}-fallback-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  debugLogger.warn(
+    `Could not find promptId in context for ${componentName}. This is unexpected. Using a fallback ID: ${fallbackId}`,
+  );
+  return fallbackId;
 }
 //# sourceMappingURL=promptIdContext.js.map

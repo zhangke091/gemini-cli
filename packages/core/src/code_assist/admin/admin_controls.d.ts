@@ -6,7 +6,9 @@
 import type { CodeAssistServer } from '../server.js';
 import { type FetchAdminControlsResponse } from '../types.js';
 import type { Config } from '../../config/config.js';
-export declare function sanitizeAdminSettings(settings: FetchAdminControlsResponse): FetchAdminControlsResponse;
+export declare function sanitizeAdminSettings(
+  settings: FetchAdminControlsResponse,
+): FetchAdminControlsResponse;
 /**
  * Fetches the admin controls from the server if enabled by experiment flag.
  * Safely handles polling start/stop based on the flag and server availability.
@@ -17,7 +19,12 @@ export declare function sanitizeAdminSettings(settings: FetchAdminControlsRespon
  * @param onSettingsChanged Callback to invoke when settings change during polling.
  * @returns The fetched settings if enabled and successful, otherwise undefined.
  */
-export declare function fetchAdminControls(server: CodeAssistServer | undefined, cachedSettings: FetchAdminControlsResponse | undefined, adminControlsEnabled: boolean, onSettingsChanged: (settings: FetchAdminControlsResponse) => void): Promise<FetchAdminControlsResponse>;
+export declare function fetchAdminControls(
+  server: CodeAssistServer | undefined,
+  cachedSettings: FetchAdminControlsResponse | undefined,
+  adminControlsEnabled: boolean,
+  onSettingsChanged: (settings: FetchAdminControlsResponse) => void,
+): Promise<FetchAdminControlsResponse>;
 /**
  * Stops polling for admin controls.
  */
@@ -29,4 +36,7 @@ export declare function stopAdminControlsPolling(): void;
  * @param config The application config
  * @returns The formatted error message
  */
-export declare function getAdminErrorMessage(featureName: string, config: Config | undefined): string;
+export declare function getAdminErrorMessage(
+  featureName: string,
+  config: Config | undefined,
+): string;

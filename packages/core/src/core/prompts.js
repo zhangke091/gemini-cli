@@ -10,18 +10,22 @@ import { resolvePathFromEnv as resolvePathFromEnvImpl } from '../prompts/utils.j
  * @deprecated Use resolvePathFromEnv from @google/gemini-cli-core/prompts/utils instead.
  */
 export function resolvePathFromEnv(envVar) {
-    return resolvePathFromEnvImpl(envVar);
+  return resolvePathFromEnvImpl(envVar);
 }
 /**
  * Returns the core system prompt for the agent.
  */
 export function getCoreSystemPrompt(config, userMemory, interactiveOverride) {
-    return new PromptProvider().getCoreSystemPrompt(config, userMemory, interactiveOverride);
+  return new PromptProvider().getCoreSystemPrompt(
+    config,
+    userMemory,
+    interactiveOverride,
+  );
 }
 /**
  * Provides the system prompt for the history compression process.
  */
 export function getCompressionPrompt() {
-    return new PromptProvider().getCompressionPrompt();
+  return new PromptProvider().getCompressionPrompt();
 }
 //# sourceMappingURL=prompts.js.map

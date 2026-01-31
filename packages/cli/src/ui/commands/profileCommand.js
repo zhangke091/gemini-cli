@@ -6,19 +6,19 @@
 import { isDevelopment } from '../../utils/installationInfo.js';
 import { CommandKind } from './types.js';
 export const profileCommand = isDevelopment
-    ? {
-        name: 'profile',
-        kind: CommandKind.BUILT_IN,
-        description: 'Toggle the debug profile display',
-        autoExecute: true,
-        action: async (context) => {
-            context.ui.toggleDebugProfiler();
-            return {
-                type: 'message',
-                messageType: 'info',
-                content: 'Toggled profile display.',
-            };
-        },
+  ? {
+      name: 'profile',
+      kind: CommandKind.BUILT_IN,
+      description: 'Toggle the debug profile display',
+      autoExecute: true,
+      action: async (context) => {
+        context.ui.toggleDebugProfiler();
+        return {
+          type: 'message',
+          messageType: 'info',
+          content: 'Toggled profile display.',
+        };
+      },
     }
-    : null;
+  : null;
 //# sourceMappingURL=profileCommand.js.map

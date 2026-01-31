@@ -20,4 +20,13 @@ import { ShellToolInvocation } from '../tools/shell.js';
  * @param config Config to look up MCP server details for hook context
  * @returns The tool result
  */
-export declare function executeToolWithHooks(invocation: ShellToolInvocation | AnyToolInvocation, toolName: string, signal: AbortSignal, tool: AnyDeclarativeTool, liveOutputCallback?: (outputChunk: string | AnsiOutput) => void, shellExecutionConfig?: ShellExecutionConfig, setPidCallback?: (pid: number) => void, config?: Config): Promise<ToolResult>;
+export declare function executeToolWithHooks(
+  invocation: ShellToolInvocation | AnyToolInvocation,
+  toolName: string,
+  signal: AbortSignal,
+  tool: AnyDeclarativeTool,
+  liveOutputCallback?: (outputChunk: string | AnsiOutput) => void,
+  shellExecutionConfig?: ShellExecutionConfig,
+  setPidCallback?: (pid: number) => void,
+  config?: Config,
+): Promise<ToolResult>;

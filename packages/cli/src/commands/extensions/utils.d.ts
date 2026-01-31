@@ -5,10 +5,13 @@
  */
 import { ExtensionManager } from '../../config/extension-manager.js';
 export declare function getExtensionManager(): Promise<ExtensionManager>;
-export declare function getExtensionAndManager(name: string): Promise<{
-    extension: null;
-    extensionManager: null;
-} | {
-    extension: import("@google/gemini-cli-core").GeminiCLIExtension;
-    extensionManager: ExtensionManager;
-}>;
+export declare function getExtensionAndManager(name: string): Promise<
+  | {
+      extension: null;
+      extensionManager: null;
+    }
+  | {
+      extension: import('@google/gemini-cli-core').GeminiCLIExtension;
+      extensionManager: ExtensionManager;
+    }
+>;

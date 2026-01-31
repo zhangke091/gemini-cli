@@ -6,19 +6,24 @@
 import type { ModelPolicy, ModelPolicyChain } from './modelPolicy.js';
 import type { UserTierId } from '../code_assist/types.js';
 export interface ModelPolicyOptions {
-    previewEnabled: boolean;
-    userTier?: UserTierId;
+  previewEnabled: boolean;
+  userTier?: UserTierId;
 }
 /**
  * Returns the default ordered model policy chain for the user.
  */
-export declare function getModelPolicyChain(options: ModelPolicyOptions): ModelPolicyChain;
+export declare function getModelPolicyChain(
+  options: ModelPolicyOptions,
+): ModelPolicyChain;
 export declare function createSingleModelChain(model: string): ModelPolicyChain;
 export declare function getFlashLitePolicyChain(): ModelPolicyChain;
 /**
  * Provides a default policy scaffold for models not present in the catalog.
  */
-export declare function createDefaultPolicy(model: string, options?: {
+export declare function createDefaultPolicy(
+  model: string,
+  options?: {
     isLastResort?: boolean;
-}): ModelPolicy;
+  },
+): ModelPolicy;
 export declare function validateModelPolicyChain(chain: ModelPolicyChain): void;

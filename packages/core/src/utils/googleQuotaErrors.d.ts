@@ -8,28 +8,42 @@ import type { GoogleApiError } from './googleErrors.js';
  * A non-retryable error indicating a hard quota limit has been reached (e.g., daily limit).
  */
 export declare class TerminalQuotaError extends Error {
-    readonly cause: GoogleApiError;
-    retryDelayMs?: number;
-    constructor(message: string, cause: GoogleApiError, retryDelaySeconds?: number);
+  readonly cause: GoogleApiError;
+  retryDelayMs?: number;
+  constructor(
+    message: string,
+    cause: GoogleApiError,
+    retryDelaySeconds?: number,
+  );
 }
 /**
  * A retryable error indicating a temporary quota issue (e.g., per-minute limit).
  */
 export declare class RetryableQuotaError extends Error {
-    readonly cause: GoogleApiError;
-    retryDelayMs?: number;
-    constructor(message: string, cause: GoogleApiError, retryDelaySeconds?: number);
+  readonly cause: GoogleApiError;
+  retryDelayMs?: number;
+  constructor(
+    message: string,
+    cause: GoogleApiError,
+    retryDelaySeconds?: number,
+  );
 }
 /**
  * An error indicating that user validation is required to continue.
  */
 export declare class ValidationRequiredError extends Error {
-    readonly cause?: GoogleApiError | undefined;
-    validationLink?: string;
-    validationDescription?: string;
-    learnMoreUrl?: string;
-    userHandled: boolean;
-    constructor(message: string, cause?: GoogleApiError | undefined, validationLink?: string, validationDescription?: string, learnMoreUrl?: string);
+  readonly cause?: GoogleApiError | undefined;
+  validationLink?: string;
+  validationDescription?: string;
+  learnMoreUrl?: string;
+  userHandled: boolean;
+  constructor(
+    message: string,
+    cause?: GoogleApiError | undefined,
+    validationLink?: string,
+    validationDescription?: string,
+    learnMoreUrl?: string,
+  );
 }
 /**
  * Analyzes a caught error and classifies it as a specific error type if applicable.

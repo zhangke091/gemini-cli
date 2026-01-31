@@ -5,17 +5,20 @@
  */
 import type React from 'react';
 export interface Column<T> {
-    key: string;
-    header: React.ReactNode;
-    width?: number;
-    flexGrow?: number;
-    flexShrink?: number;
-    flexBasis?: number | string;
-    renderCell?: (item: T) => React.ReactNode;
+  key: string;
+  header: React.ReactNode;
+  width?: number;
+  flexGrow?: number;
+  flexShrink?: number;
+  flexBasis?: number | string;
+  renderCell?: (item: T) => React.ReactNode;
 }
 interface TableProps<T> {
-    data: T[];
-    columns: Array<Column<T>>;
+  data: T[];
+  columns: Array<Column<T>>;
 }
-export declare function Table<T>({ data, columns }: TableProps<T>): import("react/jsx-runtime").JSX.Element;
+export declare function Table<T>({
+  data,
+  columns,
+}: TableProps<T>): import('react/jsx-runtime').JSX.Element;
 export {};

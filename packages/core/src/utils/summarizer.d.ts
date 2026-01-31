@@ -13,7 +13,12 @@ import type { Config } from '../config/config.js';
  * @param result The result of the tool execution.
  * @returns The summary of the result.
  */
-export type Summarizer = (config: Config, result: ToolResult, geminiClient: GeminiClient, abortSignal: AbortSignal) => Promise<string>;
+export type Summarizer = (
+  config: Config,
+  result: ToolResult,
+  geminiClient: GeminiClient,
+  abortSignal: AbortSignal,
+) => Promise<string>;
 /**
  * The default summarizer for tool results.
  *
@@ -24,4 +29,10 @@ export type Summarizer = (config: Config, result: ToolResult, geminiClient: Gemi
  */
 export declare const defaultSummarizer: Summarizer;
 export declare const llmSummarizer: Summarizer;
-export declare function summarizeToolOutput(config: Config, modelConfigKey: ModelConfigKey, textToSummarize: string, geminiClient: GeminiClient, abortSignal: AbortSignal): Promise<string>;
+export declare function summarizeToolOutput(
+  config: Config,
+  modelConfigKey: ModelConfigKey,
+  textToSummarize: string,
+  geminiClient: GeminiClient,
+  abortSignal: AbortSignal,
+): Promise<string>;

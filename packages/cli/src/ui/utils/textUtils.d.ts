@@ -15,7 +15,11 @@ export declare function cpLen(str: string): number;
  * Converts a code point index to a UTF-16 code unit offset.
  */
 export declare function cpIndexToOffset(str: string, cpIndex: number): number;
-export declare function cpSlice(str: string, start: number, end?: number): string;
+export declare function cpSlice(
+  str: string,
+  start: number,
+  end?: number,
+): string;
 /**
  * Strip characters that can break terminal rendering.
  *
@@ -40,7 +44,10 @@ export declare function stripUnsafeCharacters(str: string): string;
  * Removes ANSI codes, dangerous control characters, collapses whitespace
  * characters into a single space, and optionally truncates.
  */
-export declare function sanitizeForDisplay(str: string, maxLength?: number): string;
+export declare function sanitizeForDisplay(
+  str: string,
+  maxLength?: number,
+): string;
 /**
  * Cached version of stringWidth function for better performance
  */

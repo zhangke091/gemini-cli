@@ -5,7 +5,7 @@
  */
 import type { CommandModule } from 'yargs';
 interface EnableArgs {
-    name: string;
+  name: string;
 }
 export declare function handleEnable(args: EnableArgs): Promise<void>;
 export declare const enableCommand: CommandModule;

@@ -12,7 +12,11 @@ import type { AnyDeclarativeTool, AnyToolInvocation } from '../index.js';
  * @param topN The number of suggestions to return. Defaults to 3.
  * @returns A suggestion string like " Did you mean 'tool'?" or " Did you mean one of: 'tool1', 'tool2'?", or an empty string if no suggestions are found.
  */
-export declare function getToolSuggestion(unknownToolName: string, allToolNames: string[], topN?: number): string;
+export declare function getToolSuggestion(
+  unknownToolName: string,
+  allToolNames: string[],
+  topN?: number,
+): string;
 /**
  * Checks if a tool invocation matches any of a list of patterns.
  *
@@ -25,4 +29,8 @@ export declare function getToolSuggestion(unknownToolName: string, allToolNames:
  *     invocations where the arguments start with that prefix.
  * @returns True if the invocation matches any pattern, false otherwise.
  */
-export declare function doesToolInvocationMatch(toolOrToolName: AnyDeclarativeTool | string, invocation: AnyToolInvocation | string, patterns: string[]): boolean;
+export declare function doesToolInvocationMatch(
+  toolOrToolName: AnyDeclarativeTool | string,
+  invocation: AnyToolInvocation | string,
+  patterns: string[],
+): boolean;

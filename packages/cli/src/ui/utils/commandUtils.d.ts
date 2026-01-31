@@ -33,4 +33,6 @@ export declare const getUrlOpenCommand: () => string;
  * @param command The slash command to check
  * @returns true if the command should auto-execute on Enter
  */
-export declare function isAutoExecutableCommand(command: SlashCommand | undefined | null): boolean;
+export declare function isAutoExecutableCommand(
+  command: SlashCommand | undefined | null,
+): boolean;

@@ -5,9 +5,9 @@
  */
 import { type IndividualToolCallDisplay } from '../types.js';
 export interface ConfirmingToolState {
-    tool: IndividualToolCallDisplay;
-    index: number;
-    total: number;
+  tool: IndividualToolCallDisplay;
+  index: number;
+  total: number;
 }
 /**
  * Selects the "Head" of the confirmation queue.

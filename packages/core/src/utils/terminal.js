@@ -8,55 +8,57 @@ import { writeToStdout } from './stdio.js';
  * ANSI escape codes for disabling mouse tracking.
  */
 export function disableMouseTracking() {
-    writeToStdout([
-        '\x1b[?1000l', // Normal tracking
-        '\x1b[?1003l', // Any-event tracking
-        '\x1b[?1015l', // urxvt extended mouse mode
-        '\x1b[?1006l', // SGR-style mouse tracking
-        '\x1b[?1002l', // Button-event tracking
-    ].join(''));
+  writeToStdout(
+    [
+      '\x1b[?1000l', // Normal tracking
+      '\x1b[?1003l', // Any-event tracking
+      '\x1b[?1015l', // urxvt extended mouse mode
+      '\x1b[?1006l', // SGR-style mouse tracking
+      '\x1b[?1002l', // Button-event tracking
+    ].join(''),
+  );
 }
 export function enableMouseEvents() {
-    // Enable mouse tracking with SGR format
-    // ?1002h = button event tracking (clicks + drags + scroll wheel)
-    // ?1006h = SGR extended mouse mode (better coordinate handling)
-    writeToStdout('\u001b[?1002h\u001b[?1006h');
+  // Enable mouse tracking with SGR format
+  // ?1002h = button event tracking (clicks + drags + scroll wheel)
+  // ?1006h = SGR extended mouse mode (better coordinate handling)
+  writeToStdout('\u001b[?1002h\u001b[?1006h');
 }
 export function disableMouseEvents() {
-    // Disable mouse tracking with SGR format
-    writeToStdout('\u001b[?1006l\u001b[?1002l');
+  // Disable mouse tracking with SGR format
+  writeToStdout('\u001b[?1006l\u001b[?1002l');
 }
 export function enableKittyKeyboardProtocol() {
-    writeToStdout('\x1b[>1u');
+  writeToStdout('\x1b[>1u');
 }
 export function disableKittyKeyboardProtocol() {
-    writeToStdout('\x1b[<u');
+  writeToStdout('\x1b[<u');
 }
 export function enableModifyOtherKeys() {
-    writeToStdout('\x1b[>4;2m');
+  writeToStdout('\x1b[>4;2m');
 }
 export function disableModifyOtherKeys() {
-    writeToStdout('\x1b[>4;0m');
+  writeToStdout('\x1b[>4;0m');
 }
 export function enableBracketedPasteMode() {
-    writeToStdout('\x1b[?2004h');
+  writeToStdout('\x1b[?2004h');
 }
 export function disableBracketedPasteMode() {
-    writeToStdout('\x1b[?2004l');
+  writeToStdout('\x1b[?2004l');
 }
 export function enableLineWrapping() {
-    writeToStdout('\x1b[?7h');
+  writeToStdout('\x1b[?7h');
 }
 export function disableLineWrapping() {
-    writeToStdout('\x1b[?7l');
+  writeToStdout('\x1b[?7l');
 }
 export function enterAlternateScreen() {
-    writeToStdout('\x1b[?1049h');
+  writeToStdout('\x1b[?1049h');
 }
 export function exitAlternateScreen() {
-    writeToStdout('\x1b[?1049l');
+  writeToStdout('\x1b[?1049l');
 }
 export function shouldEnterAlternateScreen(useAlternateBuffer, isScreenReader) {
-    return useAlternateBuffer && !isScreenReader;
+  return useAlternateBuffer && !isScreenReader;
 }
 //# sourceMappingURL=terminal.js.map

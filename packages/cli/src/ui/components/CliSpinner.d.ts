@@ -6,4 +6,6 @@
 import Spinner from 'ink-spinner';
 import { type ComponentProps } from 'react';
 export type SpinnerProps = ComponentProps<typeof Spinner>;
-export declare const CliSpinner: (props: SpinnerProps) => import("react/jsx-runtime").JSX.Element | null;
+export declare const CliSpinner: (
+  props: SpinnerProps,
+) => import('react/jsx-runtime').JSX.Element | null;

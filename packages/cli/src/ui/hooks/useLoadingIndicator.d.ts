@@ -6,12 +6,17 @@
 import { StreamingState } from '../types.js';
 import { type RetryAttemptPayload } from '@google/gemini-cli-core';
 export interface UseLoadingIndicatorProps {
-    streamingState: StreamingState;
-    shouldShowFocusHint: boolean;
-    retryStatus: RetryAttemptPayload | null;
-    customWittyPhrases?: string[];
+  streamingState: StreamingState;
+  shouldShowFocusHint: boolean;
+  retryStatus: RetryAttemptPayload | null;
+  customWittyPhrases?: string[];
 }
-export declare const useLoadingIndicator: ({ streamingState, shouldShowFocusHint, retryStatus, customWittyPhrases, }: UseLoadingIndicatorProps) => {
-    elapsedTime: number;
-    currentLoadingPhrase: string;
+export declare const useLoadingIndicator: ({
+  streamingState,
+  shouldShowFocusHint,
+  retryStatus,
+  customWittyPhrases,
+}: UseLoadingIndicatorProps) => {
+  elapsedTime: number;
+  currentLoadingPhrase: string;
 };

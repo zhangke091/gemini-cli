@@ -162,35 +162,35 @@ rpc.send({
 });
 `;
 describe('mcp server with cyclic tool schema is detected', () => {
-    let rig;
-    beforeEach(() => {
-        rig = new TestRig();
+  let rig;
+  beforeEach(() => {
+    rig = new TestRig();
+  });
+  afterEach(async () => await rig.cleanup());
+  it('mcp tool list should include tool with cyclic tool schema', async () => {
+    // Setup test directory with MCP server configuration
+    await rig.setup('cyclic-schema-mcp-server', {
+      settings: {
+        mcpServers: {
+          'cyclic-schema-server': {
+            command: 'node',
+            args: ['mcp-server.cjs'],
+          },
+        },
+      },
     });
-    afterEach(async () => await rig.cleanup());
-    it('mcp tool list should include tool with cyclic tool schema', async () => {
-        // Setup test directory with MCP server configuration
-        await rig.setup('cyclic-schema-mcp-server', {
-            settings: {
-                mcpServers: {
-                    'cyclic-schema-server': {
-                        command: 'node',
-                        args: ['mcp-server.cjs'],
-                    },
-                },
-            },
-        });
-        // Create server script in the test directory
-        const testServerPath = join(rig.testDir, 'mcp-server.cjs');
-        writeFileSync(testServerPath, serverScript);
-        // Make the script executable (though running with 'node' should work anyway)
-        if (process.platform !== 'win32') {
-            const { chmodSync } = await import('node:fs');
-            chmodSync(testServerPath, 0o755);
-        }
-        const run = await rig.runInteractive();
-        await run.type('/mcp list');
-        await run.type('\r');
-        await run.expectText('tool_with_cyclic_schema');
-    });
+    // Create server script in the test directory
+    const testServerPath = join(rig.testDir, 'mcp-server.cjs');
+    writeFileSync(testServerPath, serverScript);
+    // Make the script executable (though running with 'node' should work anyway)
+    if (process.platform !== 'win32') {
+      const { chmodSync } = await import('node:fs');
+      chmodSync(testServerPath, 0o755);
+    }
+    const run = await rig.runInteractive();
+    await run.type('/mcp list');
+    await run.type('\r');
+    await run.expectText('tool_with_cyclic_schema');
+  });
 });
 //# sourceMappingURL=mcp_server_cyclic_schema.test.js.map

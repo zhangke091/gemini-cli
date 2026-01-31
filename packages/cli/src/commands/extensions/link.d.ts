@@ -5,8 +5,8 @@
  */
 import type { CommandModule } from 'yargs';
 interface InstallArgs {
-    path: string;
-    consent?: boolean;
+  path: string;
+  consent?: boolean;
 }
 export declare function handleLink(args: InstallArgs): Promise<void>;
 export declare const linkCommand: CommandModule;

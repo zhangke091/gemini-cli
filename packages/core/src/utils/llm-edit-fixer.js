@@ -62,37 +62,39 @@ const EDIT_USER_PROMPT = `
 Based on the error and the file content, provide a corrected \`search\` string that will succeed. Remember to keep your correction minimal and explain the precise reason for the failure in your \`explanation\`.
 `;
 const SearchReplaceEditSchema = {
-    type: Type.OBJECT,
-    properties: {
-        explanation: { type: Type.STRING },
-        search: { type: Type.STRING },
-        replace: { type: Type.STRING },
-        noChangesRequired: { type: Type.BOOLEAN },
-    },
-    required: ['search', 'replace', 'explanation'],
+  type: Type.OBJECT,
+  properties: {
+    explanation: { type: Type.STRING },
+    search: { type: Type.STRING },
+    replace: { type: Type.STRING },
+    noChangesRequired: { type: Type.BOOLEAN },
+  },
+  required: ['search', 'replace', 'explanation'],
 };
 const editCorrectionWithInstructionCache = new LRUCache(MAX_CACHE_SIZE);
 async function generateJsonWithTimeout(client, params, timeoutMs) {
-    try {
-        // Create a signal that aborts automatically after the specified timeout.
-        const timeoutSignal = AbortSignal.timeout(timeoutMs);
-        const result = await client.generateJson({
-            ...params,
-            // The operation will be aborted if either the original signal is aborted
-            // or if the timeout is reached.
-            abortSignal: AbortSignal.any([
-                params.abortSignal ?? new AbortController().signal,
-                timeoutSignal,
-            ]),
-        });
-        return result;
-    }
-    catch (err) {
-        debugLogger.debug('[LLM Edit Fixer] Timeout or error during generateJson', err);
-        // An AbortError will be thrown on timeout.
-        // We catch it and return null to signal that the operation timed out.
-        return null;
-    }
+  try {
+    // Create a signal that aborts automatically after the specified timeout.
+    const timeoutSignal = AbortSignal.timeout(timeoutMs);
+    const result = await client.generateJson({
+      ...params,
+      // The operation will be aborted if either the original signal is aborted
+      // or if the timeout is reached.
+      abortSignal: AbortSignal.any([
+        params.abortSignal ?? new AbortController().signal,
+        timeoutSignal,
+      ]),
+    });
+    return result;
+  } catch (err) {
+    debugLogger.debug(
+      '[LLM Edit Fixer] Timeout or error during generateJson',
+      err,
+    );
+    // An AbortError will be thrown on timeout.
+    // We catch it and return null to signal that the operation timed out.
+    return null;
+  }
 }
 /**
  * Attempts to fix a failed edit by using an LLM to generate a new search and replace pair.
@@ -106,47 +108,61 @@ async function generateJsonWithTimeout(client, params, timeoutMs) {
  * @param promptId A unique ID for the prompt.
  * @returns A new search and replace pair.
  */
-export async function FixLLMEditWithInstruction(instruction, old_string, new_string, error, current_content, baseLlmClient, abortSignal) {
-    const promptId = getPromptIdWithFallback('llm-fixer');
-    const cacheKey = createHash('sha256')
-        .update(JSON.stringify([
+export async function FixLLMEditWithInstruction(
+  instruction,
+  old_string,
+  new_string,
+  error,
+  current_content,
+  baseLlmClient,
+  abortSignal,
+) {
+  const promptId = getPromptIdWithFallback('llm-fixer');
+  const cacheKey = createHash('sha256')
+    .update(
+      JSON.stringify([
         current_content,
         old_string,
         new_string,
         instruction,
         error,
-    ]))
-        .digest('hex');
-    const cachedResult = editCorrectionWithInstructionCache.get(cacheKey);
-    if (cachedResult) {
-        return cachedResult;
-    }
-    const userPrompt = EDIT_USER_PROMPT.replace('{instruction}', instruction)
-        .replace('{old_string}', old_string)
-        .replace('{new_string}', new_string)
-        .replace('{error}', error)
-        .replace('{current_content}', current_content);
-    const contents = [
-        {
-            role: 'user',
-            parts: [{ text: userPrompt }],
-        },
-    ];
-    const result = await generateJsonWithTimeout(baseLlmClient, {
-        modelConfigKey: { model: 'llm-edit-fixer' },
-        contents,
-        schema: SearchReplaceEditSchema,
-        abortSignal,
-        systemInstruction: EDIT_SYS_PROMPT,
-        promptId,
-        maxAttempts: 1,
-    }, GENERATE_JSON_TIMEOUT_MS);
-    if (result) {
-        editCorrectionWithInstructionCache.set(cacheKey, result);
-    }
-    return result;
+      ]),
+    )
+    .digest('hex');
+  const cachedResult = editCorrectionWithInstructionCache.get(cacheKey);
+  if (cachedResult) {
+    return cachedResult;
+  }
+  const userPrompt = EDIT_USER_PROMPT.replace('{instruction}', instruction)
+    .replace('{old_string}', old_string)
+    .replace('{new_string}', new_string)
+    .replace('{error}', error)
+    .replace('{current_content}', current_content);
+  const contents = [
+    {
+      role: 'user',
+      parts: [{ text: userPrompt }],
+    },
+  ];
+  const result = await generateJsonWithTimeout(
+    baseLlmClient,
+    {
+      modelConfigKey: { model: 'llm-edit-fixer' },
+      contents,
+      schema: SearchReplaceEditSchema,
+      abortSignal,
+      systemInstruction: EDIT_SYS_PROMPT,
+      promptId,
+      maxAttempts: 1,
+    },
+    GENERATE_JSON_TIMEOUT_MS,
+  );
+  if (result) {
+    editCorrectionWithInstructionCache.set(cacheKey, result);
+  }
+  return result;
 }
 export function resetLlmEditFixerCaches_TEST_ONLY() {
-    editCorrectionWithInstructionCache.clear();
+  editCorrectionWithInstructionCache.clear();
 }
 //# sourceMappingURL=llm-edit-fixer.js.map

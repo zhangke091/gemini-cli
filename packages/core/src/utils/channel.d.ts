@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 export declare enum ReleaseChannel {
-    NIGHTLY = "nightly",
-    PREVIEW = "preview",
-    STABLE = "stable"
+  NIGHTLY = 'nightly',
+  PREVIEW = 'preview',
+  STABLE = 'stable',
 }
 /**
  * Clears the cache for testing purposes.

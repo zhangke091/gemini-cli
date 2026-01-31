@@ -13,15 +13,15 @@ import { useMouseContext } from '../contexts/MouseContext.js';
  * @param options.isActive - Whether the hook should be actively listening for input.
  */
 export function useMouse(onMouseEvent, { isActive }) {
-    const { subscribe, unsubscribe } = useMouseContext();
-    useEffect(() => {
-        if (!isActive) {
-            return;
-        }
-        subscribe(onMouseEvent);
-        return () => {
-            unsubscribe(onMouseEvent);
-        };
-    }, [isActive, onMouseEvent, subscribe, unsubscribe]);
+  const { subscribe, unsubscribe } = useMouseContext();
+  useEffect(() => {
+    if (!isActive) {
+      return;
+    }
+    subscribe(onMouseEvent);
+    return () => {
+      unsubscribe(onMouseEvent);
+    };
+  }, [isActive, onMouseEvent, subscribe, unsubscribe]);
 }
 //# sourceMappingURL=useMouse.js.map

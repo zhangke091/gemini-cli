@@ -5,7 +5,7 @@
  */
 import type React from 'react';
 interface StatusDisplayProps {
-    hideContextSummary: boolean;
+  hideContextSummary: boolean;
 }
 export declare const StatusDisplay: React.FC<StatusDisplayProps>;
 export {};
