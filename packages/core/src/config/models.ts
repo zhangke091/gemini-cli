@@ -32,6 +32,27 @@ export const DEFAULT_GEMINI_EMBEDDING_MODEL = 'gemini-embedding-001';
 // Cap the thinking at 8192 to prevent run-away thinking loops.
 export const DEFAULT_THINKING_MODE = 8192;
 
+// DeepSeek model constants
+export const DEEPSEEK_CHAT_MODEL = 'deepseek-chat';
+export const DEEPSEEK_CODER_MODEL = 'deepseek-coder';
+export const DEEPSEEK_REASONER_MODEL = 'deepseek-reasoner';
+
+export const VALID_DEEPSEEK_MODELS = new Set([
+  DEEPSEEK_CHAT_MODEL,
+  DEEPSEEK_CODER_MODEL,
+  DEEPSEEK_REASONER_MODEL,
+]);
+
+/**
+ * Checks if the model is a DeepSeek model.
+ *
+ * @param model The model name to check.
+ * @returns True if the model is a DeepSeek model.
+ */
+export function isDeepSeekModel(model: string): boolean {
+  return model.startsWith('deepseek-') || VALID_DEEPSEEK_MODELS.has(model);
+}
+
 /**
  * Resolves the requested model alias (e.g., 'auto-gemini-3', 'pro', 'flash', 'flash-lite')
  * to a concrete model name, considering preview features.
@@ -118,6 +139,13 @@ export function getDisplayString(
       return previewFeaturesEnabled
         ? PREVIEW_GEMINI_FLASH_MODEL
         : DEFAULT_GEMINI_FLASH_MODEL;
+    // DeepSeek models display names
+    case DEEPSEEK_CHAT_MODEL:
+      return 'DeepSeek Chat';
+    case DEEPSEEK_CODER_MODEL:
+      return 'DeepSeek Coder';
+    case DEEPSEEK_REASONER_MODEL:
+      return 'DeepSeek Reasoner';
     default:
       return model;
   }

@@ -219,6 +219,33 @@ export const DEFAULT_MODEL_CONFIGS: ModelConfigServiceConfig = {
         model: 'gemini-2.5-pro',
       },
     },
+    // DeepSeek model configurations
+    'deepseek-base': {
+      modelConfig: {
+        generateContentConfig: {
+          temperature: 1,
+          topP: 0.95,
+        },
+      },
+    },
+    'deepseek-chat': {
+      extends: 'deepseek-base',
+      modelConfig: {
+        model: 'deepseek-chat',
+      },
+    },
+    'deepseek-coder': {
+      extends: 'deepseek-base',
+      modelConfig: {
+        model: 'deepseek-coder',
+      },
+    },
+    'deepseek-reasoner': {
+      extends: 'deepseek-base',
+      modelConfig: {
+        model: 'deepseek-reasoner',
+      },
+    },
   },
   overrides: [
     {

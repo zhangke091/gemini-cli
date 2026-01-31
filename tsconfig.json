@@ -23,9 +23,9 @@
     "verbatimModuleSyntax": true,
     "lib": ["ES2023"],
     "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "NodeNext",
     "target": "es2022",
-    "types": ["node", "vitest/globals"],
+    "types": ["node"],
     "jsx": "react-jsx"
   }
 }

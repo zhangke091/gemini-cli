@@ -15,6 +15,11 @@ import {
   DEFAULT_GEMINI_FLASH_MODEL,
   DEFAULT_GEMINI_FLASH_LITE_MODEL,
   DEFAULT_GEMINI_MODEL_AUTO,
+  DEEPSEEK_CHAT_MODEL,
+  DEEPSEEK_CODER_MODEL,
+  DEEPSEEK_REASONER_MODEL,
+  isDeepSeekModel,
+  AuthType,
   ModelSlashCommandEvent,
   logModelSlashCommand,
   getDisplayString,
@@ -40,6 +45,9 @@ export function ModelDialog({ onClose }: ModelDialogProps): React.JSX.Element {
   const shouldShowPreviewModels =
     config?.getPreviewFeatures() && config.getHasAccessToPreviewModel();
 
+  // Check if DeepSeek API key is available
+  const hasDeepSeekApiKey = !!process.env['DEEPSEEK_API_KEY'];
+
   const manualModelSelected = useMemo(() => {
     const manualModels = [
       DEFAULT_GEMINI_MODEL,
@@ -47,6 +55,10 @@ export function ModelDialog({ onClose }: ModelDialogProps): React.JSX.Element {
       DEFAULT_GEMINI_FLASH_LITE_MODEL,
       PREVIEW_GEMINI_MODEL,
       PREVIEW_GEMINI_FLASH_MODEL,
+      // DeepSeek models
+      DEEPSEEK_CHAT_MODEL,
+      DEEPSEEK_CODER_MODEL,
+      DEEPSEEK_REASONER_MODEL,
     ];
     if (manualModels.includes(preferredModel)) {
       return preferredModel;
@@ -137,8 +149,30 @@ export function ModelDialog({ onClose }: ModelDialogProps): React.JSX.Element {
         },
       );
     }
+
+    // Add DeepSeek models if API key is available
+    if (hasDeepSeekApiKey) {
+      list.push(
+        {
+          value: DEEPSEEK_CHAT_MODEL,
+          title: getDisplayString(DEEPSEEK_CHAT_MODEL),
+          key: DEEPSEEK_CHAT_MODEL,
+        },
+        {
+          value: DEEPSEEK_CODER_MODEL,
+          title: getDisplayString(DEEPSEEK_CODER_MODEL),
+          key: DEEPSEEK_CODER_MODEL,
+        },
+        {
+          value: DEEPSEEK_REASONER_MODEL,
+          title: getDisplayString(DEEPSEEK_REASONER_MODEL),
+          key: DEEPSEEK_REASONER_MODEL,
+        },
+      );
+    }
+
     return list;
-  }, [shouldShowPreviewModels]);
+  }, [shouldShowPreviewModels, hasDeepSeekApiKey]);
 
   const options = view === 'main' ? mainOptions : manualOptions;
 
@@ -157,14 +191,32 @@ export function ModelDialog({ onClose }: ModelDialogProps): React.JSX.Element {
 
   // Handle selection internally (Autonomous Dialog).
   const handleSelect = useCallback(
-    (model: string) => {
+    async (model: string) => {
       if (model === 'Manual') {
         setView('manual');
         return;
       }
 
       if (config) {
-        config.setModel(model, persistMode ? false : true);
+        // If switching to/from DeepSeek model, need to refresh auth
+        const currentModel = config.getModel();
+        const isCurrentDeepSeek = isDeepSeekModel(currentModel);
+        const isNewDeepSeek = isDeepSeekModel(model);
+
+        if (isNewDeepSeek && !isCurrentDeepSeek) {
+          // Switching to DeepSeek - need to refresh auth with DeepSeek type
+          config.setModel(model, persistMode ? false : true);
+          await config.refreshAuth(AuthType.USE_DEEPSEEK);
+        } else if (!isNewDeepSeek && isCurrentDeepSeek) {
+          // Switching from DeepSeek to Gemini - need to refresh auth
+          config.setModel(model, persistMode ? false : true);
+          // Default back to Gemini API key if available, otherwise Google login
+          const hasGeminiKey = !!process.env['GEMINI_API_KEY'];
+          await config.refreshAuth(hasGeminiKey ? AuthType.USE_GEMINI : AuthType.LOGIN_WITH_GOOGLE);
+        } else {
+          config.setModel(model, persistMode ? false : true);
+        }
+
         const event = new ModelSlashCommandEvent(model);
         logModelSlashCommand(config, event);
       }

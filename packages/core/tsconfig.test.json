@@ -1,0 +1,8 @@
+// filepath: /Users/feilong.zk/gemini/gemini-cli/packages/core/tsconfig.test.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["**/*.test.ts", "**/*.spec.ts", "test-setup.ts"]
+}

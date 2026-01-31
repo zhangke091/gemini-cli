@@ -19,6 +19,9 @@ export * from './policy/config.js';
 export * from './confirmation-bus/types.js';
 export * from './confirmation-bus/message-bus.js';
 
+// Export DeepSeek provider
+export * from './providers/deepseek/index.js';
+
 // Export Commands logic
 export * from './commands/extensions.js';
 export * from './commands/restore.js';
